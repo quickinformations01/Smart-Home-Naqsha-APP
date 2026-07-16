@@ -1,0 +1,25 @@
+{
+  "short_name": "Naqsha",
+  "name": "Smart Home Naqsha - Floorplanner",
+  "description": "Smart Home Naqsha - Live Interactive 2D & 3D Floor Plan Architect & Layout Designer",
+  "icons": [
+    {
+      "src": "/icon.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "display": "standalone",
+  "orientation": "any",
+  "categories": ["utilities", "productivity"]
+}

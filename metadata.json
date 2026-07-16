@@ -1,0 +1,6 @@
+{
+  "name": "Smart Home Naqsha",
+  "description": "An intelligent 2D floor plan generator with automatic room suggestions, featuring layout generation, room resizing, and interactive editing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
