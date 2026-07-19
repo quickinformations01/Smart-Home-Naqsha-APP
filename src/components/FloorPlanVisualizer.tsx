@@ -2896,41 +2896,6 @@ export default function FloorPlanVisualizer({
                 {showSqFtLayer ? 'Sq Ft ON' : 'Sq Ft OFF'}
               </span>
             </button>
-
-            {!is3DView && (
-              <>
-                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800" />
-
-                {/* Zoom controls (Only in 2D blueprint) */}
-                <button
-                  onClick={handleZoomOut}
-                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
-                  title="Zoom out"
-                  id="zoom-out-btn"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </button>
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 w-12 text-center font-mono">
-                  {Math.round(zoom * 100)}%
-                </span>
-                <button
-                  onClick={handleZoomIn}
-                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
-                  title="Zoom in"
-                  id="zoom-in-btn"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleResetZoom}
-                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
-                  title="Fit/Reset view"
-                  id="fit-view-btn"
-                >
-                  <Maximize className="w-4 h-4" />
-                </button>
-              </>
-            )}
           </div>
         </div>
 
@@ -3107,6 +3072,38 @@ export default function FloorPlanVisualizer({
                 <span>Generate 3D Naqsha</span>
                 <span className="bg-amber-400 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">Live</span>
               </button>
+
+              {/* Floating Zoom & Fit Canvas HUD */}
+              <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-1.5 rounded-xl border border-slate-200/60 dark:border-slate-800/85 shadow-lg shadow-slate-250/20 dark:shadow-none select-none">
+                <button
+                  onClick={handleZoomOut}
+                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                  title="Zoom Out"
+                  id="canvas-zoom-out-btn"
+                >
+                  <ZoomOut className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 w-11 text-center font-mono select-none">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  onClick={handleZoomIn}
+                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                  title="Zoom In"
+                  id="canvas-zoom-in-btn"
+                >
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </button>
+                <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-0.5" />
+                <button
+                  onClick={handleResetZoom}
+                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                  title="Fit to Screen"
+                  id="canvas-fit-view-btn"
+                >
+                  <Maximize className="w-3.5 h-3.5" />
+                </button>
+              </div>
             <svg
               ref={svgRef}
               className={`w-full h-full cursor-default`}

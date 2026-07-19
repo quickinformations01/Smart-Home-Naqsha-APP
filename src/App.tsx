@@ -368,51 +368,51 @@ export default function App() {
           <>
             {/* Persistent Stepper & Navigation Hub */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/60 rounded-2xl py-2 px-4 flex items-center justify-between shadow-sm transition-all">
+              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/60 rounded-2xl py-1.5 px-3 flex items-center justify-between shadow-sm transition-all">
                 
                 {/* Brand / Home Quick Return */}
                 <button
                   onClick={() => setStep('setup')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer border ${
                     step === 'setup'
-                      ? 'bg-blue-50/80 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border-blue-100/50 dark:border-blue-900/30 font-black'
+                      ? 'bg-blue-50/80 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border-blue-100/50 dark:border-blue-900/30 font-black shadow-sm'
                       : 'bg-transparent border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-350'
                   }`}
                   title="Return to Sizing Input setup"
                 >
-                  <Home className="w-4 h-4" />
-                  <span className="hidden sm:inline">Home Setup</span>
+                  <Home className="w-4 h-4 text-blue-500" />
+                  <span className="hidden md:inline">Home Setup</span>
                 </button>
 
                 {/* Centered Step Indicator Timeline (Ultra-Slim & Aesthetic) */}
-                <div className="flex items-center gap-2 sm:gap-4">
+                <div className="flex items-center gap-1.5 sm:gap-3">
                   {/* Step 1: Dimensions */}
                   <button
                     onClick={() => setStep('setup')}
-                    className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl transition-all duration-300 cursor-pointer text-xs ${
+                    className={`flex items-center gap-2 py-1 px-2 rounded-xl transition-all duration-300 cursor-pointer text-xs ${
                       step === 'setup' 
-                        ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/50 dark:bg-blue-950/20' 
+                        ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/40 dark:bg-blue-950/20' 
                         : initialSummary 
-                          ? 'text-emerald-600 dark:text-emerald-400 font-bold' 
-                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300'
+                          ? 'text-emerald-600 dark:text-emerald-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/30' 
+                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
+                    <div className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
                       step === 'setup' 
                         ? 'bg-blue-600 text-white shadow-sm ring-4 ring-blue-500/10' 
                         : initialSummary 
                           ? 'bg-emerald-500 text-white shadow-sm' 
                           : 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 border border-slate-200/40 dark:border-slate-800/40'
                     }`}>
-                      {initialSummary ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Ruler className="w-3.5 h-3.5" />}
+                      {initialSummary ? <Check className="w-3 h-3 stroke-[3]" /> : <Ruler className="w-3 h-3" />}
                     </div>
-                    <div className="flex flex-col items-start text-left leading-none">
-                      <span className="text-[11px] font-black uppercase tracking-wider">1. Dimensions</span>
+                    <div className="hidden sm:flex flex-col items-start text-left leading-none">
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Dimensions</span>
                     </div>
                   </button>
 
                   {/* Connect Bridge 1 */}
-                  <div className={`w-4 sm:w-8 h-0.5 rounded ${
+                  <div className={`w-3 sm:w-6 h-0.5 rounded ${
                     initialSummary ? 'bg-emerald-500/55' : 'bg-slate-200 dark:bg-slate-800'
                   }`} />
 
@@ -420,30 +420,30 @@ export default function App() {
                   <button
                     onClick={() => initialSummary && setStep('recommendations')}
                     disabled={!initialSummary}
-                    className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-xs ${
+                    className={`flex items-center gap-2 py-1 px-2 rounded-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-xs ${
                       step === 'recommendations' 
-                        ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/50 dark:bg-blue-950/20' 
+                        ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/40 dark:bg-blue-950/20' 
                         : activeLayout 
-                          ? 'text-emerald-600 dark:text-emerald-400 font-bold' 
-                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300'
+                          ? 'text-emerald-600 dark:text-emerald-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/30' 
+                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
+                    <div className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
                       step === 'recommendations' 
                         ? 'bg-blue-600 text-white shadow-sm ring-4 ring-blue-500/10' 
                         : activeLayout 
                           ? 'bg-emerald-500 text-white shadow-sm' 
                           : 'bg-slate-100 dark:bg-slate-800/80 text-slate-450 border border-slate-200/40 dark:border-slate-800/40'
                     }`}>
-                      {activeLayout ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <ClipboardList className="w-3.5 h-3.5" />}
+                      {activeLayout ? <Check className="w-3 h-3 stroke-[3]" /> : <ClipboardList className="w-3.5 h-3.5" />}
                     </div>
-                    <div className="flex flex-col items-start text-left leading-none">
-                      <span className="text-[11px] font-black uppercase tracking-wider">2. Recommendations</span>
+                    <div className="hidden sm:flex flex-col items-start text-left leading-none">
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Recommendations</span>
                     </div>
                   </button>
 
                   {/* Connect Bridge 2 */}
-                  <div className={`w-4 sm:w-8 h-0.5 rounded ${
+                  <div className={`w-3 sm:w-6 h-0.5 rounded ${
                     activeLayout ? 'bg-emerald-500/55' : 'bg-slate-200 dark:bg-slate-800'
                   }`} />
 
@@ -451,21 +451,21 @@ export default function App() {
                   <button
                     onClick={() => activeLayout && setStep('visualizer')}
                     disabled={!activeLayout}
-                    className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-xs ${
+                    className={`flex items-center gap-2 py-1 px-2 rounded-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-xs ${
                       step === 'visualizer' 
-                        ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/50 dark:bg-blue-950/20' 
-                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300'
+                        ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/40 dark:bg-blue-950/20' 
+                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
+                    <div className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
                       step === 'visualizer' 
                         ? 'bg-blue-600 text-white shadow-sm ring-4 ring-blue-500/10' 
                         : 'bg-slate-100 dark:bg-slate-800/80 text-slate-450 border border-slate-200/40 dark:border-slate-800/40'
                     }`}>
-                      <Layout className="w-3.5 h-3.5" />
+                      <Layout className="w-3 h-3" />
                     </div>
-                    <div className="flex flex-col items-start text-left leading-none">
-                      <span className="text-[11px] font-black uppercase tracking-wider">3. Studio Canvas</span>
+                    <div className="hidden sm:flex flex-col items-start text-left leading-none">
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Studio Canvas</span>
                     </div>
                   </button>
                 </div>
