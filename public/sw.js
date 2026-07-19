@@ -32,6 +32,9 @@ self.addEventListener('fetch', (e) => {
   // Only intercept same-origin static requests or critical assets
   if (e.request.method !== 'GET') return;
   
+  // Do not intercept or cache any API requests
+  if (e.request.url.includes('/api/')) return;
+  
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       if (cachedResponse) {

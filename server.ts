@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { GoogleGenAI, Type } from '@google/genai';
 import { generateProceduralLayout } from './src/utils/layoutGenerator';
 
@@ -9,6 +10,26 @@ const PORT = 3000;
 
 // Enable JSON parser
 app.use(express.json());
+
+// Endpoint to dynamically track application code changes (for forced auto-update alerts)
+app.get('/api/app-version', (req, res) => {
+  try {
+    const appPath = path.join(process.cwd(), 'src', 'App.tsx');
+    const serverPath = path.join(process.cwd(), 'server.ts');
+    
+    let latestMtime = 0;
+    if (fs.existsSync(appPath)) {
+      latestMtime = Math.max(latestMtime, fs.statSync(appPath).mtimeMs);
+    }
+    if (fs.existsSync(serverPath)) {
+      latestMtime = Math.max(latestMtime, fs.statSync(serverPath).mtimeMs);
+    }
+    
+    res.json({ version: latestMtime.toString() });
+  } catch (error) {
+    res.json({ version: Date.now().toString() });
+  }
+});
 
 // Initialize Gemini SDK with named parameters as specified in guidelines
 // We wrap it in a function to lazily initialize or handle missing keys gracefully

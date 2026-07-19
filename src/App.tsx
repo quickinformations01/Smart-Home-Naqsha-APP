@@ -61,6 +61,67 @@ export default function App() {
     };
   }, []);
 
+  // Dynamic App Version Update & Cache clearing states
+  const [currentVersion, setCurrentVersion] = useState<string | null>(null);
+  const [newVersionAvailable, setNewVersionAvailable] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+
+  // Monitor application backend version for dynamic hot updates
+  useEffect(() => {
+    // Initial fetch to capture current build timestamp
+    fetch('/api/app-version')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.version) {
+          setCurrentVersion(data.version);
+        }
+      })
+      .catch((err) => console.log('Failed to fetch initial version:', err));
+
+    // Polling interval of 8 seconds to instantly detect code edits
+    const interval = setInterval(() => {
+      fetch('/api/app-version')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.version) {
+            setCurrentVersion((prev) => {
+              if (prev && prev !== data.version) {
+                setNewVersionAvailable(true);
+              }
+              return prev || data.version;
+            });
+          }
+        })
+        .catch((err) => console.log('Error polling version:', err));
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleUpdateApp = async () => {
+    setIsUpdating(true);
+    try {
+      // 1. Clear all service worker caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      }
+      
+      // 2. Unregister any service workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((reg) => reg.unregister()));
+      }
+
+      // 3. Clear localStorage cache specifically related to layout configurations if needed, but we keep projects safe
+      // Let's add a dynamic parameter to force bypass any server or browser routing cache
+      window.location.href = window.location.origin + window.location.pathname + '?update=' + Date.now();
+    } catch (e) {
+      console.error('Error during clearing caches:', e);
+      window.location.href = window.location.origin + window.location.pathname + '?update=' + Date.now();
+    }
+  };
+
   // PWA Install states
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState<boolean>(false);
@@ -347,6 +408,47 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      {newVersionAvailable && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl space-y-6 animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100/50 dark:border-blue-900/30 flex items-center justify-center mx-auto shadow-sm">
+              <RefreshCw className={`w-7 h-7 text-blue-600 dark:text-blue-400 ${isUpdating ? 'animate-spin' : 'animate-pulse'}`} />
+            </div>
+            
+            <div className="space-y-2">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                App Update Available!
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                Smart Home Naqsha has been updated with sleek responsive layouts, controls, and canvas enhancements. To maintain interface stability and load new features, please refresh the app.
+              </p>
+            </div>
+
+            <button
+              onClick={handleUpdateApp}
+              disabled={isUpdating}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-500/15 hover:shadow-blue-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUpdating ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Clearing Cache & Loading...</span>
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Update & Restart Now</span>
+                </>
+              )}
+            </button>
+            
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+              This updates the application instantly and is 100% free of charge.
+            </p>
+          </div>
+        </div>
+      )}
+
       {showSplashScreen && (
         <SplashScreen onComplete={() => setShowSplashScreen(false)} />
       )}
