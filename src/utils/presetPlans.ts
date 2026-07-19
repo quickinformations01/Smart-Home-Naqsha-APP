@@ -10,7 +10,7 @@ export interface PresetPlan {
   unit: 'ft' | 'm';
   bedrooms: number;
   bathrooms: number;
-  plotType: 'corner' | 'standard';
+  plotType: 'corner' | 'corner-left' | 'corner-right' | 'standard';
   facing: 'north' | 'south' | 'east' | 'west';
   getLayout: () => NaqshaLayout;
 }

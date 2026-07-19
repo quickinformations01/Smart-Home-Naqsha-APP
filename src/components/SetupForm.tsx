@@ -6,7 +6,7 @@ interface SetupFormProps {
     width: number,
     length: number,
     unit: 'ft' | 'm',
-    plotType: 'corner' | 'standard',
+    plotType: 'corner' | 'corner-left' | 'corner-right' | 'standard',
     facing: 'north' | 'south' | 'east' | 'west'
   ) => void;
   isLoading: boolean;
@@ -16,7 +16,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
   const [width, setWidth] = useState<string>('30');
   const [length, setLength] = useState<string>('50');
   const [unit, setUnit] = useState<'ft' | 'm'>('ft');
-  const [plotType, setPlotType] = useState<'corner' | 'standard'>('standard');
+  const [plotType, setPlotType] = useState<'corner' | 'corner-left' | 'corner-right' | 'standard'>('standard');
   const [facing, setFacing] = useState<'north' | 'south' | 'east' | 'west'>('east');
   const [error, setError] = useState<string>('');
 
@@ -142,28 +142,39 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
             <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
               Plot Location Type
             </label>
-            <div className="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-slate-800/30 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div className="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-slate-800/30 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setPlotType('standard')}
-                className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                className={`py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-all ${
                   plotType === 'standard'
                     ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >
-                Standard Plot
+                Standard
               </button>
               <button
                 type="button"
-                onClick={() => setPlotType('corner')}
-                className={`py-2 text-xs font-bold rounded-lg transition-all ${
-                  plotType === 'corner'
+                onClick={() => setPlotType('corner-left')}
+                className={`py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-all ${
+                  plotType === 'corner-left'
                     ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >
-                Corner Plot
+                Left Corner
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlotType('corner-right')}
+                className={`py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-all ${
+                  plotType === 'corner-right'
+                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
+                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                }`}
+              >
+                Right Corner
               </button>
             </div>
           </div>

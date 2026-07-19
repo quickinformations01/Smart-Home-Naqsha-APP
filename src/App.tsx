@@ -11,7 +11,8 @@ import AuxPages from './components/AuxPages';
 import { PresetPlan } from './utils/presetPlans';
 import { NaqshaLayout, NaqshaSummary, SavedProject } from './types';
 import { generateProceduralLayout } from './utils/layoutGenerator';
-import { Sparkles, Sliders, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Sparkles, Sliders, CheckCircle2, AlertTriangle, RefreshCw, Home, ArrowLeft, ArrowRight } from 'lucide-react';
+import SmartHomeNaqshaLogo from './components/SmartHomeNaqshaLogo';
 
 export default function App() {
   // Splash Screen State
@@ -25,7 +26,7 @@ export default function App() {
   const [width, setWidth] = useState<number>(30);
   const [length, setLength] = useState<number>(50);
   const [unit, setUnit] = useState<'ft' | 'm'>('ft');
-  const [plotType, setPlotType] = useState<'corner' | 'standard'>('standard');
+  const [plotType, setPlotType] = useState<'corner' | 'corner-left' | 'corner-right' | 'standard'>('standard');
   const [facing, setFacing] = useState<'north' | 'south' | 'east' | 'west'>('east');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -41,6 +42,24 @@ export default function App() {
 
   // Dark mode state
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  // Internet connection state
+  const [isOnline, setIsOnline] = useState<boolean>(true);
+
+  // Monitor internet connectivity
+  useEffect(() => {
+    setIsOnline(navigator.onLine);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // PWA Install states
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -181,7 +200,7 @@ export default function App() {
     w: number,
     l: number,
     selectedUnit: 'ft' | 'm',
-    pType: 'corner' | 'standard',
+    pType: 'corner' | 'corner-left' | 'corner-right' | 'standard',
     fDir: 'north' | 'south' | 'east' | 'west'
   ) => {
     setWidth(w);
@@ -332,6 +351,14 @@ export default function App() {
         <SplashScreen onComplete={() => setShowSplashScreen(false)} />
       )}
       <GenerationProgress isOpen={isLoading} />
+      
+      {!isOnline && (
+        <div className="fixed top-0 inset-x-0 z-[110] bg-rose-600 dark:bg-rose-950 text-white text-xs sm:text-sm py-2.5 px-4 text-center font-bold flex items-center justify-center gap-2 shadow-lg animate-in slide-in-from-top duration-300">
+          <AlertTriangle className="w-4 h-4 text-white animate-pulse shrink-0" />
+          <span>Please check your internet connection. Some layout generators and real-time mapping services might be temporarily limited.</span>
+        </div>
+      )}
+
       <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
       <main className="py-8">
@@ -339,15 +366,132 @@ export default function App() {
           <AuxPages initialTab={auxTab} onClose={() => setAuxTab(null)} />
         ) : (
           <>
+            {/* Persistent Stepper & Navigation Hub */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm transition-all">
+                
+                {/* Left Side: Navigation Actions */}
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setStep('setup')}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer border ${
+                      step === 'setup'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border-blue-100 dark:border-blue-900/30 font-black shadow-inner'
+                        : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                    }`}
+                    title="Return to Sizing Input setup"
+                  >
+                    <Home className="w-3.5 h-3.5" />
+                    <span>Home Setup</span>
+                  </button>
+
+                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
+
+                  <button
+                    onClick={() => {
+                      if (step === 'visualizer') {
+                        if (initialSummary) setStep('recommendations');
+                        else setStep('setup');
+                      } else if (step === 'recommendations') {
+                        setStep('setup');
+                      }
+                    }}
+                    disabled={step === 'setup'}
+                    className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                    title="Navigate Back to previous step"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Back</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (step === 'setup' && initialSummary) {
+                        setStep('recommendations');
+                      } else if (step === 'recommendations' && activeLayout) {
+                        setStep('visualizer');
+                      }
+                    }}
+                    disabled={
+                      (step === 'setup' && !initialSummary) ||
+                      (step === 'recommendations' && !activeLayout) ||
+                      step === 'visualizer'
+                    }
+                    className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                    title="Navigate Forth to next step"
+                  >
+                    <span>Forth</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Right Side: Professional Visual Step Indicator Stepper */}
+                <div className="flex items-center space-x-2.5 text-xs font-bold bg-slate-50 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800/60 w-full md:w-auto justify-center">
+                  {/* Step 1 */}
+                  <button
+                    onClick={() => setStep('setup')}
+                    className={`flex items-center space-x-1.5 py-1 px-3.5 rounded-xl transition-all ${
+                      step === 'setup' 
+                        ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-sm font-extrabold' 
+                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+                    }`}
+                  >
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono ${
+                      step === 'setup' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800'
+                    }`}>1</span>
+                    <span>Dimensions</span>
+                  </button>
+
+                  <div className="w-4 h-px bg-slate-200 dark:bg-slate-800" />
+
+                  {/* Step 2 */}
+                  <button
+                    onClick={() => initialSummary && setStep('recommendations')}
+                    disabled={!initialSummary}
+                    className={`flex items-center space-x-1.5 py-1 px-3.5 rounded-xl transition-all disabled:opacity-40 ${
+                      step === 'recommendations' 
+                        ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-sm font-extrabold' 
+                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+                    }`}
+                  >
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono ${
+                      step === 'recommendations' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800'
+                    }`}>2</span>
+                    <span>Recommendations</span>
+                  </button>
+
+                  <div className="w-4 h-px bg-slate-200 dark:bg-slate-800" />
+
+                  {/* Step 3 */}
+                  <button
+                    onClick={() => activeLayout && setStep('visualizer')}
+                    disabled={!activeLayout}
+                    className={`flex items-center space-x-1.5 py-1 px-3.5 rounded-xl transition-all disabled:opacity-40 ${
+                      step === 'visualizer' 
+                        ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-sm font-extrabold' 
+                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+                    }`}
+                  >
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono ${
+                      step === 'visualizer' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800'
+                    }`}>3</span>
+                    <span>Studio Canvas</span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
             {step === 'setup' && (
               <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
                 {/* Hero / Introduction */}
-                <div className="text-center max-w-2xl mx-auto space-y-4">
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Next-Gen Floorplanner</span>
-                  </span>
-                  <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 dark:text-white">
+                <div className="text-center max-w-2xl mx-auto space-y-6">
+                  {/* Centered Professional Logo Badge */}
+                  <div className="flex justify-center transform hover:scale-[1.01] transition-transform duration-300">
+                    <SmartHomeNaqshaLogo size="lg" showText={true} />
+                  </div>
+                  
+                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 dark:text-white uppercase">
                     Design Your Dream Home Layout
                   </h2>
                   <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -387,19 +531,7 @@ export default function App() {
                   </p>
                 </div>
 
-                {aiWarning && (
-                  <div className="flex items-start space-x-3 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-2xl">
-                    <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-xs font-bold text-amber-800 dark:text-amber-400">
-                        Engine Note
-                      </h4>
-                      <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                        {aiWarning}
-                      </p>
-                    </div>
-                  </div>
-                )}
+
 
                 <RecommendationCard
                   initialSummary={initialSummary}

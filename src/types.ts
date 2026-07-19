@@ -97,7 +97,7 @@ export interface NaqshaLayout {
   doors: Door[];
   windows: Window[];
   summary: NaqshaSummary;
-  plotType?: 'corner' | 'standard';
+  plotType?: 'corner' | 'corner-left' | 'corner-right' | 'standard';
   facing?: 'north' | 'south' | 'east' | 'west';
   activeFloor?: 'ground' | 'first' | 'second';
   autoFurnished?: boolean;

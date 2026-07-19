@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Home, Sun, Moon, Info, Download, Smartphone, ExternalLink } from 'lucide-react';
+import SmartHomeNaqshaLogo from './SmartHomeNaqshaLogo';
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -48,15 +49,8 @@ export default function Header({ isDarkMode, setIsDarkMode }: HeaderProps) {
   return (
     <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 h-16 shrink-0 flex items-center transition-colors duration-200 relative z-50">
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/20">
-            H
-          </div>
-          <div>
-            <h1 className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Smart Home <span className="text-blue-600">Naqsha</span>
-            </h1>
-          </div>
+        <div className="flex items-center">
+          <SmartHomeNaqshaLogo size="sm" />
         </div>
 
         <div className="flex items-center space-x-4">

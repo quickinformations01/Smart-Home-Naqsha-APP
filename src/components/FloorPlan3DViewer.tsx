@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { NaqshaLayout, Room, Door, Window, FurnitureItem } from '../types';
-import { RotateCw, ZoomIn, ZoomOut, Compass, Check, Brush, Sparkles, Layers, Paintbrush, Undo2, LayoutGrid, RefreshCw, Trash2, Download, Sun, Moon, Sunrise, Home, Sofa, Eye, Camera, Hand, Box } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Compass, Check, Brush, Sparkles, Layers, Paintbrush, Undo2, LayoutGrid, RefreshCw, Trash2, Download, Sun, Moon, Sunrise, Home, Sofa, Eye, Camera, Hand, Box, MoveUp, MoveDown, RotateCcw, LogOut } from 'lucide-react';
 import { autoFurnishLayout, clearFurnishLayout } from '../utils/furnishSolver';
 import { drawFurnitureItem } from '../utils/furnitureRenderer';
 import exteriorRenderImg from '../assets/images/exterior_render_1784024482194.jpg';
@@ -77,7 +77,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
   const [sidebarTab, setSidebarTab] = useState<'styling' | 'exterior_render'>('styling');
 
   // New Interactive 3D Features states
-  const [projectionType, setProjectionType] = useState<'perspective' | 'top'>('perspective');
+  const [projectionType, setProjectionType] = useState<'perspective' | 'top' | 'elevation'>('perspective');
   const [showRoof, setShowRoof] = useState<boolean>(false);
   const [showFurniture, setShowFurniture] = useState<boolean>(true);
   const [isWalkthrough, setIsWalkthrough] = useState<boolean>(false);
@@ -96,14 +96,14 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
   // Walkthrough navigation helper functions
   const moveForward = (dist: number) => {
     const rad = (wtYaw * Math.PI) / 180;
-    setWtX((prev) => Math.max(0, Math.min(layout.width, prev - Math.sin(rad) * dist)));
-    setWtY((prev) => Math.max(0, Math.min(layout.length, prev + Math.cos(rad) * dist)));
+    setWtX((prev) => Math.max(0, Math.min(layout.width, prev + Math.cos(rad) * dist)));
+    setWtY((prev) => Math.max(0, Math.min(layout.length, prev - Math.sin(rad) * dist)));
   };
 
   const moveSideways = (dist: number) => {
-    const rad = ((wtYaw + 90) * Math.PI) / 180;
+    const rad = (wtYaw * Math.PI) / 180;
     setWtX((prev) => Math.max(0, Math.min(layout.width, prev + Math.sin(rad) * dist)));
-    setWtY((prev) => Math.max(0, Math.min(layout.length, prev - Math.cos(rad) * dist)));
+    setWtY((prev) => Math.max(0, Math.min(layout.length, prev + Math.cos(rad) * dist)));
   };
 
   // Walkthrough mode keyboard navigation listener
@@ -306,9 +306,10 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
       const rYaw = (wtYaw * Math.PI) / 180;
       const rPitch = (5 * Math.PI) / 180; // slightly tilted for modern wide horizon look
 
-      // 1. Z-axis yaw rotation
-      rx1 = dx * Math.cos(rYaw) - dy * Math.sin(rYaw);
-      ry1 = dx * Math.sin(rYaw) + dy * Math.cos(rYaw);
+      // 1. Z-axis yaw rotation relative to camera look angle
+      // Look direction is (cos(rYaw), -sin(rYaw)), right direction is (sin(rYaw), cos(rYaw))
+      rx1 = dx * Math.sin(rYaw) + dy * Math.cos(rYaw);
+      ry1 = dx * Math.cos(rYaw) - dy * Math.sin(rYaw);
       rz1 = dz;
 
       // 2. X-axis pitch rotation
@@ -320,10 +321,13 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
       const perspective = 180;
       scale = zoom3d * pxPerUnit * (perspective / Math.max(10, perspective + ry2)) * 1.8;
 
+      const isBehind = ry2 < 0.25;
+
       return {
         x: cx + rx2 * scale,
-        y: cy + rz2 * scale,
+        y: cy - rz2 * scale, // Subtract vertical component because on screen smaller Y is higher
         depth: ry2,
+        behind: isBehind,
       };
     } else if (projectionType === 'top') {
       // Parallel orthographic top-down blueprint projection
@@ -336,12 +340,13 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         x: cx + panX + dx * scale,
         y: cy + panY + dy * scale,
         depth: -z, // Height acts as depth to draw bottom-up
+        behind: false,
       };
     } else {
       // Standard Perspective Orbit Projection
       dx = x - layout.width / 2;
       dy = y - layout.length / 2;
-      dz = z - 3; // Centering vertical offset
+      dz = z - 1.1; // Centering vertical offset (centered at mid-wall height)
 
       // 1. Rotation around Z-axis (Yaw)
       rx1 = dx * Math.cos(radYaw) - dy * Math.sin(radYaw);
@@ -360,6 +365,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         x: cx + panX + rx2 * scale,
         y: cy + panY + rz2 * scale,
         depth: ry2,
+        behind: false,
       };
     }
   };
@@ -411,6 +417,157 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     setZoom3d((prev) => Math.max(0.4, Math.min(4.0, prev - e.deltaY * 0.0015)));
+  };
+
+  // Touch state references for mobile zoom/pinch and rotate/pan gestures
+  const touchState = useRef<{
+    lastX: number;
+    lastY: number;
+    initialDistance: number;
+    initialZoom: number;
+    isDoubleTouch: boolean;
+  }>({
+    lastX: 0,
+    lastY: 0,
+    initialDistance: 0,
+    initialZoom: 1.2,
+    isDoubleTouch: false,
+  });
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsRotating(true);
+      dragStart.current = { x: touch.clientX, y: touch.clientY };
+      setClickStart({ x: touch.clientX, y: touch.clientY });
+      touchState.current.isDoubleTouch = false;
+    } else if (e.touches.length === 2) {
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      touchState.current.initialDistance = dist;
+      touchState.current.initialZoom = zoom3d;
+      touchState.current.lastX = (t1.clientX + t2.clientX) / 2;
+      touchState.current.lastY = (t1.clientY + t2.clientY) / 2;
+      touchState.current.isDoubleTouch = true;
+      setIsRotating(false);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 1 && !touchState.current.isDoubleTouch) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - dragStart.current.x;
+      const dy = touch.clientY - dragStart.current.y;
+      dragStart.current = { x: touch.clientX, y: touch.clientY };
+
+      const isPanning = controlMode === 'pan';
+
+      if (isPanning) {
+        setPanX((prev) => prev + dx);
+        setPanY((prev) => prev + dy);
+      } else if (isWalkthrough) {
+        setWtYaw((prev) => (prev + dx * 0.5 + 360) % 360);
+      } else {
+        setYaw((prev) => (prev + dx * 0.7) % 360);
+        setPitch((prev) => Math.max(15, Math.min(80, prev + dy * 0.5)));
+      }
+    } else if (e.touches.length === 2) {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+      
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      const initialDist = touchState.current.initialDistance;
+      if (initialDist > 0 && dist > 0) {
+        const factor = dist / initialDist;
+        const newZoom = touchState.current.initialZoom * factor;
+        setZoom3d(Math.max(0.4, Math.min(4.0, newZoom)));
+      }
+
+      const centerX = (t1.clientX + t2.clientX) / 2;
+      const centerY = (t1.clientY + t2.clientY) / 2;
+      const pdx = centerX - touchState.current.lastX;
+      const pdy = centerY - touchState.current.lastY;
+
+      if (Math.abs(pdx) > 1 || Math.abs(pdy) > 1) {
+        setPanX((prev) => prev + pdx);
+        setPanY((prev) => prev + pdy);
+      }
+
+      touchState.current.lastX = centerX;
+      touchState.current.lastY = centerY;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setIsRotating(false);
+    if (e.touches.length === 0) {
+      if (clickStart && !touchState.current.isDoubleTouch) {
+        const dx = Math.abs(dragStart.current.x - clickStart.x);
+        const dy = Math.abs(dragStart.current.y - clickStart.y);
+        if (dx < 10 && dy < 10) {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = dragStart.current.x - rect.left;
+            const my = dragStart.current.y - rect.top;
+            handleCanvasTouchTap(mx, my, canvas);
+          }
+        }
+      }
+      setClickStart(null);
+      touchState.current.isDoubleTouch = false;
+      touchState.current.initialDistance = 0;
+    } else if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      dragStart.current = { x: touch.clientX, y: touch.clientY };
+      setIsRotating(true);
+    }
+  };
+
+  const handleCanvasTouchTap = (mx: number, my: number, canvas: HTMLCanvasElement) => {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const radYaw = (yaw * Math.PI) / 180;
+    const radPitch = (pitch * Math.PI) / 180;
+
+    let clickedRoom: Room | null = null;
+    let maxDepth = -999999;
+
+    layout.rooms.forEach((room) => {
+      const rx = room.x;
+      const ry = room.y;
+      const rw = room.width;
+      const rh = room.height;
+
+      const c1 = project(rx, ry, 0, cx, cy, radYaw, radPitch);
+      const c2 = project(rx + rw, ry, 0, cx, cy, radYaw, radPitch);
+      const c3 = project(rx + rw, ry + rh, 0, cx, cy, radYaw, radPitch);
+      const c4 = project(rx, ry + rh, 0, cx, cy, radYaw, radPitch);
+
+      if (isPointInQuad(mx, my, c1, c2, c3, c4)) {
+        const avgDepth = (c1.depth + c2.depth + c3.depth + c4.depth) / 4;
+        if (avgDepth > maxDepth) {
+          maxDepth = avgDepth;
+          clickedRoom = room;
+        }
+      }
+    });
+
+    if (clickedRoom) {
+      setSelectedRoomId((clickedRoom as Room).id);
+    } else {
+      setSelectedRoomId('all');
+    }
   };
 
   const handleCanvasClick = (e: React.MouseEvent) => {
@@ -473,6 +630,619 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
 
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
+
+    const drawFrontElevation = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+      // 1. CHOOSE ATMOSPHERIC COLOR PALETTE
+      const isDark = document.documentElement.classList.contains('dark');
+      let skyGradient = ctx.createLinearGradient(0, 0, 0, height);
+      let groundColor = isDark ? '#111827' : '#1e3a1e';
+      let grassColor = isDark ? '#1b4332' : '#22c55e';
+      let sunMoonColor = '#fef08a';
+      let sunMoonAura = 'rgba(254, 240, 138, 0.2)';
+      let hasStars = false;
+      let textThemeColor = isDark ? '#f8fafc' : '#1e293b';
+      let dimLineColor = isDark ? 'rgba(148, 163, 184, 0.4)' : 'rgba(71, 85, 105, 0.3)';
+
+      if (lightingMode === 'sunset') {
+        skyGradient.addColorStop(0, '#1e1b4b'); // dark indigo
+        skyGradient.addColorStop(0.5, '#f97316'); // sunset orange
+        skyGradient.addColorStop(1, '#fef08a'); // golden yellow
+        sunMoonColor = '#fca5a5'; // reddish large sun
+        sunMoonAura = 'rgba(249, 115, 22, 0.35)';
+      } else if (lightingMode === 'night') {
+        skyGradient.addColorStop(0, '#030712'); // midnight
+        skyGradient.addColorStop(1, '#0f172a'); // slate dark
+        sunMoonColor = '#e2e8f0'; // bright silver moon
+        sunMoonAura = 'rgba(226, 232, 240, 0.15)';
+        hasStars = true;
+      } else { // 'day'
+        skyGradient.addColorStop(0, isDark ? '#0b1528' : '#7dd3fc'); // deep sky blue
+        skyGradient.addColorStop(1, isDark ? '#1e293b' : '#e0f2fe'); // soft light blue
+        sunMoonColor = '#facc15'; // blazing yellow sun
+        sunMoonAura = 'rgba(250, 204, 21, 0.25)';
+      }
+
+      // Draw Sky
+      ctx.fillStyle = skyGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw stars if night
+      if (hasStars) {
+        ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < 40; i++) {
+          const starX = (Math.sin(i * 1234.5) * 0.5 + 0.5) * width;
+          const starY = (Math.cos(i * 5432.1) * 0.5 + 0.5) * (height - 150);
+          const starSize = (Math.sin(i * 99) * 0.5 + 0.5) * 1.5 + 0.5;
+          ctx.beginPath();
+          ctx.arc(starX, starY, starSize, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+
+      // Draw Sun/Moon
+      ctx.save();
+      const celestialX = width * 0.8;
+      const celestialY = 80;
+      const celestialRad = lightingMode === 'sunset' ? 35 : 20;
+      
+      // Glow Aura
+      ctx.beginPath();
+      ctx.arc(celestialX, celestialY, celestialRad * 2.2, 0, 2 * Math.PI);
+      ctx.fillStyle = sunMoonAura;
+      ctx.fill();
+
+      // Core Celestial body
+      ctx.beginPath();
+      if (lightingMode === 'night') {
+        // Draw moon crescent shape
+        ctx.arc(celestialX, celestialY, celestialRad, 0, 2 * Math.PI);
+        ctx.fillStyle = sunMoonColor;
+        ctx.fill();
+        // Overlay a bit darker to make crescent
+        ctx.beginPath();
+        ctx.arc(celestialX - celestialRad * 0.4, celestialY - celestialRad * 0.2, celestialRad, 0, 2 * Math.PI);
+        ctx.fillStyle = isDark ? '#030712' : '#0f172a'; // match sky color
+        ctx.fill();
+      } else {
+        ctx.arc(celestialX, celestialY, celestialRad, 0, 2 * Math.PI);
+        ctx.fillStyle = sunMoonColor;
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Draw standard stylized architectural clouds
+      ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.35)';
+      const drawCloud = (cx: number, cy: number, w: number) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, w, w * 0.4, 0, 0, 2 * Math.PI);
+        ctx.ellipse(cx - w * 0.5, cy + w * 0.1, w * 0.7, w * 0.3, 0, 0, 2 * Math.PI);
+        ctx.ellipse(cx + w * 0.5, cy + w * 0.1, w * 0.6, w * 0.3, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+      };
+      drawCloud(width * 0.2, 110, 45);
+      drawCloud(width * 0.55, 75, 60);
+
+      // 2. CALCULATE FLOOR AND BUILDING GEOMETRY
+      const groundY = height - 100;
+      
+      // Detect available floors
+      const floorsAvailable: string[] = ['ground'];
+      if (layout.floors?.first?.rooms && layout.floors.first.rooms.length > 0) {
+        floorsAvailable.push('first');
+      }
+      if (layout.floors?.second?.rooms && layout.floors.second.rooms.length > 0) {
+        floorsAvailable.push('second');
+      }
+      const numFloors = floorsAvailable.length;
+
+      // Base building dimensions
+      const plotWidth = layout.width;
+      const unit = layout.unit;
+
+      // Scale to fit beautifully
+      const scaleX = (width - 180) / plotWidth;
+      const scaleY = (height - 200) / (numFloors * 11 + 6); // 10ft height per floor + margins
+      const scale = Math.max(5, Math.min(30, Math.min(scaleX, scaleY)));
+
+      const buildingWidthPx = plotWidth * scale;
+      const startX = (width - buildingWidthPx) / 2;
+      const floorHeightFt = 10;
+      const floorHeightPx = floorHeightFt * scale;
+
+      // Draw background ground base
+      ctx.fillStyle = groundColor;
+      ctx.fillRect(0, groundY, width, height - groundY);
+
+      // Grassy garden top curb
+      const grassGrad = ctx.createLinearGradient(0, groundY, 0, groundY + 12);
+      grassGrad.addColorStop(0, grassColor);
+      grassGrad.addColorStop(1, groundColor);
+      ctx.fillStyle = grassGrad;
+      ctx.fillRect(0, groundY, width, 12);
+
+      // 3. DRAW LANDSCAPING TREES IN BACKGROUND / SIDES (Architectural presentation style)
+      const drawTree = (tx: number, ty: number, tHeight: number) => {
+        ctx.save();
+        // Trunk
+        ctx.fillStyle = isDark ? '#334155' : '#64748b';
+        ctx.fillRect(tx - 3, ty - tHeight, 6, tHeight);
+
+        // Translucent minimalist foliage layers
+        ctx.fillStyle = isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(34, 197, 94, 0.2)';
+        ctx.strokeStyle = isDark ? 'rgba(16, 185, 129, 0.4)' : 'rgba(34, 197, 94, 0.6)';
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.arc(tx, ty - tHeight + 10, 22, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(tx - 10, ty - tHeight + 30, 18, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(tx + 10, ty - tHeight + 30, 18, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      };
+      drawTree(startX - 55, groundY, 110);
+      drawTree(startX + buildingWidthPx + 55, groundY, 125);
+
+      // 4. DRAW BUILDING SHADOW OVERLAY
+      // Let's draw the floors from ground up!
+      floorsAvailable.forEach((floorKey, fIdx) => {
+        const floorY = fIdx * floorHeightPx;
+        const currentFloorBottomY = groundY - floorY;
+        const currentFloorTopY = currentFloorBottomY - floorHeightPx;
+
+        // Draw main solid facade backing for this floor
+        ctx.fillStyle = isDark ? '#1e293b' : '#f8fafc';
+        ctx.fillRect(startX, currentFloorTopY, buildingWidthPx, floorHeightPx);
+
+        // Fetch rooms for this floor
+        const floorRooms = floorKey === 'ground' 
+          ? (layout.floors?.ground?.rooms || layout.rooms)
+          : (layout.floors?.[floorKey]?.rooms || []);
+
+        // Find rooms with layout positions and color them
+        floorRooms.forEach((room) => {
+          const rxPx = startX + room.x * scale;
+          const rwPx = room.width * scale;
+          
+          // Determine architectural facade color for this room
+          let roomColor = isDark ? '#334155' : '#f1f5f9';
+          let wallMat = room.wallMaterial ? WALL_MATERIALS.find(m => m.id === room.wallMaterial) : null;
+          
+          if (wallMat) {
+            roomColor = wallMat.color;
+          } else {
+            // Stylized based on room type
+            if (room.type === 'garage') {
+              roomColor = isDark ? '#2e3542' : '#e2e8f0'; // grey concrete panel
+            } else if (room.type === 'staircase') {
+              roomColor = isDark ? '#312e81' : '#cbd5e1'; // elegant violet/charcoal accent
+            } else if (room.type === 'drawing' || room.type === 'living') {
+              roomColor = isDark ? '#374151' : '#fcfbf7'; // plaster white
+            } else if (room.type === 'bathroom') {
+              roomColor = isDark ? '#1a365d' : '#f0f9ff';
+            }
+          }
+
+          ctx.fillStyle = roomColor;
+          ctx.fillRect(rxPx, currentFloorTopY, rwPx, floorHeightPx);
+
+          // Apply material patterns
+          if (wallMat && wallMat.pattern === 'brick') {
+            ctx.save();
+            ctx.strokeStyle = wallMat.secondaryColor || (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)');
+            ctx.lineWidth = 0.5;
+            for (let yOffset = 4; yOffset < floorHeightPx; yOffset += 5) {
+              ctx.beginPath();
+              ctx.moveTo(rxPx, currentFloorTopY + yOffset);
+              ctx.lineTo(rxPx + rwPx, currentFloorTopY + yOffset);
+              ctx.stroke();
+            }
+            ctx.restore();
+          } else if (wallMat && wallMat.pattern === 'wood') {
+            ctx.save();
+            ctx.strokeStyle = wallMat.secondaryColor || (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)');
+            ctx.lineWidth = 0.5;
+            for (let xOffset = 3; xOffset < rwPx; xOffset += 4) {
+              ctx.beginPath();
+              ctx.moveTo(rxPx + xOffset, currentFloorTopY);
+              ctx.lineTo(rxPx + xOffset, currentFloorBottomY);
+              ctx.stroke();
+            }
+            ctx.restore();
+          }
+
+          // Draw doors inside this room on front
+          const floorDoors = floorKey === 'ground'
+            ? (layout.floors?.ground?.doors || layout.doors)
+            : (layout.floors?.[floorKey]?.doors || []);
+
+          floorDoors.forEach((door) => {
+            // Door horizontal position must fall inside this room
+            const dXPx = startX + door.x * scale;
+            const dWPx = door.width * scale;
+            if (door.x >= room.x && door.x + door.width <= room.x + room.width + 0.1) {
+              // Draw Door on facade!
+              const dHPx = 7 * scale; // standard 7ft height
+              const dTopY = currentFloorBottomY - dHPx;
+
+              // Door shadow frame
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+              ctx.fillRect(dXPx - 2, dTopY - 2, dWPx + 4, dHPx + 2);
+
+              if (door.isMain || room.type === 'garage') {
+                if (room.type === 'garage') {
+                  // Roll-up modern metal garage door with horizontal slats
+                  ctx.fillStyle = isDark ? '#475569' : '#94a3b8';
+                  ctx.fillRect(dXPx, dTopY, dWPx, dHPx);
+                  ctx.strokeStyle = isDark ? '#1e293b' : '#475569';
+                  ctx.lineWidth = 1;
+                  for (let slatY = dTopY + 4; slatY < currentFloorBottomY; slatY += 6) {
+                    ctx.beginPath();
+                    ctx.moveTo(dXPx, slatY);
+                    ctx.lineTo(dXPx + dWPx, slatY);
+                    ctx.stroke();
+                  }
+                  // Handle lock
+                  ctx.fillStyle = '#cbd5e1';
+                  ctx.fillRect(dXPx + dWPx/2 - 10, currentFloorBottomY - 12, 20, 4);
+                } else {
+                  // Gorgeous main entrance double wooden door
+                  ctx.fillStyle = '#78350f'; // mahogany
+                  ctx.fillRect(dXPx, dTopY, dWPx, dHPx);
+                  // Door panels
+                  ctx.strokeStyle = '#451a03';
+                  ctx.lineWidth = 1.5;
+                  ctx.strokeRect(dXPx + 2, dTopY + 2, dWPx/2 - 3, dHPx - 4);
+                  ctx.strokeRect(dXPx + dWPx/2 + 1, dTopY + 2, dWPx/2 - 3, dHPx - 4);
+                  // Brass handles
+                  ctx.fillStyle = '#fbbf24';
+                  ctx.fillRect(dXPx + dWPx/2 - 3, dTopY + dHPx/2 - 6, 2, 12);
+                  ctx.fillRect(dXPx + dWPx/2 + 1, dTopY + dHPx/2 - 6, 2, 12);
+                }
+              } else {
+                // Interior or back door visible from front
+                ctx.fillStyle = '#d97706'; // warm oak
+                ctx.fillRect(dXPx, dTopY, dWPx, dHPx);
+                ctx.strokeStyle = '#78350f';
+                ctx.strokeRect(dXPx + 1, dTopY + 1, dWPx - 2, dHPx - 1);
+                // Simple handle
+                ctx.fillStyle = '#cbd5e1';
+                ctx.beginPath();
+                ctx.arc(dXPx + dWPx - 6, dTopY + dHPx/2, 2.5, 0, 2 * Math.PI);
+                ctx.fill();
+              }
+            }
+          });
+
+          // Draw windows inside this room on front
+          const floorWindows = floorKey === 'ground'
+            ? (layout.floors?.ground?.windows || layout.windows)
+            : (layout.floors?.[floorKey]?.windows || []);
+
+          floorWindows.forEach((win) => {
+            const wXPx = startX + win.x * scale;
+            const wWPx = win.width * scale;
+            if (win.x >= room.x && win.x + win.width <= room.x + room.width + 0.1) {
+              // Draw window on facade
+              const wSillHPx = 3 * scale; // Sill height standard 3ft
+              const wHPx = 4.5 * scale; // Standard height 4.5ft
+              const wTopY = currentFloorBottomY - wSillHPx - wHPx;
+
+              // Window casing
+              ctx.fillStyle = isDark ? '#0f172a' : '#1e293b';
+              ctx.fillRect(wXPx - 3, wTopY - 3, wWPx + 6, wHPx + 6);
+
+              // Window Glass (reflective sky blue or golden interior glow)
+              if (lightingMode === 'night') {
+                const winGrad = ctx.createLinearGradient(wXPx, wTopY, wXPx, wTopY + wHPx);
+                winGrad.addColorStop(0, '#fef08a'); // Warm glow
+                winGrad.addColorStop(1, '#ca8a04');
+                ctx.fillStyle = winGrad;
+              } else {
+                const winGrad = ctx.createLinearGradient(wXPx, wTopY, wXPx, wTopY + wHPx);
+                winGrad.addColorStop(0, '#bae6fd'); // Sky reflective
+                winGrad.addColorStop(1, '#38bdf8');
+                ctx.fillStyle = winGrad;
+              }
+              ctx.fillRect(wXPx, wTopY, wWPx, wHPx);
+
+              // Grid mullions (2 horizontal, 2 vertical)
+              ctx.strokeStyle = isDark ? '#1e293b' : '#ffffff';
+              ctx.lineWidth = 1;
+              ctx.strokeRect(wXPx, wTopY, wWPx, wHPx);
+
+              // Horizontal divider
+              ctx.beginPath();
+              ctx.moveTo(wXPx, wTopY + wHPx / 2);
+              ctx.lineTo(wXPx + wWPx, wTopY + wHPx / 2);
+              ctx.stroke();
+
+              // Vertical divider
+              ctx.beginPath();
+              ctx.moveTo(wXPx + wWPx / 2, wTopY);
+              ctx.lineTo(wXPx + wWPx / 2, wTopY + wHPx);
+              ctx.stroke();
+            }
+          });
+        });
+
+        // Draw structural floor slabs & balconies
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(startX, currentFloorBottomY - 3, buildingWidthPx, 6);
+
+        // Balcony Glass Railing for First Floor / Second Floor
+        if (fIdx > 0) {
+          const railH = 3.5 * scale;
+          ctx.save();
+          // Glass color
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+          ctx.fillRect(startX, currentFloorBottomY, buildingWidthPx, railH);
+          // Steel borders
+          ctx.strokeStyle = '#94a3b8';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(startX, currentFloorBottomY, buildingWidthPx, railH);
+          // Handrail bar on top
+          ctx.fillStyle = '#64748b';
+          ctx.fillRect(startX - 2, currentFloorBottomY - 4, buildingWidthPx + 4, 4);
+          ctx.restore();
+        }
+
+        // Draw structural pillar outline or boundaries
+        ctx.strokeStyle = isDark ? '#475569' : '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(startX, currentFloorTopY, buildingWidthPx, floorHeightPx);
+      });
+
+      // 5. DRAW ROOF TOP PARAPET WALL
+      const topFloorY = numFloors * floorHeightPx;
+      const roofY = groundY - topFloorY;
+      const parapetH = 3.5 * scale;
+
+      // Draw Roof Slab
+      ctx.fillStyle = isDark ? '#334155' : '#e2e8f0';
+      ctx.fillRect(startX - 6, roofY - 4, buildingWidthPx + 12, 6);
+      ctx.strokeStyle = isDark ? '#1e293b' : '#cbd5e1';
+      ctx.strokeRect(startX - 6, roofY - 4, buildingWidthPx + 12, 6);
+
+      // Draw Parapet Wall (Decorative Modern Slots)
+      ctx.fillStyle = isDark ? '#1e293b' : '#f8fafc';
+      ctx.fillRect(startX, roofY - parapetH, buildingWidthPx, parapetH);
+      ctx.strokeStyle = isDark ? '#475569' : '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(startX, roofY - parapetH, buildingWidthPx, parapetH);
+
+      // Parapet decorative glass inserts or vertical slats
+      ctx.fillStyle = isDark ? '#0f172a' : '#475569';
+      for (let slatX = startX + 20; slatX < startX + buildingWidthPx - 20; slatX += 45) {
+        ctx.fillRect(slatX, roofY - parapetH + 4, 15, parapetH - 8);
+      }
+
+      // Check if there is a Staircase tower extending to roof
+      const groundRooms = layout.floors?.ground?.rooms || layout.rooms;
+      const stairRoom = groundRooms.find((r) => r.type === 'staircase');
+      if (stairRoom) {
+        // Draw elegant staircase tower popping up above roof level!
+        const stairXPx = startX + stairRoom.x * scale;
+        const stairWPx = stairRoom.width * scale;
+        const towerHPx = 11 * scale; // stair tower roof goes ~11ft above building roof slab
+        const towerTopY = roofY - towerHPx;
+
+        // Draw tower masonry base
+        ctx.fillStyle = isDark ? '#334155' : '#e2e8f0';
+        ctx.fillRect(stairXPx, towerTopY, stairWPx, towerHPx);
+
+        // Cladding accent for architectural height (Vertical wood or dark slate paneling!)
+        ctx.fillStyle = isDark ? '#0f172a' : '#1e293b';
+        ctx.fillRect(stairXPx + 6, towerTopY + 10, stairWPx - 12, towerHPx - 10);
+        
+        // Stair tall frosted glass vertical window
+        ctx.fillStyle = '#bae6fd';
+        ctx.fillRect(stairXPx + stairWPx/2 - 4, towerTopY + 20, 8, towerHPx - 45);
+        ctx.strokeStyle = '#ffffff';
+        ctx.strokeRect(stairXPx + stairWPx/2 - 4, towerTopY + 20, 8, towerHPx - 45);
+
+        // Tower Roof Slab
+        ctx.fillStyle = isDark ? '#1e293b' : '#94a3b8';
+        ctx.fillRect(stairXPx - 4, towerTopY - 4, stairWPx + 8, 4);
+
+        // Standard borders
+        ctx.strokeStyle = isDark ? '#475569' : '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(stairXPx, towerTopY, stairWPx, towerHPx);
+      }
+
+      // 6. DRAW A MODERN CAR IN THE FRONT YARD/GARAGE AREA
+      const garageRoom = groundRooms.find((r) => r.type === 'garage');
+      if (garageRoom) {
+        // Draw a beautiful sedan silhouette parked near the garage horizontal position!
+        const carXPx = startX + garageRoom.x * scale + (garageRoom.width * scale - 70) / 2;
+        const carY = groundY;
+        
+        ctx.save();
+        // Shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(carXPx + 35, carY - 2, 35, 4, 0, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Car main cabin (sporty curves)
+        ctx.fillStyle = '#b91c1c'; // brilliant sporty red
+        ctx.beginPath();
+        ctx.moveTo(carXPx + 4, carY - 8);
+        ctx.lineTo(carXPx + 8, carY - 14);
+        ctx.quadraticCurveTo(carXPx + 18, carY - 24, carXPx + 35, carY - 24); // roof curve
+        ctx.quadraticCurveTo(carXPx + 52, carY - 24, carXPx + 62, carY - 14);
+        ctx.lineTo(carXPx + 66, carY - 8);
+        ctx.closePath();
+        ctx.fill();
+
+        // Car main body lower half
+        ctx.fillStyle = '#dc2626'; // lighter red
+        ctx.beginPath();
+        const rx = carXPx;
+        const ry = carY - 12;
+        const rw = 70;
+        const rh = 8;
+        const radius = 4;
+        ctx.moveTo(rx + radius, ry);
+        ctx.lineTo(rx + rw - radius, ry);
+        ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + radius);
+        ctx.lineTo(rx + rw, ry + rh - radius);
+        ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - radius, ry + rh);
+        ctx.lineTo(rx + radius, ry + rh);
+        ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - radius);
+        ctx.lineTo(rx, ry + radius);
+        ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
+        ctx.closePath();
+        ctx.fill();
+
+        // Wheel wells
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(carXPx + 15, carY - 4, 7, 0, Math.PI, true);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(carXPx + 55, carY - 4, 7, 0, Math.PI, true);
+        ctx.fill();
+
+        // Wheels
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.arc(carXPx + 15, carY - 4, 5.5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(carXPx + 55, carY - 4, 5.5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Shiny hubcaps
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.arc(carXPx + 15, carY - 4, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(carXPx + 55, carY - 4, 2, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Headlights
+        ctx.fillStyle = '#fef08a';
+        ctx.fillRect(carXPx + 67, carY - 10, 3, 2);
+
+        ctx.restore();
+      }
+
+      // 7. DRAW PROFESSIONAL ARCHITECTURAL LEVEL MARKERS & DIMENSIONS
+      ctx.save();
+      ctx.font = 'bold 9px "JetBrains Mono", monospace';
+      ctx.fillStyle = textThemeColor;
+      ctx.textAlign = 'left';
+
+      const drawLevelMarker = (label: string, levelVal: string, levelY: number) => {
+        // Draw dotted horizontal reference line across the entire plot
+        ctx.strokeStyle = dimLineColor;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(startX - 20, levelY);
+        ctx.lineTo(startX + buildingWidthPx + 20, levelY);
+        ctx.stroke();
+        ctx.setLineDash([]); // clear dash
+
+        // Draw professional level bubble symbol (black & white opposite quadrants)
+        const indicatorX = startX - 65;
+        ctx.strokeStyle = textThemeColor;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(indicatorX, levelY);
+        ctx.lineTo(indicatorX + 25, levelY);
+        ctx.stroke();
+
+        const bubbleX = indicatorX + 29;
+        ctx.beginPath();
+        ctx.arc(bubbleX, levelY, 4, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.fillStyle = textThemeColor;
+        ctx.beginPath();
+        ctx.moveTo(bubbleX, levelY);
+        ctx.arc(bubbleX, levelY, 4, Math.PI, 1.5 * Math.PI);
+        ctx.lineTo(bubbleX, levelY);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(bubbleX, levelY);
+        ctx.arc(bubbleX, levelY, 4, 0, 0.5 * Math.PI);
+        ctx.lineTo(bubbleX, levelY);
+        ctx.fill();
+
+        // Labels
+        ctx.fillText(label, indicatorX, levelY - 7);
+        ctx.fillStyle = '#3b82f6'; // beautiful blue level numbers
+        ctx.fillText(levelVal, indicatorX, levelY + 12);
+        ctx.fillStyle = textThemeColor;
+      };
+
+      // Draw different levels based on total floors
+      drawLevelMarker('ROAD/GROUND LEVEL', '±0.00 ' + unit, groundY);
+      drawLevelMarker('PLINTH LEVEL (GF)', '+1.50 ' + unit, groundY - 1.5 * scale);
+      
+      floorsAvailable.forEach((f, idx) => {
+        const floorH = (idx + 1) * 10 + 1.5;
+        const levelLabel = idx === 0 ? 'FIRST FLOOR (FF)' : idx === 1 ? 'SECOND FLOOR (SF)' : 'THIRD FLOOR';
+        drawLevelMarker(levelLabel, `+${floorH.toFixed(2)} ${unit}`, groundY - floorH * scale);
+      });
+
+      // Highest top-most roof line
+      const totalBuildingH = numFloors * 10 + 1.5 + 3.5; // floors + plinth + parapet
+      drawLevelMarker('ROOF PARAPET LEVEL', `+${totalBuildingH.toFixed(2)} ${unit}`, groundY - totalBuildingH * scale);
+
+      // Draw professional graphic scale bar at bottom right
+      const barX = startX + buildingWidthPx - 100;
+      const barY = groundY + 45;
+      ctx.fillStyle = textThemeColor;
+      ctx.font = 'bold 8px "JetBrains Mono", monospace';
+      ctx.fillText('GRAPHIC SCALE', barX, barY - 6);
+
+      // Alternating segments
+      const segW = 20; // 20px per segment
+      ctx.strokeStyle = textThemeColor;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(barX, barY, segW * 4, 4);
+
+      ctx.fillStyle = textThemeColor;
+      ctx.fillRect(barX, barY, segW, 4);
+      ctx.fillRect(barX + segW * 2, barY, segW, 4);
+
+      ctx.fillStyle = textThemeColor;
+      ctx.fillText('0', barX, barY + 12);
+      ctx.fillText((5 * scale / 5).toFixed(0), barX + segW, barY + 12);
+      const scaleFeetLabel = (4 * segW / scale).toFixed(0);
+      ctx.fillText(`${scaleFeetLabel} ${unit}`, barX + segW * 4, barY + 12);
+
+      // Plot Dimension Label at very bottom
+      ctx.font = '800 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = textThemeColor;
+      ctx.fillText(`FRONT FACADE ELEVATION VIEW — PLOT WIDTH: ${plotWidth} ${unit}`, width / 2, height - 30);
+      ctx.font = 'medium 9px Inter, sans-serif';
+      ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
+      ctx.fillText('Perfect horizontal scale & structural levels based on municipal bye-laws.', width / 2, height - 15);
+
+      ctx.restore();
+    };
+
+    if (projectionType === 'elevation') {
+      drawFrontElevation(ctx, width, height);
+      return;
+    }
 
     // Draw background grid lines (ambient 3D feel)
     let bgColor = document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc';
@@ -540,27 +1310,34 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
       const rh = room.height;
 
       // Color selection based on room type
-      let floorColor = '#f1f5f9';
-      let borderStroke = '#e2e8f0';
+      const isDark = document.documentElement.classList.contains('dark');
+      let floorColor = isDark ? '#1e293b' : '#f8fafc';
+      let borderStroke = isDark ? '#334155' : '#e2e8f0';
 
       if (room.type === 'lawn') {
-        floorColor = '#dcfce7'; // grassy green
-        borderStroke = '#bbf7d0';
+        // Soft lush golf-turf green
+        floorColor = isDark ? '#143c22' : '#f0fdf4'; 
+        borderStroke = isDark ? '#1e5e34' : '#bbf7d0';
       } else if (room.type === 'garage') {
-        floorColor = '#e2e8f0'; // grey pavement tiles
-        borderStroke = '#cbd5e1';
+        // Slate modern cobblestone pavement
+        floorColor = isDark ? '#2e3542' : '#f1f5f9'; 
+        borderStroke = isDark ? '#475569' : '#cbd5e1';
       } else if (room.type === 'kitchen') {
-        floorColor = '#fef08a'; // tile cream
-        borderStroke = '#fef9c3';
+        // Warm sand/limestone ceramic tile
+        floorColor = isDark ? '#3d3823' : '#fefbeb'; 
+        borderStroke = isDark ? '#5c522b' : '#fef3c7';
       } else if (room.type === 'bathroom') {
-        floorColor = '#e0f2fe'; // water blue
-        borderStroke = '#bae6fd';
+        // Modern pastel cyan marine tile
+        floorColor = isDark ? '#1a365d' : '#f0f9ff'; 
+        borderStroke = isDark ? '#2a5b94' : '#e0f2fe';
       } else if (room.type === 'staircase') {
-        floorColor = '#f3e8ff';
-        borderStroke = '#e9d5ff';
+        // Chic light marble lavender-grey
+        floorColor = isDark ? '#2b1b42' : '#faf5ff'; 
+        borderStroke = isDark ? '#462a70' : '#f3e8ff';
       } else if (room.type === 'bedroom' || room.type === 'living' || room.type === 'drawing') {
-        floorColor = '#fafafa'; // elegant marbled/parquet white
-        borderStroke = '#f4f4f5';
+        // Premium Scandinavian warm travertine plaster / warm white oak
+        floorColor = isDark ? '#24252e' : '#fafaf9'; 
+        borderStroke = isDark ? '#3b3c4a' : '#f4f4f5';
       }
 
       // Check if there is a custom material applied
@@ -575,6 +1352,8 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
       const c2 = project(rx + rw, ry, 0, cx, cy, radYaw, radPitch);
       const c3 = project(rx + rw, ry + rh, 0, cx, cy, radYaw, radPitch);
       const c4 = project(rx, ry + rh, 0, cx, cy, radYaw, radPitch);
+
+      if (c1.behind || c2.behind || c3.behind || c4.behind) return;
 
       // Average depth for floor
       const avgFloorDepth = (c1.depth + c2.depth + c3.depth + c4.depth) / 4;
@@ -1853,6 +2632,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
       ];
 
       wallDefs.forEach((w) => {
+        if (w.b1.behind || w.b2.behind || w.t1.behind || w.t2.behind) return;
         const wallDepth = (w.b1.depth + w.b2.depth) / 2;
 
         primitives.push({
@@ -1882,11 +2662,24 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
               ctx.fill();
               ctx.restore();
             } else {
-              // Elegant semi-transparent glass model wall style
-              ctx.fillStyle = document.documentElement.classList.contains('dark')
-                ? 'rgba(71, 85, 105, 0.45)' // steel glass slate
-                : 'rgba(51, 65, 85, 0.18)'; // ambient soft slate glass
+              // Elegant, realistic architectural plaster style
+              const isDark = document.documentElement.classList.contains('dark');
+              ctx.fillStyle = isDark ? '#334155' : '#fbfaf7'; // Slate charcoal or sand plaster
               ctx.fill();
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.moveTo(w.b1.x, w.b1.y);
+              ctx.lineTo(w.b2.x, w.b2.y);
+              ctx.lineTo(w.t2.x, w.t2.y);
+              ctx.lineTo(w.t1.x, w.t1.y);
+              ctx.closePath();
+              // Back/Left walls get shaded darker; Front/Right walls get highlighted lighter
+              ctx.fillStyle = w.name === 'Back' || w.name === 'Left'
+                ? (isDark ? 'rgba(0, 0, 0, 0.28)' : 'rgba(0, 0, 0, 0.08)')
+                : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.45)');
+              ctx.fill();
+              ctx.restore();
             }
 
             // Draw custom texture patterns
@@ -1999,6 +2792,8 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         radPitch
       );
 
+      if (doorB1.behind || doorT2.behind) return;
+
       primitives.push({
         depth: (doorB1.depth + doorT2.depth) / 2,
         draw: () => {
@@ -2045,6 +2840,8 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         radYaw,
         radPitch
       );
+
+      if (wB1.behind || wT2.behind) return;
 
       primitives.push({
         depth: (wB1.depth + wT2.depth) / 2,
@@ -2117,6 +2914,8 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         const r2 = project(rx + rw, ry, wallHeight, cx, cy, radYaw, radPitch);
         const r3 = project(rx + rw, ry + rh, wallHeight, cx, cy, radYaw, radPitch);
         const r4 = project(rx, ry + rh, wallHeight, cx, cy, radYaw, radPitch);
+
+        if (r1.behind || r2.behind || r3.behind || r4.behind) return;
 
         const avgRoofDepth = (r1.depth + r2.depth + r3.depth + r4.depth) / 4;
 
@@ -2195,6 +2994,8 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         const c2 = project(rx + rw, ry, 0, cx, cy, radYaw, radPitch);
         const c3 = project(rx + rw, ry + rh, 0, cx, cy, radYaw, radPitch);
         const c4 = project(rx, ry + rh, 0, cx, cy, radYaw, radPitch);
+
+        if (c1.behind || c2.behind || c3.behind || c4.behind) return;
 
         const avgDepth = (c1.depth + c2.depth + c3.depth + c4.depth) / 4;
 
@@ -2337,7 +3138,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-full min-h-[600px] bg-slate-50 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div className="flex flex-col lg:flex-row w-full h-auto min-h-[850px] lg:min-h-[900px] bg-slate-50 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
       {/* Left Column: 3D Canvas Viewport */}
       <div className="flex-1 relative bg-slate-100 dark:bg-slate-950 flex flex-col justify-start items-stretch p-4 gap-4">
         
@@ -2419,17 +3220,21 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         </div>
 
         {/* Large, Clear, and Unobstructed Canvas Container */}
-        <div ref={containerRef} className="relative w-full flex-1 min-h-[460px] sm:min-h-[500px] md:min-h-[550px] lg:min-h-[580px] xl:min-h-[620px] overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
+        <div ref={containerRef} className="relative w-full flex-1 min-h-[650px] sm:min-h-[700px] md:min-h-[750px] lg:min-h-[800px] xl:min-h-[850px] overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
           {/* 3D Canvas rendering node */}
           <canvas
+            id="three-naqsha-canvas"
             ref={canvasRef}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             onContextMenu={(e) => e.preventDefault()}
-            className={`absolute inset-0 w-full h-full block transition-colors duration-200 ${
+            className={`absolute inset-0 w-full h-full block transition-colors duration-200 touch-none ${
               isWalkthrough
                 ? 'cursor-default'
                 : controlMode === 'pan'
@@ -2474,6 +3279,23 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
             >
               <Layers className="w-3.5 h-3.5" />
               <span className="hidden md:inline">Top Down (2D)</span>
+            </button>
+
+            {/* Front Elevation Mode */}
+            <button
+              onClick={() => {
+                setProjectionType('elevation');
+                setIsWalkthrough(false);
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                projectionType === 'elevation' && !isWalkthrough
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+              }`}
+              title="2D Front Building Elevation View"
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span>Front Elevation</span>
             </button>
 
             {/* Immersive Walkthrough Mode */}
@@ -2529,95 +3351,6 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
               <span>Furniture</span>
             </button>
           </div>
-
-          {/* Immersive Walkthrough Navigation Pad */}
-          {isWalkthrough && (
-            <div className="absolute bottom-4 left-4 z-10 bg-white/95 dark:bg-slate-900/95 p-3.5 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800/80 flex flex-col items-center gap-2 animate-in slide-in-from-bottom-5 duration-300 pointer-events-auto">
-              <div className="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center mb-1 flex items-center gap-1 select-none">
-                <Compass className="w-3 h-3 text-blue-500 animate-pulse" /> Live Walkthrough Controller
-              </div>
-              
-              {/* Virtual Control D-Pad */}
-              <div className="grid grid-cols-3 gap-1.5 w-32 h-32">
-                <div />
-                
-                {/* Move Forward */}
-                <button
-                  onClick={() => moveForward(1.5)}
-                  className="flex items-center justify-center bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 rounded-xl transition shadow-sm active:scale-95 border border-blue-100/50 dark:border-blue-900/30"
-                  title="Move Forward (W or Up Arrow)"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7 7 7M12 3v18" />
-                  </svg>
-                </button>
-                
-                <div />
-
-                {/* Look Left */}
-                <button
-                  onClick={() => setWtYaw((prev) => (prev - 15 + 360) % 360)}
-                  className="flex items-center justify-center bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 rounded-xl transition shadow-sm active:scale-95 border border-slate-200/50 dark:border-slate-700/30"
-                  title="Turn Left (Arrow Left)"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                </button>
-
-                {/* Move Backward */}
-                <button
-                  onClick={() => moveForward(-1.5)}
-                  className="flex items-center justify-center bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 rounded-xl transition shadow-sm active:scale-95 border border-blue-100/50 dark:border-blue-900/30"
-                  title="Move Backward (S or Down Arrow)"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </button>
-
-                {/* Look Right */}
-                <button
-                  onClick={() => setWtYaw((prev) => (prev + 15) % 360)}
-                  className="flex items-center justify-center bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 rounded-xl transition shadow-sm active:scale-95 border border-slate-200/50 dark:border-slate-700/30"
-                  title="Turn Right (Arrow Right)"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </button>
-
-                {/* Strafe Left */}
-                <button
-                  onClick={() => moveSideways(-1.5)}
-                  className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition shadow-sm active:scale-95 text-xs font-bold border border-slate-200/50 dark:border-slate-700/30"
-                  title="Strafe Left (A)"
-                >
-                  ◀ A
-                </button>
-                
-                {/* Center Label */}
-                <div className="flex items-center justify-center text-[8px] font-black text-slate-400 dark:text-slate-500 select-none">
-                  WASD
-                </div>
-
-                {/* Strafe Right */}
-                <button
-                  onClick={() => moveSideways(1.5)}
-                  className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition shadow-sm active:scale-95 text-xs font-bold border border-slate-200/50 dark:border-slate-700/30"
-                  title="Strafe Right (D)"
-                >
-                  D ▶
-                </button>
-              </div>
-
-              {/* Coordinates Indicator */}
-              <div className="text-[8px] font-mono text-slate-400 dark:text-slate-500 mt-1 select-none text-center flex flex-col gap-0.5 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 w-full">
-                <div>POS: <span className="font-bold text-slate-600 dark:text-slate-400">{wtX.toFixed(1)}ft</span>, <span className="font-bold text-slate-600 dark:text-slate-400">{wtY.toFixed(1)}ft</span></div>
-                <div>DIR: <span className="font-bold text-slate-600 dark:text-slate-400">{wtYaw}°</span> ({wtYaw < 45 || wtYaw >= 315 ? 'EAST' : wtYaw < 135 ? 'NORTH' : wtYaw < 225 ? 'WEST' : 'SOUTH'})</div>
-              </div>
-            </div>
-          )}
 
           {/* Custom Informative Tips (e.g. Orbit instruction or Walkthrough controller tips) */}
           {!isWalkthrough && (
@@ -2687,6 +3420,81 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
             </button>
           </div>
         </div>
+
+        {isWalkthrough && (
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col md:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-5 duration-300 pointer-events-auto">
+            {/* Left side: Header / Compass info */}
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-600 dark:text-indigo-400">
+                <Compass className="w-5 h-5 animate-spin" style={{ animationDuration: '4s' }} />
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm">First-Person Walkthrough Controller</h4>
+                <div className="text-[11px] font-mono text-slate-400 dark:text-slate-500 mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span>POS: <strong className="text-slate-700 dark:text-slate-300">{wtX.toFixed(1)}ft</strong>, <strong className="text-slate-700 dark:text-slate-300">{wtY.toFixed(1)}ft</strong></span>
+                  <span className="text-slate-300 dark:text-slate-700">|</span>
+                  <span>DIR: <strong className="text-slate-700 dark:text-slate-300">{wtYaw}°</strong> ({wtYaw < 45 || wtYaw >= 315 ? 'EAST' : wtYaw < 135 ? 'NORTH' : wtYaw < 225 ? 'WEST' : 'SOUTH'})</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Middle: Controller Controls */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Move Forward */}
+              <button
+                onClick={() => moveForward(1.5)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 rounded-xl transition font-bold text-xs border border-indigo-100/50 dark:border-indigo-900/30 active:scale-95 cursor-pointer"
+                title="Move Forward (W or Up Arrow)"
+              >
+                <MoveUp className="w-3.5 h-3.5" />
+                <span>Forward</span>
+              </button>
+
+              {/* Move Backward */}
+              <button
+                onClick={() => moveForward(-1.5)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 rounded-xl transition font-bold text-xs border border-indigo-100/50 dark:border-indigo-900/30 active:scale-95 cursor-pointer"
+                title="Move Backward (S or Down Arrow)"
+              >
+                <MoveDown className="w-3.5 h-3.5" />
+                <span>Backward</span>
+              </button>
+
+              {/* Look Left */}
+              <button
+                onClick={() => setWtYaw((prev) => (prev - 15 + 360) % 360)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 rounded-xl transition font-bold text-xs border border-slate-200/50 dark:border-slate-700/30 active:scale-95 cursor-pointer"
+                title="Turn Left (Arrow Left)"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Turn Left</span>
+              </button>
+
+              {/* Look Right */}
+              <button
+                onClick={() => setWtYaw((prev) => (prev + 15) % 360)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 rounded-xl transition font-bold text-xs border border-slate-200/50 dark:border-slate-700/30 active:scale-95 cursor-pointer"
+                title="Turn Right (Arrow Right)"
+              >
+                <RotateCw className="w-3.5 h-3.5" />
+                <span>Turn Right</span>
+              </button>
+
+              <span className="hidden xl:inline text-[10px] font-mono text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
+                WASD / Arrows Supported
+              </span>
+            </div>
+
+            {/* Right: Exit Button */}
+            <button
+              onClick={() => setIsWalkthrough(false)}
+              className="py-2 px-4 bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm border border-rose-500/20 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Exit Walkthrough</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right Column: High Fidelity Materials Sidebar */}
