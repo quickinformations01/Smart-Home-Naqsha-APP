@@ -11,7 +11,7 @@ import AuxPages from './components/AuxPages';
 import { PresetPlan } from './utils/presetPlans';
 import { NaqshaLayout, NaqshaSummary, SavedProject } from './types';
 import { generateProceduralLayout } from './utils/layoutGenerator';
-import { Sparkles, Sliders, CheckCircle2, AlertTriangle, RefreshCw, Home, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Sparkles, Sliders, CheckCircle2, AlertTriangle, RefreshCw, Home, ArrowLeft, ArrowRight, Ruler, ClipboardList, Layout, Check } from 'lucide-react';
 import SmartHomeNaqshaLogo from './components/SmartHomeNaqshaLogo';
 
 export default function App() {
@@ -368,25 +368,27 @@ export default function App() {
           <>
             {/* Persistent Stepper & Navigation Hub */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm transition-all">
+              <div className="bg-slate-50/80 dark:bg-slate-950/40 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-4 md:p-5 flex flex-col xl:flex-row items-center justify-between gap-6 shadow-lg shadow-slate-100/50 dark:shadow-none transition-all">
                 
-                {/* Left Side: Navigation Actions */}
-                <div className="flex items-center space-x-2">
+                {/* Left Side: Tactile & High-contrast Navigation Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+                  {/* Home Setup Button */}
                   <button
                     onClick={() => setStep('setup')}
-                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer border ${
+                    className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer border shadow-sm ${
                       step === 'setup'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border-blue-100 dark:border-blue-900/30 font-black shadow-inner'
-                        : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                        ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-500/20 font-black'
+                        : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/70 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-800/80'
                     }`}
                     title="Return to Sizing Input setup"
                   >
-                    <Home className="w-3.5 h-3.5" />
+                    <Home className={`w-4 h-4 ${step === 'setup' ? 'animate-bounce' : ''}`} />
                     <span>Home Setup</span>
                   </button>
 
-                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
+                  <div className="hidden sm:block h-8 w-px bg-slate-200 dark:bg-slate-800" />
 
+                  {/* Back Navigation Button */}
                   <button
                     onClick={() => {
                       if (step === 'visualizer') {
@@ -397,13 +399,14 @@ export default function App() {
                       }
                     }}
                     disabled={step === 'setup'}
-                    className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/70 text-slate-750 dark:text-slate-300 border border-slate-200/60 dark:border-slate-800/80 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                     title="Navigate Back to previous step"
                   >
-                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <ArrowLeft className="w-4 h-4" />
                     <span>Back</span>
                   </button>
 
+                  {/* Forth Navigation Button */}
                   <button
                     onClick={() => {
                       if (step === 'setup' && initialSummary) {
@@ -417,66 +420,99 @@ export default function App() {
                       (step === 'recommendations' && !activeLayout) ||
                       step === 'visualizer'
                     }
-                    className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/70 text-slate-750 dark:text-slate-300 border border-slate-200/60 dark:border-slate-800/80 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                     title="Navigate Forth to next step"
                   >
                     <span>Forth</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
 
-                {/* Right Side: Professional Visual Step Indicator Stepper */}
-                <div className="flex items-center space-x-2.5 text-xs font-bold bg-slate-50 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800/60 w-full md:w-auto justify-center">
-                  {/* Step 1 */}
+                {/* Right Side: Professional Interactive Step Tracker with Icons & Connecting Bridges */}
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 bg-white/60 dark:bg-slate-950/30 p-2 rounded-2xl border border-slate-200/40 dark:border-slate-800/60 w-full xl:w-auto">
+                  
+                  {/* Step 1: Dimensions */}
                   <button
                     onClick={() => setStep('setup')}
-                    className={`flex items-center space-x-1.5 py-1 px-3.5 rounded-xl transition-all ${
+                    className={`flex items-center gap-3 py-2 px-4 rounded-xl transition-all duration-300 w-full sm:w-auto cursor-pointer ${
                       step === 'setup' 
-                        ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-sm font-extrabold' 
-                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+                        ? 'bg-blue-50/90 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold shadow-sm border border-blue-100 dark:border-blue-900/20' 
+                        : initialSummary 
+                          ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/5' 
+                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
                   >
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono ${
-                      step === 'setup' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800'
-                    }`}>1</span>
-                    <span>Dimensions</span>
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
+                      step === 'setup' 
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-500/10' 
+                        : initialSummary 
+                          ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/15' 
+                          : 'bg-slate-100 dark:bg-slate-900 text-slate-500 border border-slate-200 dark:border-slate-800'
+                    }`}>
+                      {initialSummary ? <Check className="w-4 h-4 stroke-[3]" /> : <Ruler className="w-4 h-4" />}
+                    </div>
+                    <div className="flex flex-col items-start text-left leading-tight">
+                      <span className="text-[11px] font-black uppercase tracking-wider">1. Dimensions</span>
+                      <span className="text-[9px] font-medium opacity-65">Plot size & specs</span>
+                    </div>
                   </button>
 
-                  <div className="w-4 h-px bg-slate-200 dark:bg-slate-800" />
+                  {/* Connect Bridge 1 */}
+                  <div className="hidden sm:block w-6 h-px bg-slate-200 dark:bg-slate-800" />
 
-                  {/* Step 2 */}
+                  {/* Step 2: Recommendations */}
                   <button
                     onClick={() => initialSummary && setStep('recommendations')}
                     disabled={!initialSummary}
-                    className={`flex items-center space-x-1.5 py-1 px-3.5 rounded-xl transition-all disabled:opacity-40 ${
+                    className={`flex items-center gap-3 py-2 px-4 rounded-xl transition-all duration-300 w-full sm:w-auto disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
                       step === 'recommendations' 
-                        ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-sm font-extrabold' 
-                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+                        ? 'bg-blue-50/90 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold shadow-sm border border-blue-100 dark:border-blue-900/20' 
+                        : activeLayout 
+                          ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/5' 
+                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
                   >
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono ${
-                      step === 'recommendations' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800'
-                    }`}>2</span>
-                    <span>Recommendations</span>
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
+                      step === 'recommendations' 
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-500/10' 
+                        : activeLayout 
+                          ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/15' 
+                          : 'bg-slate-100 dark:bg-slate-900 text-slate-450 border border-slate-200 dark:border-slate-800'
+                    }`}>
+                      {activeLayout ? <Check className="w-4 h-4 stroke-[3]" /> : <ClipboardList className="w-4 h-4" />}
+                    </div>
+                    <div className="flex flex-col items-start text-left leading-tight">
+                      <span className="text-[11px] font-black uppercase tracking-wider">2. Recommendations</span>
+                      <span className="text-[9px] font-medium opacity-65">AI design suggestions</span>
+                    </div>
                   </button>
 
-                  <div className="w-4 h-px bg-slate-200 dark:bg-slate-800" />
+                  {/* Connect Bridge 2 */}
+                  <div className="hidden sm:block w-6 h-px bg-slate-200 dark:bg-slate-800" />
 
-                  {/* Step 3 */}
+                  {/* Step 3: Studio Canvas */}
                   <button
                     onClick={() => activeLayout && setStep('visualizer')}
                     disabled={!activeLayout}
-                    className={`flex items-center space-x-1.5 py-1 px-3.5 rounded-xl transition-all disabled:opacity-40 ${
+                    className={`flex items-center gap-3 py-2 px-4 rounded-xl transition-all duration-300 w-full sm:w-auto disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
                       step === 'visualizer' 
-                        ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-sm font-extrabold' 
-                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350'
+                        ? 'bg-blue-50/90 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold shadow-sm border border-blue-100 dark:border-blue-900/20' 
+                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
                   >
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono ${
-                      step === 'visualizer' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800'
-                    }`}>3</span>
-                    <span>Studio Canvas</span>
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
+                      step === 'visualizer' 
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-500/10' 
+                        : 'bg-slate-100 dark:bg-slate-900 text-slate-450 border border-slate-200 dark:border-slate-800'
+                    }`}>
+                      <Layout className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col items-start text-left leading-tight">
+                      <span className="text-[11px] font-black uppercase tracking-wider">3. Studio Canvas</span>
+                      <span className="text-[9px] font-medium opacity-65">2D, 3D & Elevation</span>
+                    </div>
                   </button>
+
                 </div>
 
               </div>
