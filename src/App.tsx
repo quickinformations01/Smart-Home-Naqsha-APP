@@ -569,7 +569,7 @@ export default function App() {
                     <SmartHomeNaqshaLogo size="lg" showText={true} />
                   </div>
                   
-                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 dark:text-white uppercase">
+                  <h2 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-slate-950 dark:text-white uppercase">
                     Design Your Dream Home Layout
                   </h2>
                   <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -596,7 +596,7 @@ export default function App() {
             {step === 'recommendations' && initialSummary && (
               <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-8 animate-in fade-in zoom-in-95 duration-200">
                 <div className="text-center space-y-2">
-                  <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+                  <h2 className="font-display text-2xl font-black tracking-tight text-slate-950 dark:text-white uppercase">
                     Confirm Layout Summary
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">

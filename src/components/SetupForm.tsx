@@ -61,11 +61,11 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
       <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl -translate-y-12 translate-x-12 pointer-events-none" />
 
       <div className="flex items-center space-x-4 mb-8 border-b border-slate-100 dark:border-slate-850 pb-5">
-        <div className="p-3 bg-blue-550/10 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-500/10 shadow-inner">
+        <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-500/10 shadow-inner">
           <Ruler className="w-5.5 h-5.5" />
         </div>
         <div>
-          <h2 className="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+          <h2 className="text-sm font-display font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
             Plot Layout Configuration
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium leading-normal">
@@ -243,7 +243,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-blue-500/15 hover:shadow-blue-500/25 focus:outline-none focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5 cursor-pointer"
+          className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 via-indigo-650 to-indigo-700 hover:from-blue-500 hover:via-indigo-555 hover:to-indigo-600 text-white font-display font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-500/15 hover:shadow-indigo-500/25 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 active:scale-[0.98] transition-all hover:scale-[1.01] duration-150 disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5 cursor-pointer"
           id="generate-btn"
         >
           {isLoading ? (

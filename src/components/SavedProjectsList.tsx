@@ -33,7 +33,7 @@ export default function SavedProjectsList({ projects, onLoad, onDelete }: SavedP
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md">
       <div className="flex items-center space-x-2.5 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
         <FolderOpen className="w-5 h-5 text-blue-600" />
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+        <h3 className="text-sm font-display font-black tracking-tight text-slate-900 dark:text-white uppercase">
           Offline Local Vault ({projects.length})
         </h3>
       </div>
@@ -42,7 +42,7 @@ export default function SavedProjectsList({ projects, onLoad, onDelete }: SavedP
         {projects.map((project) => (
           <div
             key={project.id}
-            className="flex flex-col justify-between p-4 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-800 rounded-2xl bg-slate-50/20 dark:bg-slate-800/10 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all cursor-pointer group"
+            className="flex flex-col justify-between p-4 border border-slate-200/80 dark:border-slate-800/80 hover:border-blue-550 dark:hover:border-blue-700/80 rounded-2xl bg-slate-50/20 dark:bg-slate-800/10 hover:bg-slate-50 dark:hover:bg-slate-900/40 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
             onClick={() => onLoad(project)}
           >
             <div>

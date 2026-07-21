@@ -101,12 +101,12 @@ export default function SmartHomeNaqshaLogo({
       {/* Brand Typography Text */}
       {showText && (
         <div className="flex flex-col select-none leading-none">
-          <span className={`font-black tracking-tight text-slate-900 dark:text-white uppercase ${
+          <span className={`font-display font-black tracking-tight text-slate-900 dark:text-white uppercase ${
             size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-2xl' : 'text-sm'
           }`}>
             Smart Home
           </span>
-          <span className={`font-black text-blue-600 dark:text-blue-400 tracking-wider flex items-center gap-1.5 ${
+          <span className={`font-display font-extrabold text-blue-600 dark:text-blue-400 tracking-wider flex items-center gap-1.5 ${
             size === 'sm' ? 'text-[10px]' : size === 'lg' ? 'text-lg' : 'text-xs'
           }`}>
             <span>NAQSHA</span>

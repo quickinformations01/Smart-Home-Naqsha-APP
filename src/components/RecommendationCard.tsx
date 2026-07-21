@@ -53,11 +53,11 @@ export default function RecommendationCard({
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-blue-900/10 dark:shadow-none transition-all">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center space-x-3">
-          <div className="p-2.5 bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 rounded-xl">
-            <Sparkles className="w-5 h-5 animate-pulse" />
+          <div className="p-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl border border-amber-500/10">
+            <Sparkles className="w-5 h-5 animate-pulse text-amber-500" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+            <h2 className="text-xl font-display font-black tracking-tight text-slate-950 dark:text-white uppercase">
               AI Smart Recommendations
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -102,10 +102,10 @@ export default function RecommendationCard({
                   // Auto scale bathrooms to match bedrooms
                   setBathrooms(Math.min(num, 3));
                 }}
-                className={`flex-1 py-2 rounded-xl text-sm font-bold border transition ${
+                className={`flex-1 py-2.5 rounded-xl text-sm font-extrabold border transition-all duration-150 cursor-pointer ${
                   bedrooms === num
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100 dark:shadow-none'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                    ? 'bg-gradient-to-br from-blue-600 to-indigo-700 border-transparent text-white shadow-lg shadow-blue-500/15'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                 }`}
               >
                 {num}
@@ -131,10 +131,10 @@ export default function RecommendationCard({
                 key={num}
                 type="button"
                 onClick={() => setBathrooms(num)}
-                className={`flex-1 py-2 rounded-xl text-sm font-bold border transition ${
+                className={`flex-1 py-2.5 rounded-xl text-sm font-extrabold border transition-all duration-150 cursor-pointer ${
                   bathrooms === num
-                    ? 'bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-100 dark:shadow-none'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                    ? 'bg-gradient-to-br from-emerald-600 to-teal-700 border-transparent text-white shadow-lg shadow-emerald-500/15'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                 }`}
               >
                 {num}
@@ -156,10 +156,10 @@ export default function RecommendationCard({
                 key={type}
                 type="button"
                 onClick={() => setKitchen(type)}
-                className={`flex-1 py-2 px-4 rounded-xl text-sm font-semibold border transition ${
+                className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-extrabold border transition-all duration-150 cursor-pointer ${
                   kitchen.toLowerCase().includes(type.toLowerCase().split(' ')[0])
-                    ? 'bg-blue-600 border-blue-600 text-white'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                    ? 'bg-gradient-to-br from-blue-600 to-indigo-700 border-transparent text-white shadow-lg shadow-blue-500/15'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                 }`}
               >
                 {type}
@@ -182,10 +182,10 @@ export default function RecommendationCard({
                 key={opt}
                 type="button"
                 onClick={() => setDrawingRoom(opt)}
-                className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${
+                className={`flex-1 py-2.5 rounded-xl text-sm font-extrabold border transition-all duration-150 cursor-pointer ${
                   drawingRoom === opt
-                    ? 'bg-blue-600 border-blue-600 text-white'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                    ? 'bg-gradient-to-br from-blue-600 to-indigo-700 border-transparent text-white shadow-lg shadow-blue-500/15'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                 }`}
               >
                 {opt}
@@ -210,10 +210,10 @@ export default function RecommendationCard({
                   key={opt}
                   type="button"
                   onClick={() => setGarage(opt === 'No' ? 'No' : '1 Car')}
-                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-extrabold border transition-all duration-150 cursor-pointer ${
                     matches
-                      ? 'bg-blue-600 border-blue-600 text-white'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                      ? 'bg-gradient-to-br from-blue-600 to-indigo-700 border-transparent text-white shadow-lg shadow-blue-500/15'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   {opt}
@@ -239,10 +239,10 @@ export default function RecommendationCard({
                   key={opt}
                   type="button"
                   onClick={() => setLawn(opt === 'No' ? 'No' : 'Front Lawn')}
-                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-extrabold border transition-all duration-150 cursor-pointer ${
                     matches
-                      ? 'bg-blue-600 border-blue-600 text-white'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                      ? 'bg-gradient-to-br from-blue-600 to-indigo-700 border-transparent text-white shadow-lg shadow-blue-500/15'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   {opt}
@@ -274,11 +274,11 @@ export default function RecommendationCard({
       <div className="flex items-center space-x-4">
         <button
           onClick={handleConfirm}
-          className="flex-1 py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 dark:shadow-none flex items-center justify-center space-x-2 transition hover:scale-[1.01] active:scale-[0.99]"
+          className="flex-1 py-4 px-6 bg-gradient-to-r from-blue-600 via-indigo-650 to-indigo-700 hover:from-blue-500 hover:via-indigo-555 hover:to-indigo-600 text-white font-display font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-500/15 hover:shadow-indigo-500/25 flex items-center justify-center space-x-2 transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           id="confirm-generate-btn"
         >
           <span>Generate 2D Floor Plan</span>
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5 text-white animate-pulse" />
         </button>
       </div>
     </div>
