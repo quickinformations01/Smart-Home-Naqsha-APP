@@ -10,7 +10,10 @@ import {
   MapPin, 
   Sun, 
   ArrowUpRight,
-  Sliders
+  Sliders,
+  Sunrise,
+  Sunset,
+  Moon
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -84,24 +87,26 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
             <button
               type="button"
               onClick={() => setUnit('ft')}
-              className={`px-4 py-1.5 text-[10px] font-black uppercase rounded-lg transition-all cursor-pointer ${
+              className={`px-4.5 py-2 text-[10px] font-black uppercase rounded-lg transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
                 unit === 'ft'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-md border border-slate-200/20'
                   : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              Feet (ft)
+              {unit === 'ft' && <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+              <span>Feet (ft)</span>
             </button>
             <button
               type="button"
               onClick={() => setUnit('m')}
-              className={`px-4 py-1.5 text-[10px] font-black uppercase rounded-lg transition-all cursor-pointer ${
+              className={`px-4.5 py-2 text-[10px] font-black uppercase rounded-lg transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
                 unit === 'm'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-md border border-slate-200/20'
                   : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              Meters (m)
+              {unit === 'm' && <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+              <span>Meters (m)</span>
             </button>
           </div>
         </div>
@@ -203,28 +208,31 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { id: 'east', title: 'East', sub: 'Morning Sun', icon: '🌅' },
-              { id: 'west', title: 'West', sub: 'Evening Glow', icon: '🌇' },
-              { id: 'north', title: 'North', sub: 'Ambient Light', icon: '❄️' },
-              { id: 'south', title: 'South', sub: 'All-day Warmth', icon: '☀️' },
+              { id: 'east', title: 'East', sub: 'Morning Sun', icon: Sunrise, iconColor: 'text-amber-500' },
+              { id: 'west', title: 'West', sub: 'Evening Glow', icon: Sunset, iconColor: 'text-orange-500' },
+              { id: 'north', title: 'North', sub: 'Ambient Light', icon: Moon, iconColor: 'text-indigo-400' },
+              { id: 'south', title: 'South', sub: 'All-day Warmth', icon: Sun, iconColor: 'text-yellow-500' },
             ].map((dir) => {
               const isSelected = facing === dir.id;
+              const IconComponent = dir.icon;
               return (
                 <button
                   key={dir.id}
                   type="button"
                   onClick={() => setFacing(dir.id as any)}
-                  className={`p-3 rounded-2xl text-center border transition-all duration-200 flex flex-col items-center justify-center relative cursor-pointer ${
+                  className={`p-4 rounded-2xl text-center border transition-all duration-300 flex flex-col items-center justify-center relative cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     isSelected
-                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-md scale-[1.01]'
+                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-lg shadow-blue-500/5 scale-[1.02]'
                       : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
                   }`}
                 >
-                  <span className="text-base mb-1.5">{dir.icon}</span>
-                  <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase leading-none block">
+                  <div className={`p-2.5 rounded-xl mb-2 transition-all duration-300 ${isSelected ? 'bg-white dark:bg-slate-800 shadow-inner scale-110' : 'bg-slate-100 dark:bg-slate-900/50'}`}>
+                    <IconComponent className={`w-5 h-5 ${dir.iconColor}`} />
+                  </div>
+                  <span className="text-[11px] font-display font-black text-slate-900 dark:text-white uppercase leading-none block">
                     {dir.title}
                   </span>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium leading-none block mt-1">
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold leading-none block mt-1 tracking-tight">
                     {dir.sub}
                   </span>
                 </button>
