@@ -95,6 +95,12 @@ export default function GenerationProgress({
   const [progress, setProgress] = useState(0);
   const [activeLogs, setActiveLogs] = useState<string[]>([]);
   const logsEndRef = useRef<HTMLDivElement>(null);
+  
+  // Guard onComplete from triggering effect re-runs
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   // Restart loading state when modal opens
   useEffect(() => {
@@ -117,15 +123,15 @@ export default function GenerationProgress({
         clearInterval(timer);
         setProgress(100);
         setTimeout(() => {
-          if (onComplete) {
-            onComplete();
+          if (onCompleteRef.current) {
+            onCompleteRef.current();
           }
         }, 800); // sleek delay to admire 100% completion
       }
     }, intervalTime);
 
     return () => clearInterval(timer);
-  }, [isOpen, durationMs, onComplete]);
+  }, [isOpen, durationMs]);
 
   // Compute active phase on-the-fly from current progress state
   const currentPhase = PHASES.find(p => progress >= p.range[0] && progress <= p.range[1]) || PHASES[PHASES.length - 1];
