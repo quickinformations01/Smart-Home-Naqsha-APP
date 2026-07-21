@@ -33,21 +33,6 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
   const [facing, setFacing] = useState<'north' | 'south' | 'east' | 'west'>('east');
   const [error, setError] = useState<string>('');
 
-  // Quick Preset Plot Sizes in Pakistan
-  const pakPresets = [
-    { name: '3 Marla', desc: 'Compact Townhouse', w: 20, l: 30, unit: 'ft' },
-    { name: '5 Marla', desc: 'Standard Residential', w: 25, l: 50, unit: 'ft' },
-    { name: '10 Marla', desc: 'Premium Semi-Villa', w: 35, l: 70, unit: 'ft' },
-    { name: '1 Kanal', desc: 'Luxurious Estate', w: 50, l: 90, unit: 'ft' },
-  ];
-
-  const handleApplyPreset = (w: number, l: number, prUnit: 'ft' | 'm') => {
-    setWidth(w.toString());
-    setLength(l.toString());
-    setUnit(prUnit);
-    setError('');
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const w = parseFloat(width);
@@ -86,54 +71,6 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium leading-normal">
             Enter your site parameters. The AI architect will compile a fully ventilated spatial blueprint.
           </p>
-        </div>
-      </div>
-
-      {/* Quick Presets Section */}
-      <div className="mb-6 space-y-2.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Quick Pakistan Size Presets
-          </span>
-          <span className="text-[9px] font-medium text-slate-400 flex items-center gap-1">
-            <MapPin className="w-2.5 h-2.5" /> Auto-config
-          </span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {pakPresets.map((preset) => {
-            const isSelected = 
-              parseFloat(width) === preset.w && 
-              parseFloat(length) === preset.l && 
-              unit === preset.unit;
-
-            return (
-              <button
-                key={preset.name}
-                type="button"
-                onClick={() => handleApplyPreset(preset.w, preset.l, preset.unit as any)}
-                className={`p-3 rounded-2xl text-left border transition-all duration-200 relative group overflow-hidden cursor-pointer ${
-                  isSelected
-                    ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 text-blue-700 dark:text-blue-400 shadow-sm'
-                    : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200/60 dark:border-slate-800/60 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                <div className="flex justify-between items-start mb-1">
-                  <span className="text-xs font-black tracking-tight block">{preset.name}</span>
-                  {isSelected && (
-                    <div className="w-3.5 h-3.5 rounded-full bg-blue-500 text-white flex items-center justify-center">
-                      <Check className="w-2 h-2 stroke-[3]" />
-                    </div>
-                  )}
-                </div>
-                <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold block leading-none">
-                  {preset.w}′×{preset.l}′ {preset.unit}
-                </span>
-                <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium block mt-1 leading-none group-hover:text-blue-500 transition-colors">
-                  {preset.desc}
-                </span>
-              </button>
-            );
-          })}
         </div>
       </div>
 

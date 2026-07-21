@@ -2074,7 +2074,7 @@ export default function FloorPlanVisualizer({
     });
 
     // Space analysis section
-    const diagY = Math.min(currentY + 12, 195);
+    const diagY = Math.min(currentY + 12, 165);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10.5);
     doc.setTextColor(15, 23, 42);
@@ -2082,7 +2082,7 @@ export default function FloorPlanVisualizer({
 
     // Bento blocks
     const boxWidth = 90;
-    const boxHeight = 44;
+    const boxHeight = 34;
 
     doc.setFillColor(248, 250, 252);
     doc.rect(12, diagY + 4, boxWidth, boxHeight, 'F');
@@ -2090,37 +2090,39 @@ export default function FloorPlanVisualizer({
     doc.setLineWidth(0.3);
     doc.rect(12, diagY + 4, boxWidth, boxHeight, 'S');
 
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
     doc.setTextColor(37, 99, 235);
-    doc.text('FOOTPRINT UTILIZATION SUMMARY', 16, diagY + 11);
+    doc.text('FOOTPRINT UTILIZATION SUMMARY', 16, diagY + 10);
 
-    doc.setFontSize(8);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 116, 139);
-    doc.text('TOTAL COVERABLE PLOT:', 16, diagY + 19);
+    doc.text('TOTAL COVERABLE PLOT:', 16, diagY + 16);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(15, 23, 42);
-    doc.text(`${totalArea} SQ ${layout.unit.toUpperCase()}`, 64, diagY + 19);
+    doc.text(`${totalArea} SQ ${layout.unit.toUpperCase()}`, 64, diagY + 16);
 
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 116, 139);
-    doc.text('BUILT AREA FOOTPRINT:', 16, diagY + 26);
+    doc.text('BUILT AREA FOOTPRINT:', 16, diagY + 22);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(15, 23, 42);
-    doc.text(`${roomArea} SQ ${layout.unit.toUpperCase()} (${Math.round((roomArea / totalArea) * 100)}%)`, 64, diagY + 26);
+    doc.text(`${roomArea} SQ ${layout.unit.toUpperCase()} (${Math.round((roomArea / totalArea) * 100)}%)`, 64, diagY + 22);
 
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 116, 139);
-    doc.text('OPEN VENTILATION YARDS:', 16, diagY + 33);
+    doc.text('OPEN VENTILATION YARDS:', 16, diagY + 28);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(15, 23, 42);
-    doc.text(`${openArea} SQ ${layout.unit.toUpperCase()} (${Math.round((openArea / totalArea) * 100)}%)`, 64, diagY + 33);
+    doc.text(`${openArea} SQ ${layout.unit.toUpperCase()} (${Math.round((openArea / totalArea) * 100)}%)`, 64, diagY + 28);
 
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 116, 139);
-    doc.text('INSTALLED FIXTURES:', 16, diagY + 40);
+    doc.text('INSTALLED FIXTURES:', 16, diagY + 34);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(15, 23, 42);
-    doc.text(`${layout.doors.length} DOORS • ${layout.windows.length} WINDOWS`, 64, diagY + 40);
+    doc.text(`${layout.doors.length} DOORS • ${layout.windows.length} WINDOWS`, 64, diagY + 34);
 
     // Box Right: Compliance
     doc.setFillColor(248, 250, 252);
@@ -2129,11 +2131,12 @@ export default function FloorPlanVisualizer({
     doc.rect(108, diagY + 4, boxWidth, boxHeight, 'S');
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
     doc.setTextColor(16, 185, 129);
-    doc.text('AI ARCHITECTURAL CERTIFICATIONS', 112, diagY + 11);
+    doc.text('AI ARCHITECTURAL CERTIFICATIONS', 112, diagY + 10);
 
-    doc.setFontSize(7.5);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
     doc.setTextColor(71, 85, 105);
 
     const nonCompliantRooms = layout.rooms.filter(r => !checkRoomVentilation(r, layout).compliant).length;
@@ -2142,23 +2145,64 @@ export default function FloorPlanVisualizer({
     const energyScore = layout.facing === 'east' || layout.facing === 'north' ? 9 : 8;
 
     const notes = [
-      `Plot is aligned with ${(layout.facing || 'EAST').toUpperCase()} vector for structural passive thermal capture.`,
+      `Plot is aligned with ${(layout.facing || 'EAST').toUpperCase()} vector for passive thermal capture.`,
       `Lobby ventilation zones meet international light-ingress guidelines.`,
       `Energy footprint rating: ${energyScore}/10 • Ventilation safety score: ${ventilationScore}/10.`,
-      ...(layout.summary.otherFeatures?.slice(0, 2) || [
-        'Includes specialized staircase circulation corridors.',
+      ...(layout.summary.otherFeatures?.slice(0, 1) || [
         'Optimized structural span lengths to lower concrete cost.'
       ])
     ];
 
-    let noteY = diagY + 18;
+    let noteY = diagY + 16;
     notes.forEach((note) => {
       doc.text(`• ${note.length > 52 ? note.substring(0, 50) + '...' : note}`, 112, noteY);
       noteY += 6;
     });
 
+    // 3. Financial Valuation & Construction Cost Estimates
+    const costY = diagY + 44;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(15, 23, 42);
+    doc.text('3. FINANCIAL VALUATION & CONSTRUCTION COST ESTIMATES', 14, costY);
+
+    const bomData = calculateBOM();
+    const pakEstimateData = calculatePakistanGreyStructureCost(layout, estimatorInputs, materialRates);
+
+    const formattedUSDEstimate = `$${Math.round(bomData.grandTotal).toLocaleString('en-US')}`;
+    const formattedPKREstimate = new Intl.NumberFormat('en-PK', {
+      style: 'currency',
+      currency: 'PKR',
+      maximumFractionDigits: 0
+    }).format(pakEstimateData.grandTotal);
+
+    doc.setFillColor(248, 250, 252);
+    doc.rect(12, costY + 3, 186, 18, 'F');
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.3);
+    doc.rect(12, costY + 3, 186, 18, 'S');
+
+    // Split line
+    doc.line(105, costY + 3, 105, costY + 21);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text('FINISHES & PREMIUM MATERIALS ESTIMATE (USD):', 16, costY + 8);
+    doc.setFontSize(11);
+    doc.setTextColor(37, 99, 235); // Blue
+    doc.text(formattedUSDEstimate, 16, costY + 16);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text('PAKISTAN GREY STRUCTURE CIVIL ESTIMATE (PKR):', 109, costY + 8);
+    doc.setFontSize(11);
+    doc.setTextColor(16, 185, 129); // Emerald
+    doc.text(formattedPKREstimate, 109, costY + 16);
+
     // Stamp/Approval
-    const sigY = 222;
+    const sigY = costY + 27;
     doc.setDrawColor(203, 213, 225);
     doc.setLineWidth(0.3);
     doc.line(15, sigY + 20, 70, sigY + 20);
