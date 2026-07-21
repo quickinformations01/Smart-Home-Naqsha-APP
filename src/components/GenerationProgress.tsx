@@ -94,7 +94,6 @@ export default function GenerationProgress({
 }: GenerationProgressProps) {
   const [progress, setProgress] = useState(0);
   const [activeLogs, setActiveLogs] = useState<string[]>([]);
-  const [currentPhaseId, setCurrentPhaseId] = useState(1);
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   // Restart loading state when modal opens
@@ -102,7 +101,6 @@ export default function GenerationProgress({
     if (!isOpen) {
       setProgress(0);
       setActiveLogs([]);
-      setCurrentPhaseId(1);
       return;
     }
 
@@ -114,12 +112,6 @@ export default function GenerationProgress({
       const calculatedProgress = Math.min((elapsed / durationMs) * 100, 100);
       
       setProgress(Math.floor(calculatedProgress));
-
-      // Determine active phase based on progress value
-      const matchedPhase = PHASES.find(p => calculatedProgress >= p.range[0] && calculatedProgress <= p.range[1]);
-      if (matchedPhase && matchedPhase.id !== currentPhaseId) {
-        setCurrentPhaseId(matchedPhase.id);
-      }
 
       if (elapsed >= durationMs) {
         clearInterval(timer);
@@ -133,7 +125,10 @@ export default function GenerationProgress({
     }, intervalTime);
 
     return () => clearInterval(timer);
-  }, [isOpen, durationMs, onComplete, currentPhaseId]);
+  }, [isOpen, durationMs, onComplete]);
+
+  // Compute active phase on-the-fly from current progress state
+  const currentPhase = PHASES.find(p => progress >= p.range[0] && progress <= p.range[1]) || PHASES[PHASES.length - 1];
 
   // Feed logs progressively during execution
   useEffect(() => {
@@ -257,7 +252,7 @@ export default function GenerationProgress({
                 ACTIVE PHASE WORKLOAD
               </span>
               <h4 className="text-sm font-bold text-slate-100 uppercase">
-                {PHASES[currentPhaseId - 1].name}
+                {currentPhase.name}
               </h4>
             </div>
             <div className="text-right">
