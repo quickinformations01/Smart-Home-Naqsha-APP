@@ -32,6 +32,9 @@ import {
   AlertTriangle,
   CheckCircle2,
   Image as ImageIcon,
+  Home,
+  Grid,
+  Wind,
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { NaqshaLayout, Room, Door, Window, RoomType } from '../types';
@@ -341,6 +344,51 @@ const ensureLogicalVentilation = (lay: NaqshaLayout): NaqshaLayout => {
     doors,
     windows,
   };
+};
+
+const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
+  switch (v) {
+    case 1:
+      return {
+        title: 'V1: Classic',
+        subtitle: 'Traditional privacy-centric design with separate drawing rooms & kitchen',
+        icon: Home,
+        badgeColor: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+        activeBtnBg: 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
+      };
+    case 2:
+      return {
+        title: 'V2: Modern',
+        subtitle: 'Open-concept layout with seamless room-to-lounge transitions',
+        icon: Compass,
+        badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+        activeBtnBg: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20'
+      };
+    case 3:
+      return {
+        title: 'V3: Efficient',
+        subtitle: 'High density design maximizing functional rooms and private study corridors',
+        icon: Grid,
+        badgeColor: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+        activeBtnBg: 'bg-purple-600 hover:bg-purple-700 shadow-purple-500/20'
+      };
+    case 4:
+      return {
+        title: 'V4: Luxury',
+        subtitle: 'Premium layout with executive suites, grand TV lounge and double terraces',
+        icon: Sparkles,
+        badgeColor: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+        activeBtnBg: 'bg-amber-600 hover:bg-amber-700 shadow-amber-500/20'
+      };
+    case 5:
+      return {
+        title: 'V5: Ventilated',
+        subtitle: 'Airflow-first design utilizing open-to-sky central courtyard zones',
+        icon: Wind,
+        badgeColor: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
+        activeBtnBg: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
+      };
+  }
 };
 
 interface FloorPlanVisualizerProps {
@@ -2765,8 +2813,8 @@ export default function FloorPlanVisualizer({
       {/* Editor & Canvas Area - Left 8 or 12 Cols depending on 2D/3D Mode */}
       <div className={`${is3DView ? 'lg:col-span-12' : 'lg:col-span-8'} w-full flex flex-col space-y-4`}>
         
-        {/* Row 1: Floor Selector & Preset Designs & 2D/3D Mode Selector */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm">
+        {/* Row 1: Floor Selector & 2D/3D Mode Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm">
           {/* Segmented Floor Selector */}
           <div className="flex flex-col space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
@@ -2788,53 +2836,6 @@ export default function FloorPlanVisualizer({
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Segmented Layout Version Selector */}
-          <div className="flex flex-col space-y-2">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
-              <LayoutTemplate className="w-3.5 h-3.5 text-indigo-500" /> Naqsha Architectural Versions
-            </span>
-            
-            {/* Version direct select grid (5 columns) */}
-            <div className="grid grid-cols-5 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
-              {([1, 2, 3, 4, 5] as const).map((v) => (
-                <button
-                  key={v}
-                  onClick={() => handleLayoutVersionChange(v)}
-                  className={`py-2 px-1 text-xs font-black rounded-lg transition-all duration-150 ${
-                    layoutVersion === v
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-900'
-                  }`}
-                  id={`layout-version-btn-${v}`}
-                  title={
-                    v === 1
-                      ? 'V1: Classic Balanced Layout (Standard separated spaces)'
-                      : v === 2
-                      ? 'V2: Modern Open-Concept (Seamless flow & shifted porch)'
-                      : v === 3
-                      ? 'V3: High-Efficiency (Maximum room utility & kids study)'
-                      : v === 4
-                      ? 'V4: Luxury Premium (Executive penthouse suite & grand lounge)'
-                      : 'V5: Courtyard Ventilation-Centric (Kitchen adjacent to patio)'
-                  }
-                >
-                  V{v}
-                </button>
-              ))}
-            </div>
-
-            {/* Cycle to Next Version Button */}
-            <button
-              onClick={cycleToNextVersion}
-              className="w-full py-2.5 px-3 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-all duration-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/50 hover:scale-[1.01] active:scale-[0.99] shadow-sm"
-              id="cycle-version-btn"
-              title="Show the next dynamic architectural naqsha style for this dimension"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
-              <span>Show Next Naqsha Version</span>
-            </button>
           </div>
 
           {/* Segmented 2D/3D/Elevation/Cost View Selector */}
@@ -3028,56 +3029,7 @@ export default function FloorPlanVisualizer({
           </div>
         </div>
 
-        {/* Dynamic Architectural Variation Block (V1 to V5) */}
-        <div className="bg-gradient-to-r from-slate-50 to-indigo-50/30 dark:from-slate-950 dark:to-indigo-950/10 border border-slate-200 dark:border-slate-800 p-4 rounded-3xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
-          <div className="flex items-center space-x-3 shrink-0">
-            <div className="p-2.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-2xl">
-              <LayoutTemplate className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
-            </div>
-            <div>
-              <h4 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
-                Naqsha Architectural Variations
-              </h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
-                Click to instantly swap floor plan layouts for these exact plot dimensions
-              </p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-5 gap-1.5 w-full md:w-auto bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl border border-slate-200/50 dark:border-slate-850">
-            {([1, 2, 3, 4, 5] as const).map((v) => {
-              const info =
-                v === 1
-                  ? { title: 'V1: Classic', desc: 'Balanced traditional structure' }
-                  : v === 2
-                  ? { title: 'V2: Modern', desc: 'Open-concept & double terrace' }
-                  : v === 3
-                  ? { title: 'V3: Efficient', desc: 'Maximized room utility & kids zone' }
-                  : v === 4
-                  ? { title: 'V4: Luxury', desc: 'Executive master suite & grand lounge' }
-                  : { title: 'V5: Ventilated', desc: 'Courtyard adjacent kitchen flow' };
 
-              return (
-                <button
-                  key={v}
-                  onClick={() => handleLayoutVersionChange(v)}
-                  className={`py-2 px-1 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer select-none ${
-                    layoutVersion === v
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 scale-[1.03]'
-                      : 'text-slate-650 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                  title={info.desc}
-                  id={`canvas-version-btn-${v}`}
-                >
-                  <span className="text-[11px] font-black uppercase tracking-wider">V{v}</span>
-                  <span className="text-[8px] font-medium hidden sm:inline opacity-80 uppercase tracking-tighter truncate max-w-[65px]">
-                    {v === 1 ? 'Classic' : v === 2 ? 'Modern' : v === 3 ? 'Efficient' : v === 4 ? 'Luxury' : 'Ventilated'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Canvas frame */}
         {showEstimator ? (
@@ -3213,14 +3165,22 @@ export default function FloorPlanVisualizer({
                       fill="none"
                       stroke={layout.unit === 'ft' ? '#e2e8f0' : '#cbd5e1'}
                       strokeWidth="0.5"
-                      className="stroke-slate-200 dark:stroke-slate-800"
+                      className="stroke-slate-200"
                     />
                   </pattern>
                 </defs>
 
             {/* Canvas Transformation Node */}
             <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-              {/* Outer plot boundary grid fill */}
+              {/* Solid white background layer */}
+              <rect
+                x="0"
+                y="0"
+                width={svgWidth}
+                height={svgHeight}
+                fill="#ffffff"
+              />
+              {/* Outer plot boundary grid layer */}
               <rect
                 id="grid-background"
                 x="0"
@@ -3228,7 +3188,6 @@ export default function FloorPlanVisualizer({
                 width={svgWidth}
                 height={svgHeight}
                 fill="url(#blueprint-grid)"
-                className="fill-white dark:fill-slate-900/30"
               />
 
               {/* Bold Outer Walls of Plot */}
@@ -3618,6 +3577,75 @@ export default function FloorPlanVisualizer({
           </svg>
         </div>
       </div>
+        )}
+
+        {/* Dynamic Architectural Variation Block (V1 to V5) */}
+        {!showEstimator && (
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-sm space-y-4 transition-all">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-150 dark:border-slate-800/60">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 bg-blue-500/10 text-blue-500 dark:text-blue-400 rounded-2xl border border-blue-500/10 shrink-0">
+                  <LayoutTemplate className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2">
+                    Naqsha Architectural Variations
+                    <span className="bg-blue-600/10 text-blue-600 dark:text-blue-400 text-[9px] font-black px-2 py-0.5 rounded-full border border-blue-500/25">
+                      V{layoutVersion} Active
+                    </span>
+                  </h4>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                    {getVersionDetails(layoutVersion).subtitle}
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={cycleToNextVersion}
+                className="self-start md:self-auto py-1.5 px-3 text-[10px] font-bold rounded-xl flex items-center space-x-1.5 transition-all duration-200 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                id="cycle-version-btn"
+              >
+                <RefreshCw className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                <span>Cycle Version</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              {([1, 2, 3, 4, 5] as const).map((v) => {
+                const details = getVersionDetails(v);
+                const IconComponent = details.icon;
+                const isSelected = layoutVersion === v;
+
+                return (
+                  <button
+                    key={v}
+                    onClick={() => handleLayoutVersionChange(v)}
+                    className={`p-3.5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer select-none border group ${
+                      isSelected
+                        ? `${details.activeBtnBg} text-white border-transparent shadow-lg scale-[1.02]`
+                        : 'bg-slate-50/50 dark:bg-slate-950 p-1 text-slate-650 dark:text-slate-300 border-slate-200/60 dark:border-slate-850 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white hover:scale-[1.01]'
+                    }`}
+                    title={details.subtitle}
+                    id={`layout-version-card-${v}`}
+                  >
+                    <div className={`p-2 rounded-xl transition-colors duration-200 mb-1.5 ${
+                      isSelected 
+                        ? 'bg-white/10 text-white' 
+                        : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200/55 dark:border-slate-800/80 group-hover:bg-slate-100 dark:group-hover:bg-slate-800'
+                    }`}>
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest block">V{v}</span>
+                    <span className={`text-[8px] font-bold uppercase tracking-tighter truncate max-w-full block mt-0.5 ${
+                      isSelected ? 'text-white/90' : 'text-slate-400 dark:text-slate-500'
+                    }`}>
+                      {v === 1 ? 'Classic' : v === 2 ? 'Modern' : v === 3 ? 'Efficient' : v === 4 ? 'Luxury' : 'Ventilated'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* Quick Toolbar */}

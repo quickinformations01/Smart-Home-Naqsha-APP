@@ -210,8 +210,7 @@ export default function App() {
   useEffect(() => {
     // Dark mode setting
     const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialThemeIsDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+    const initialThemeIsDark = savedTheme ? savedTheme === 'dark' : true;
     
     setIsDarkMode(initialThemeIsDark);
     if (initialThemeIsDark) {
