@@ -354,7 +354,7 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         subtitle: 'Traditional privacy-centric design with separate drawing rooms & kitchen',
         icon: Home,
         badgeColor: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-        activeBtnBg: 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
+        activeBtnBg: 'bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20'
       };
     case 2:
       return {
@@ -362,7 +362,7 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         subtitle: 'Open-concept layout with seamless room-to-lounge transitions',
         icon: Compass,
         badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-        activeBtnBg: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20'
+        activeBtnBg: 'bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 shadow-lg shadow-emerald-500/20'
       };
     case 3:
       return {
@@ -370,7 +370,7 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         subtitle: 'High density design maximizing functional rooms and private study corridors',
         icon: Grid,
         badgeColor: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-        activeBtnBg: 'bg-purple-600 hover:bg-purple-700 shadow-purple-500/20'
+        activeBtnBg: 'bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 shadow-lg shadow-purple-500/20'
       };
     case 4:
       return {
@@ -378,7 +378,7 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         subtitle: 'Premium layout with executive suites, grand TV lounge and double terraces',
         icon: Sparkles,
         badgeColor: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-        activeBtnBg: 'bg-amber-600 hover:bg-amber-700 shadow-amber-500/20'
+        activeBtnBg: 'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20'
       };
     case 5:
       return {
@@ -386,7 +386,7 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         subtitle: 'Airflow-first design utilizing open-to-sky central courtyard zones',
         icon: Wind,
         badgeColor: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
-        activeBtnBg: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
+        activeBtnBg: 'bg-gradient-to-br from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 shadow-lg shadow-indigo-500/20'
       };
   }
 };
@@ -2850,10 +2850,10 @@ export default function FloorPlanVisualizer({
                   setShowEstimator(false);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-bold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
                   !is3DView && !showEstimator && !isElevationView
-                    ? 'bg-slate-800 text-white dark:bg-slate-800 dark:text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                    ? 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-2d"
               >
@@ -2866,10 +2866,10 @@ export default function FloorPlanVisualizer({
                   setShowEstimator(false);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-bold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
                   is3DView && !showEstimator && !isElevationView
                     ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-3d"
               >
@@ -2882,10 +2882,10 @@ export default function FloorPlanVisualizer({
                   setShowEstimator(false);
                   setIsElevationView(true);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-bold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
                   isElevationView && !showEstimator && !is3DView
                     ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-elevation"
               >
@@ -2901,7 +2901,7 @@ export default function FloorPlanVisualizer({
                 className={`py-2 px-1 text-[10px] sm:text-[11px] font-black rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
                   showEstimator && !is3DView && !isElevationView
                     ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-estimator"
               >
@@ -3622,8 +3622,8 @@ export default function FloorPlanVisualizer({
                     onClick={() => handleLayoutVersionChange(v)}
                     className={`p-3.5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer select-none border group ${
                       isSelected
-                        ? `${details.activeBtnBg} text-white border-transparent shadow-lg scale-[1.02]`
-                        : 'bg-slate-50/50 dark:bg-slate-950 p-1 text-slate-650 dark:text-slate-300 border-slate-200/60 dark:border-slate-850 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white hover:scale-[1.01]'
+                        ? `${details.activeBtnBg} text-white border-transparent scale-[1.02]`
+                        : 'bg-slate-50/50 dark:bg-slate-950 text-slate-650 dark:text-slate-300 border-slate-200/60 dark:border-slate-850 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900/80 hover:text-slate-900 dark:hover:text-white hover:scale-[1.01]'
                     }`}
                     title={details.subtitle}
                     id={`layout-version-card-${v}`}

@@ -47,7 +47,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: HeaderProps) {
   };
 
   return (
-    <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 h-16 shrink-0 flex items-center transition-colors duration-200 relative z-50">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200/80 dark:border-slate-800/80 px-6 h-16 shrink-0 flex items-center transition-all duration-200 shadow-sm">
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <SmartHomeNaqshaLogo size="sm" />
