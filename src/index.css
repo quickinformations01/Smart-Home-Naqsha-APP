@@ -4,36 +4,37 @@
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Elegant light mode: Premium editorial warm ivory & prestigious architectural cobalt */
-  --slate-50: #fcfbfa;      /* Warm premium paper canvas */
-  --slate-100: #f5f3ef;     /* Subtle warm-cream secondary panels */
-  --slate-200: #e7e3da;     /* High-precision tactile borders */
-  --slate-300: #d5cfc1;
-  --slate-350: #b1a796;
-  --slate-400: #8d8370;     /* Muted metadata labels */
-  --slate-450: #756c5c;
-  --slate-500: #62594b;
-  --slate-600: #4d453b;     /* High-contrast readable body text */
-  --slate-700: #3b352d;
-  --slate-800: #29241f;
-  --slate-900: #1b1814;     /* Deep prestige charcoal/espresso for crisp typography */
-  --slate-950: #0f0d0b;
+  /* Ultra-Professional High-Contrast Light Mode (Sleek Slate-Cool Editorial Theme) */
+  --slate-50: #f8fafc;      /* Pristine cool slate-white page background */
+  --slate-100: #f1f5f9;     /* Secondary cool light slate elements / subtle panels */
+  --slate-200: #e2e8f0;     /* Highly visible, clean structural borders */
+  --slate-300: #cbd5e1;     /* Tactile interactive outline states */
+  --slate-350: #94a3b8;     /* Muted secondary borders */
+  --slate-400: #64748b;     /* High-contrast readable secondary labels */
+  --slate-450: #475569;     /* Clean metadata subtitle text */
+  --slate-500: #475569;     
+  --slate-600: #334155;     /* Extremely legible, elegant dark body text */
+  --slate-700: #1e293b;     /* Primary readable text elements */
+  --slate-800: #0f172a;     /* Deep contrast charcoal for prominent titles */
+  --slate-850: #0f172a;     /* High-definition accent container borders */
+  --slate-900: #020617;     /* Pure, prestigious dark slate header typography */
+  --slate-950: #020617;     /* Solid solid base contrast black */
 
-  --indigo-50: #f0f3ff;
-  --indigo-100: #e1e7ff;
-  --indigo-200: #cbd7ff;
-  --indigo-300: #a1b6ff;
-  --indigo-400: #7390ff;
-  --indigo-500: #2552e2;    /* Architectural Blueprint Cobalt Blue */
-  --indigo-600: #1a3fc0;
-  --indigo-700: #122f99;
-  --indigo-800: #0d2273;
-  --indigo-900: #0a1854;
-  --indigo-950: #050d33;
+  --indigo-50: #eff6ff;     /* Beautiful bright blue highlighting */
+  --indigo-100: #dbeafe;    /* Light blueprint backdrop highlights */
+  --indigo-200: #bfdbfe;
+  --indigo-300: #93c5fd;
+  --indigo-400: #60a5fa;
+  --indigo-500: #2563eb;    /* Architectural Blueprint Cobalt Blue - High Contrast */
+  --indigo-600: #1d4ed8;
+  --indigo-700: #1e40af;
+  --indigo-800: #1e3a8a;
+  --indigo-900: #172554;
+  --indigo-950: #030712;
 }
 
 .dark {
-  /* High-fidelity dark mode: Original perfect blue-slate scheme */
+  /* High-fidelity Premium original blue-slate dark mode (already good as requested) */
   --slate-50: #f8fafc;
   --slate-100: #f1f5f9;
   --slate-200: #e2e8f0;
@@ -45,6 +46,7 @@
   --slate-600: #475569;
   --slate-700: #334155;
   --slate-800: #1e293b;
+  --slate-850: #111b27;     /* Rich deep navy-slate panel separator */
   --slate-900: #0f172a;
   --slate-950: #020617;
 
@@ -78,6 +80,7 @@
   --color-slate-600: var(--slate-600);
   --color-slate-700: var(--slate-700);
   --color-slate-800: var(--slate-800);
+  --color-slate-850: var(--slate-850);
   --color-slate-900: var(--slate-900);
   --color-slate-950: var(--slate-950);
 
