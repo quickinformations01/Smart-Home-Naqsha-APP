@@ -2927,7 +2927,7 @@ export default function FloorPlanVisualizer({
           <div className="flex items-center space-x-2">
             <button
               onClick={onBackToSize}
-              className="px-3 py-1.5 text-xs font-display font-extrabold uppercase tracking-wider border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 hover:border-slate-350 dark:hover:border-slate-700 hover:text-slate-950 dark:hover:text-white transition-all duration-150 flex items-center gap-1 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="px-3 py-1.5 text-xs font-display font-extrabold uppercase tracking-wider border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:text-slate-950 dark:hover:text-white transition-all duration-150 flex items-center gap-1 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               id="new-dimensions-btn"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -3604,7 +3604,7 @@ export default function FloorPlanVisualizer({
                 <div>
                   <h4 className="font-display text-sm font-black text-slate-950 dark:text-slate-50 uppercase tracking-wider flex items-center gap-2">
                     Naqsha Architectural Variations
-                    <span className="bg-indigo-600/10 text-indigo-600 dark:text-indigo-450 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-indigo-500/20">
+                    <span className="bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-indigo-500/20">
                       V{layoutVersion} Active
                     </span>
                   </h4>
@@ -3638,7 +3638,7 @@ export default function FloorPlanVisualizer({
                     className={`p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer select-none border group relative overflow-hidden ${
                       isSelected
                         ? `${details.activeBtnBg} text-white border-transparent scale-[1.03] shadow-lg shadow-indigo-500/10`
-                        : 'bg-slate-50/40 dark:bg-slate-950/30 text-slate-650 dark:text-slate-300 border-slate-200/50 dark:border-slate-850/80 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white hover:scale-[1.02] hover:shadow-md'
+                        : 'bg-slate-50/40 dark:bg-slate-950/30 text-slate-600 dark:text-slate-300 border-slate-200/50 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white hover:scale-[1.02] hover:shadow-md'
                     }`}
                     title={details.subtitle}
                     id={`layout-version-card-${v}`}
@@ -3677,7 +3677,7 @@ export default function FloorPlanVisualizer({
                   {getVersionDetails(layoutVersion).features.map((feature, idx) => (
                     <div 
                       key={idx} 
-                      className="flex items-center space-x-3 bg-slate-50/50 dark:bg-slate-950/40 p-3 rounded-2xl border border-slate-200/30 dark:border-slate-850 hover:border-indigo-500/20 dark:hover:border-indigo-500/20 hover:bg-white dark:hover:bg-slate-900/50 transition-all duration-200"
+                      className="flex items-center space-x-3 bg-slate-50/50 dark:bg-slate-950/40 p-3 rounded-2xl border border-slate-200/30 dark:border-slate-800 hover:border-indigo-500/20 dark:hover:border-indigo-500/20 hover:bg-white dark:hover:bg-slate-900/50 transition-all duration-200"
                     >
                       <div className="p-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-500/10">
                         <svg className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24">
@@ -3693,7 +3693,7 @@ export default function FloorPlanVisualizer({
               </div>
 
               {/* Right Column: Dynamic Engineering Performance Dial Indicators */}
-              <div className="lg:col-span-5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200/40 dark:border-slate-850 p-4.5 rounded-2xl space-y-3.5">
+              <div className="lg:col-span-5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200/40 dark:border-slate-800 p-4.5 rounded-2xl space-y-3.5">
                 <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">
                   Dynamic Engineering Diagnostics
                 </span>
@@ -3704,7 +3704,7 @@ export default function FloorPlanVisualizer({
                       <span>Privacy Partitioning</span>
                       <span className="font-mono text-indigo-600 dark:text-indigo-400">{getVersionDetails(layoutVersion).scores.privacy}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full transition-all duration-500"
                         style={{ width: `${getVersionDetails(layoutVersion).scores.privacy}%` }}
@@ -3718,7 +3718,7 @@ export default function FloorPlanVisualizer({
                       <span>Spatial Efficiency</span>
                       <span className="font-mono text-emerald-600 dark:text-emerald-400">{getVersionDetails(layoutVersion).scores.efficiency}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
                         style={{ width: `${getVersionDetails(layoutVersion).scores.efficiency}%` }}
@@ -3732,7 +3732,7 @@ export default function FloorPlanVisualizer({
                       <span>Natural Ventilation & Sunlight</span>
                       <span className="font-mono text-amber-600 dark:text-amber-500">{getVersionDetails(layoutVersion).scores.airflow}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
                         style={{ width: `${getVersionDetails(layoutVersion).scores.airflow}%` }}
@@ -4114,7 +4114,7 @@ export default function FloorPlanVisualizer({
               <div className="grid grid-cols-2 gap-3">
                 {/* Floor Material Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
                     Floor Finish
                   </label>
                   <select
@@ -4133,7 +4133,7 @@ export default function FloorPlanVisualizer({
 
                 {/* Wall Material Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
                     Wall Finish
                   </label>
                   <select

@@ -195,7 +195,7 @@ export default function GenerationProgress({
               </h3>
             </div>
           </div>
-          <div className="bg-slate-850 border border-slate-800 rounded-2xl px-4 py-2 flex items-center space-x-2.5 shrink-0 self-start sm:self-auto">
+          <div className="bg-slate-800 border border-slate-700/60 rounded-2xl px-4 py-2 flex items-center space-x-2.5 shrink-0 self-start sm:self-auto">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -248,7 +248,7 @@ export default function GenerationProgress({
         </div>
 
         {/* Current Dynamic Phase Indicator Card */}
-        <div className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl space-y-1.5 relative overflow-hidden">
+        <div className="bg-slate-950/40 border border-slate-800 p-4 rounded-2xl space-y-1.5 relative overflow-hidden">
           {/* Neon laser overlay sweeps left and right */}
           <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-indigo-500 to-blue-500 blur-[1px] shadow-lg shadow-indigo-500/50" style={{ animation: 'laser-sweep 3s ease-in-out infinite' }} />
           
@@ -299,11 +299,11 @@ export default function GenerationProgress({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              <span className="text-[9px] font-bold text-slate-450 font-mono tracking-tight">ENGINE FEEDING</span>
+              <span className="text-[9px] font-bold text-slate-400 font-mono tracking-tight">ENGINE FEEDING</span>
             </div>
           </div>
 
-          <div className="h-44 bg-slate-950 border border-slate-850 rounded-2xl p-4.5 overflow-y-auto font-mono text-[10px] text-slate-400 space-y-2.5 shadow-inner">
+          <div className="h-44 bg-slate-950 border border-slate-800 rounded-2xl p-4.5 overflow-y-auto font-mono text-[10px] text-slate-400 space-y-2.5 shadow-inner">
             {activeLogs.length === 0 ? (
               <div className="text-slate-600 italic animate-pulse">Establishing core blueprint system protocols...</div>
             ) : (
@@ -313,7 +313,7 @@ export default function GenerationProgress({
                   <div 
                     key={index} 
                     className={`flex items-start transition-all duration-150 ${
-                      isLatest ? 'text-indigo-300 font-extrabold scale-[1.005]' : 'opacity-65 text-slate-450'
+                      isLatest ? 'text-indigo-300 font-extrabold scale-[1.005]' : 'opacity-65 text-slate-400'
                     }`}
                   >
                     <span className="text-indigo-500 mr-2 shrink-0 select-none">&gt;&gt;</span>
@@ -327,7 +327,7 @@ export default function GenerationProgress({
         </div>
 
         {/* Footer info block */}
-        <div className="flex items-start gap-3 p-4 bg-slate-950/40 border border-slate-850 rounded-2xl relative z-10">
+        <div className="flex items-start gap-3 p-4 bg-slate-950/40 border border-slate-800 rounded-2xl relative z-10">
           <ShieldCheck className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
           <p className="text-[10.5px] text-slate-400 leading-normal tracking-tight font-medium">
             Smart Home Naqsha automates spatial layout zoning, load stress margins, Vastu sun alignments, and 3D meshes to build a compliant, highly optimized blueprint tailored specifically for your structural parameters.

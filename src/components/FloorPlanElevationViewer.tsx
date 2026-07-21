@@ -298,7 +298,7 @@ export default function FloorPlanElevationViewer({ layout }: FloorPlanElevationV
         {/* Action Button: Export SVG / CAD Schema */}
         <button
           onClick={triggerExport}
-          className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-850 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-500/10 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-500/10 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           title="Download printable high-fidelity vector SVG elevation file"
         >
           <Download className="w-4 h-4" />
@@ -358,7 +358,7 @@ export default function FloorPlanElevationViewer({ layout }: FloorPlanElevationV
                   className={`p-2.5 text-left rounded-xl border text-xs transition-all flex items-center justify-between cursor-pointer ${
                     style === styleOption.id
                       ? 'bg-indigo-50 border-indigo-200 text-indigo-900 dark:bg-indigo-950/30 dark:border-indigo-900/60 dark:text-indigo-300 font-bold'
-                      : 'bg-white border-slate-200 text-slate-650 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60'
                   }`}
                 >
                   <div>
@@ -1103,12 +1103,12 @@ export default function FloorPlanElevationViewer({ layout }: FloorPlanElevationV
                   <span>{hoveredElement.name}</span>
                   <button 
                     onClick={() => setHoveredElement(null)} 
-                    className="text-[10px] text-slate-450 hover:text-slate-600 dark:hover:text-slate-200 transition-all cursor-pointer font-bold px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md"
+                    className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-all cursor-pointer font-bold px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md"
                   >
                     Dismiss
                   </button>
                 </h5>
-                <p className="text-[10px] text-slate-500 dark:text-slate-450 leading-relaxed">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
                   {hoveredElement.description}
                 </p>
               </div>

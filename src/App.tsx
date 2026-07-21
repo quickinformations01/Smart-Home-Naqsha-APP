@@ -502,7 +502,7 @@ export default function App() {
                         ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/40 dark:bg-blue-950/20' 
                         : initialSummary 
                           ? 'text-emerald-600 dark:text-emerald-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/30' 
-                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
+                          : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
                     <div className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
@@ -533,7 +533,7 @@ export default function App() {
                         ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/40 dark:bg-blue-950/20' 
                         : activeLayout 
                           ? 'text-emerald-600 dark:text-emerald-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/30' 
-                          : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
+                          : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
                     <div className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
@@ -541,7 +541,7 @@ export default function App() {
                         ? 'bg-blue-600 text-white shadow-sm ring-4 ring-blue-500/10' 
                         : activeLayout 
                           ? 'bg-emerald-500 text-white shadow-sm' 
-                          : 'bg-slate-100 dark:bg-slate-800/80 text-slate-450 border border-slate-200/40 dark:border-slate-800/40'
+                          : 'bg-slate-100 dark:bg-slate-800/80 text-slate-400 border border-slate-200/40 dark:border-slate-800/40'
                     }`}>
                       {activeLayout ? <Check className="w-3 h-3 stroke-[3]" /> : <ClipboardList className="w-3.5 h-3.5" />}
                     </div>
@@ -562,13 +562,13 @@ export default function App() {
                     className={`flex items-center gap-2 py-1 px-2 rounded-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-xs ${
                       step === 'visualizer' 
                         ? 'text-blue-600 dark:text-blue-400 font-extrabold bg-blue-50/40 dark:bg-blue-950/20' 
-                        : 'text-slate-450 dark:text-slate-500 hover:text-slate-750 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
+                        : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
                     <div className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
                       step === 'visualizer' 
                         ? 'bg-blue-600 text-white shadow-sm ring-4 ring-blue-500/10' 
-                        : 'bg-slate-100 dark:bg-slate-800/80 text-slate-450 border border-slate-200/40 dark:border-slate-800/40'
+                        : 'bg-slate-100 dark:bg-slate-800/80 text-slate-400 border border-slate-200/40 dark:border-slate-800/40'
                     }`}>
                       <Layout className="w-3 h-3" />
                     </div>

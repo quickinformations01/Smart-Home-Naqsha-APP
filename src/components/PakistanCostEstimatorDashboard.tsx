@@ -722,7 +722,7 @@ export default function PakistanCostEstimatorDashboard({
             {/* TAB CONTENT: MATERIAL RATES */}
             {activeTab === 'rates' && (
               <div className="space-y-3.5 max-h-[580px] overflow-y-auto pr-1">
-                <p className="text-[10px] text-slate-450 leading-relaxed bg-amber-50 dark:bg-amber-950/20 border border-amber-200/40 p-2.5 rounded-2xl font-medium">
+                <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-relaxed bg-amber-50 dark:bg-amber-950/20 border border-amber-200/40 p-2.5 rounded-2xl font-medium">
                   ⚠️ Adjust rates manually according to current retail rates in your city (Lahore, Karachi, Islamabad, Rawalpindi, Peshawar, Multan, etc.)
                 </p>
 
@@ -827,12 +827,12 @@ export default function PakistanCostEstimatorDashboard({
                 </div>
 
                 {/* Logistics */}
-                <div className="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/30 dark:border-slate-850 space-y-2">
+                <div className="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/30 dark:border-slate-800 space-y-2">
                   <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block">Logistics & Flat Budgets</span>
                   
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-450 uppercase">Transport</label>
+                      <label className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">Transport</label>
                       <input
                         type="number"
                         value={rates.transportation}
@@ -841,7 +841,7 @@ export default function PakistanCostEstimatorDashboard({
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-450 uppercase">Water Supply</label>
+                      <label className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">Water Supply</label>
                       <input
                         type="number"
                         value={rates.water}
@@ -874,8 +874,8 @@ export default function PakistanCostEstimatorDashboard({
             {!collapsedSections.materials && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {/* Cement */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-850/60 text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide block">Cement (Gravel / DG)</span>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-800/60 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide block">Cement (Gravel / DG)</span>
                   <span className="text-base sm:text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {estimate.materialBreakdown.cementBags.toLocaleString()}
                   </span>
@@ -883,8 +883,8 @@ export default function PakistanCostEstimatorDashboard({
                 </div>
 
                 {/* Sarya Steel */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-850/60 text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide block">Steel (Sarya - Grade 60)</span>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-800/60 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide block">Steel (Sarya - Grade 60)</span>
                   <span className="text-base sm:text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {estimate.materialBreakdown.steelTons}
                   </span>
@@ -892,8 +892,8 @@ export default function PakistanCostEstimatorDashboard({
                 </div>
 
                 {/* Bricks */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-850/60 text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide block">Bricks (Eent - Awwal)</span>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-800/60 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide block">Bricks (Eent - Awwal)</span>
                   <span className="text-base sm:text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {estimate.materialBreakdown.bricksCount.toLocaleString()}
                   </span>
@@ -901,8 +901,8 @@ export default function PakistanCostEstimatorDashboard({
                 </div>
 
                 {/* Sand */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-850/60 text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide block">Sand (Ravi/Lawrencepur)</span>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-800/60 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide block">Sand (Ravi/Lawrencepur)</span>
                   <span className="text-base sm:text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {estimate.materialBreakdown.sandCft.toLocaleString()}
                   </span>
@@ -910,8 +910,8 @@ export default function PakistanCostEstimatorDashboard({
                 </div>
 
                 {/* Crush */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-850/60 text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide block">Crush (Sargodha/Margalla)</span>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-800/60 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide block">Crush (Sargodha/Margalla)</span>
                   <span className="text-base sm:text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {estimate.materialBreakdown.crushCft.toLocaleString()}
                   </span>
@@ -919,8 +919,8 @@ export default function PakistanCostEstimatorDashboard({
                 </div>
 
                 {/* Binding Wire */}
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-850/60 text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wide block">Binding Wire (Ghai)</span>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/50 dark:border-slate-800/60 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide block">Binding Wire (Ghai)</span>
                   <span className="text-base sm:text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {estimate.materialBreakdown.bindingWireKg}
                   </span>
@@ -978,7 +978,7 @@ export default function PakistanCostEstimatorDashboard({
                                 <td className="px-4 py-4 text-right font-mono">
                                   {floor.coveredAreaSqFt > 0 ? (
                                     <>
-                                      {Math.round(floor.coveredAreaSqFt).toLocaleString()} <span className="text-[10px] font-sans text-slate-450">Sq Ft</span>
+                                      {Math.round(floor.coveredAreaSqFt).toLocaleString()} <span className="text-[10px] font-sans text-slate-400 dark:text-slate-500">Sq Ft</span>
                                     </>
                                   ) : '-'}
                                 </td>
@@ -1063,7 +1063,7 @@ export default function PakistanCostEstimatorDashboard({
                             Combined Total
                           </td>
                           <td className="px-4 py-4 text-right font-mono">
-                            {Math.round(estimate.coveredAreaSqFt).toLocaleString()} <span className="text-[10px] font-sans text-slate-450">Sq Ft</span>
+                            {Math.round(estimate.coveredAreaSqFt).toLocaleString()} <span className="text-[10px] font-sans text-slate-400 dark:text-slate-500">Sq Ft</span>
                           </td>
                           <td className="px-4 py-4 text-right font-mono text-blue-600 dark:text-blue-400">
                             {formatPKR(estimate.totalMaterialCost)}
@@ -1138,10 +1138,10 @@ export default function PakistanCostEstimatorDashboard({
                               <td className="px-4 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">
                                 {item.quantity.toLocaleString()} <span className="text-[9px] font-sans text-slate-400">{item.unit}</span>
                               </td>
-                              <td className="px-4 py-3.5 text-right font-mono text-slate-650 dark:text-slate-400">
+                              <td className="px-4 py-3.5 text-right font-mono text-slate-600 dark:text-slate-450">
                                 {item.materialCost > 0 ? Math.round(item.materialCost).toLocaleString() : '-'}
                               </td>
-                              <td className="px-4 py-3.5 text-right font-mono text-slate-650 dark:text-slate-400">
+                              <td className="px-4 py-3.5 text-right font-mono text-slate-600 dark:text-slate-450">
                                 {item.labourCost > 0 ? Math.round(item.labourCost).toLocaleString() : '-'}
                               </td>
                               <td className="px-4 py-3.5 text-right font-mono text-emerald-600 dark:text-emerald-400 font-bold">
