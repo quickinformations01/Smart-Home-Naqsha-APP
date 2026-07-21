@@ -27,6 +27,9 @@ export default function App() {
   const [plotType, setPlotType] = useState<'corner' | 'corner-left' | 'corner-right' | 'standard'>('standard');
   const [facing, setFacing] = useState<'north' | 'south' | 'east' | 'west'>('east');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isCinematicLoading, setIsCinematicLoading] = useState<boolean>(false);
+  const [cinematicDuration, setCinematicDuration] = useState<number>(12000);
+  const [pendingNextStep, setPendingNextStep] = useState<'recommendations' | 'visualizer' | null>(null);
 
   // Layout & Summary states
   const [initialSummary, setInitialSummary] = useState<NaqshaSummary | null>(null);
@@ -277,7 +280,9 @@ export default function App() {
         if (data.fallback) {
           setAiWarning(data.message || 'Generated using architectural offline engine.');
         }
-        setStep('recommendations');
+        setPendingNextStep('recommendations');
+        setCinematicDuration(3500);
+        setIsCinematicLoading(true);
       } else {
         throw new Error('Invalid server layout payload');
       }
@@ -291,7 +296,9 @@ export default function App() {
       setActiveLayout(fallbackLayout);
       setInitialSummary(fallbackLayout.summary);
       setAiWarning('Direct generation via local template engine (Offline Fallback).');
-      setStep('recommendations');
+      setPendingNextStep('recommendations');
+      setCinematicDuration(3500);
+      setIsCinematicLoading(true);
     } finally {
       setIsLoading(false);
     }
@@ -324,7 +331,9 @@ export default function App() {
       const data = await response.json();
       if (data.layout) {
         setActiveLayout(data.layout);
-        setStep('visualizer');
+        setPendingNextStep('visualizer');
+        setCinematicDuration(12000);
+        setIsCinematicLoading(true);
       } else {
         throw new Error('Failed to generate customized blueprint');
       }
@@ -341,7 +350,9 @@ export default function App() {
         facing,
       });
       setActiveLayout(clientCustomizedLayout);
-      setStep('visualizer');
+      setPendingNextStep('visualizer');
+      setCinematicDuration(12000);
+      setIsCinematicLoading(true);
     } finally {
       setIsLoading(false);
     }
@@ -437,7 +448,17 @@ export default function App() {
       {showSplashScreen && (
         <SplashScreen onComplete={() => setShowSplashScreen(false)} />
       )}
-      <GenerationProgress isOpen={isLoading} />
+      <GenerationProgress 
+        isOpen={isCinematicLoading} 
+        durationMs={cinematicDuration}
+        onComplete={() => {
+          if (pendingNextStep) {
+            setStep(pendingNextStep);
+            setPendingNextStep(null);
+          }
+          setIsCinematicLoading(false);
+        }}
+      />
       
       {!isOnline && (
         <div className="fixed top-0 inset-x-0 z-[110] bg-rose-600 dark:bg-rose-950 text-white text-xs sm:text-sm py-2.5 px-4 text-center font-bold flex items-center justify-center gap-2 shadow-lg animate-in slide-in-from-top duration-300">

@@ -355,7 +355,8 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         icon: Home,
         badgeColor: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
         activeBtnBg: 'bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20',
-        features: ['Traditional Privacy Partitioning', 'Autonomous Public Drawing Room', 'Enclosed Independent Kitchen', 'Optimized Main Entry Flow']
+        features: ['Traditional Privacy Partitioning', 'Autonomous Public Drawing Room', 'Enclosed Independent Kitchen', 'Optimized Main Entry Flow'],
+        scores: { privacy: 95, efficiency: 84, airflow: 78 }
       };
     case 2:
       return {
@@ -364,7 +365,8 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         icon: Compass,
         badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
         activeBtnBg: 'bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 shadow-lg shadow-emerald-500/20',
-        features: ['Seamless Open-Plan Lounge', 'Double Spacious Outdoor Terraces', 'Integrated Island Kitchen Flow', 'Enlarged Living/Dining Area']
+        features: ['Seamless Open-Plan Lounge', 'Double Spacious Outdoor Terraces', 'Integrated Island Kitchen Flow', 'Enlarged Living/Dining Area'],
+        scores: { privacy: 72, efficiency: 92, airflow: 86 }
       };
     case 3:
       return {
@@ -373,7 +375,8 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         icon: Grid,
         badgeColor: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
         activeBtnBg: 'bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 shadow-lg shadow-purple-500/20',
-        features: ['Maximized Functional Rooms', 'Private Corridor Study Alcoves', 'High-Density Smart Closets', 'Perfect for Large Families']
+        features: ['Maximized Functional Rooms', 'Private Corridor Study Alcoves', 'High-Density Smart Closets', 'Perfect for Large Families'],
+        scores: { privacy: 78, efficiency: 98, airflow: 72 }
       };
     case 4:
       return {
@@ -382,7 +385,8 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         icon: Sparkles,
         badgeColor: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
         activeBtnBg: 'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20',
-        features: ['Royal Master Bed Suite', 'Dual Front & Back Terraces', 'Double Prep Kitchen Zone', 'Grand Double-Height Lounge Feel']
+        features: ['Royal Master Bed Suite', 'Dual Front & Back Terraces', 'Double Prep Kitchen Zone', 'Grand Double-Height Lounge Feel'],
+        scores: { privacy: 90, efficiency: 88, airflow: 92 }
       };
     case 5:
       return {
@@ -391,7 +395,8 @@ const getVersionDetails = (v: 1 | 2 | 3 | 4 | 5) => {
         icon: Wind,
         badgeColor: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
         activeBtnBg: 'bg-gradient-to-br from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 shadow-lg shadow-indigo-500/20',
-        features: ['Open-To-Sky Central Courtyard', 'Premium Natural Air Ventilation', 'Traditional Central Family Patio', 'Maximized Solar Daylight Harvesting']
+        features: ['Open-To-Sky Central Courtyard', 'Premium Natural Air Ventilation', 'Traditional Central Family Patio', 'Maximized Solar Daylight Harvesting'],
+        scores: { privacy: 82, efficiency: 80, airflow: 98 }
       };
   }
 };
@@ -3587,20 +3592,23 @@ export default function FloorPlanVisualizer({
 
         {/* Dynamic Architectural Variation Block (V1 to V5) */}
         {!showEstimator && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-md space-y-4.5 transition-all">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-xl space-y-6 transition-all relative overflow-hidden">
+            {/* Architectural Grid Background Overlay */}
+            <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px), radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 10px 10px' }} />
+
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800/80 relative z-10">
               <div className="flex items-center space-x-3.5">
-                <div className="p-3 bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 text-indigo-600 dark:text-indigo-450 rounded-2xl border border-indigo-500/10 shrink-0 shadow-inner">
-                  <LayoutTemplate className="w-5.5 h-5.5" />
+                <div className="p-3 bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-2xl border border-indigo-500/10 shrink-0 shadow-inner">
+                  <LayoutTemplate className="w-6 h-6 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="font-display text-xs font-black text-slate-950 dark:text-slate-50 uppercase tracking-widest flex items-center gap-2">
+                  <h4 className="font-display text-sm font-black text-slate-950 dark:text-slate-50 uppercase tracking-wider flex items-center gap-2">
                     Naqsha Architectural Variations
-                    <span className="bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border border-indigo-500/20">
+                    <span className="bg-indigo-600/10 text-indigo-600 dark:text-indigo-450 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-indigo-500/20">
                       V{layoutVersion} Active
                     </span>
                   </h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-tight">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-tight mt-0.5">
                     {getVersionDetails(layoutVersion).subtitle}
                   </p>
                 </div>
@@ -3608,7 +3616,7 @@ export default function FloorPlanVisualizer({
               
               <button
                 onClick={cycleToNextVersion}
-                className="self-start md:self-auto py-2 px-3.5 text-[10px] font-extrabold uppercase tracking-wider rounded-xl flex items-center space-x-1.5 transition-all duration-200 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
+                className="self-start md:self-auto py-2.5 px-4 text-[10px] font-extrabold uppercase tracking-widest rounded-xl flex items-center space-x-2 transition-all duration-250 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
                 id="cycle-version-btn"
               >
                 <RefreshCw className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:rotate-180 transition-transform duration-500" />
@@ -3616,7 +3624,8 @@ export default function FloorPlanVisualizer({
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            {/* Version Cards Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5 relative z-10">
               {([1, 2, 3, 4, 5] as const).map((v) => {
                 const details = getVersionDetails(v);
                 const IconComponent = details.icon;
@@ -3626,28 +3635,28 @@ export default function FloorPlanVisualizer({
                   <button
                     key={v}
                     onClick={() => handleLayoutVersionChange(v)}
-                    className={`p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer select-none border group relative overflow-hidden ${
+                    className={`p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer select-none border group relative overflow-hidden ${
                       isSelected
-                        ? `${details.activeBtnBg} text-white border-transparent scale-[1.03] shadow-md`
-                        : 'bg-slate-50/50 dark:bg-slate-950/40 text-slate-650 dark:text-slate-300 border-slate-200/60 dark:border-slate-850 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white hover:scale-[1.01] hover:shadow-md'
+                        ? `${details.activeBtnBg} text-white border-transparent scale-[1.03] shadow-lg shadow-indigo-500/10`
+                        : 'bg-slate-50/40 dark:bg-slate-950/30 text-slate-650 dark:text-slate-300 border-slate-200/50 dark:border-slate-850/80 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white hover:scale-[1.02] hover:shadow-md'
                     }`}
                     title={details.subtitle}
                     id={`layout-version-card-${v}`}
                   >
-                    {/* Active Corner Glow / Light Indicator */}
+                    {/* Active Corner Pulse Indicator */}
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                      <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-white animate-ping" />
                     )}
 
-                    <div className={`p-2.5 rounded-xl transition-all duration-300 mb-2 ${
+                    <div className={`p-3 rounded-xl transition-all duration-300 mb-2.5 ${
                       isSelected 
                         ? 'bg-white/15 text-white scale-110 shadow-inner' 
-                        : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200/55 dark:border-slate-800/80 group-hover:bg-slate-100 dark:group-hover:bg-slate-800/60 group-hover:scale-110 group-hover:text-slate-750 dark:group-hover:text-slate-200'
+                        : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-800/60 group-hover:bg-slate-100 dark:group-hover:bg-slate-800/50 group-hover:scale-110 group-hover:text-slate-800 dark:group-hover:text-slate-100'
                     }`}>
-                      <IconComponent className="w-4 h-4" />
+                      <IconComponent className="w-4.5 h-4.5" />
                     </div>
                     <span className="font-display text-[11px] font-black uppercase tracking-widest block">V{v}</span>
-                    <span className={`text-[8px] font-bold uppercase tracking-tighter truncate max-w-full block mt-0.5 ${
+                    <span className={`text-[9px] font-extrabold uppercase tracking-wider truncate max-w-full block mt-1 ${
                       isSelected ? 'text-white/90' : 'text-slate-400 dark:text-slate-500'
                     }`}>
                       {v === 1 ? 'Classic' : v === 2 ? 'Modern' : v === 3 ? 'Efficient' : v === 4 ? 'Luxury' : 'Ventilated'}
@@ -3657,27 +3666,80 @@ export default function FloorPlanVisualizer({
               })}
             </div>
 
-            {/* Dynamic Features List Panel for Selected Version */}
-            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <span className="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-2.5">
-                Architectural Specifications & Highlights
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-                {getVersionDetails(layoutVersion).features.map((feature, idx) => (
-                  <div 
-                    key={idx} 
-                    className="flex items-center space-x-2 bg-slate-50/50 dark:bg-slate-950/40 p-2.5 rounded-xl border border-slate-200/40 dark:border-slate-850 hover:border-slate-250 dark:hover:border-slate-800 hover:bg-white dark:hover:bg-slate-900/40 transition-all duration-200"
-                  >
-                    <div className="p-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-500/10">
-                      <svg className="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
+            {/* Architectural Highlights & Professional Analytics Performance Panel */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-300">
+              {/* Left Column: Specifications Checklist */}
+              <div className="lg:col-span-7 space-y-3">
+                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">
+                  Architectural Specifications & Highlights
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {getVersionDetails(layoutVersion).features.map((feature, idx) => (
+                    <div 
+                      key={idx} 
+                      className="flex items-center space-x-3 bg-slate-50/50 dark:bg-slate-950/40 p-3 rounded-2xl border border-slate-200/30 dark:border-slate-850 hover:border-indigo-500/20 dark:hover:border-indigo-500/20 hover:bg-white dark:hover:bg-slate-900/50 transition-all duration-200"
+                    >
+                      <div className="p-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-500/10">
+                        <svg className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300 tracking-tight leading-normal" title={feature}>
+                        {feature}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-350 tracking-tight truncate" title={feature}>
-                      {feature}
-                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Dynamic Engineering Performance Dial Indicators */}
+              <div className="lg:col-span-5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200/40 dark:border-slate-850 p-4.5 rounded-2xl space-y-3.5">
+                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">
+                  Dynamic Engineering Diagnostics
+                </span>
+                <div className="space-y-2.5">
+                  {/* Privacy Metric */}
+                  <div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">
+                      <span>Privacy Partitioning</span>
+                      <span className="font-mono text-indigo-600 dark:text-indigo-400">{getVersionDetails(layoutVersion).scores.privacy}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full transition-all duration-500"
+                        style={{ width: `${getVersionDetails(layoutVersion).scores.privacy}%` }}
+                      />
+                    </div>
                   </div>
-                ))}
+
+                  {/* Efficiency Metric */}
+                  <div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">
+                      <span>Spatial Efficiency</span>
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400">{getVersionDetails(layoutVersion).scores.efficiency}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                        style={{ width: `${getVersionDetails(layoutVersion).scores.efficiency}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Airflow Metric */}
+                  <div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-600 dark:text-slate-400 mb-1">
+                      <span>Natural Ventilation & Sunlight</span>
+                      <span className="font-mono text-amber-600 dark:text-amber-500">{getVersionDetails(layoutVersion).scores.airflow}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
+                        style={{ width: `${getVersionDetails(layoutVersion).scores.airflow}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
