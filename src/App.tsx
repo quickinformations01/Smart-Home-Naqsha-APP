@@ -4,11 +4,9 @@ import SetupForm from './components/SetupForm';
 import RecommendationCard from './components/RecommendationCard';
 import FloorPlanVisualizer from './components/FloorPlanVisualizer';
 import SavedProjectsList from './components/SavedProjectsList';
-import PresetPlansSelector from './components/PresetPlansSelector';
 import GenerationProgress from './components/GenerationProgress';
 import SplashScreen from './components/SplashScreen';
 import AuxPages from './components/AuxPages';
-import { PresetPlan } from './utils/presetPlans';
 import { NaqshaLayout, NaqshaSummary, SavedProject } from './types';
 import { generateProceduralLayout } from './utils/layoutGenerator';
 import { Sparkles, Sliders, CheckCircle2, AlertTriangle, RefreshCw, Home, ArrowLeft, ArrowRight, Ruler, ClipboardList, Layout, Check } from 'lucide-react';
@@ -245,18 +243,6 @@ export default function App() {
   }, [isDarkMode]);
 
   // Step 1: Handle initial analysis submit
-  const handleSelectPresetPlan = (preset: PresetPlan) => {
-    const presetLayout = preset.getLayout();
-    setWidth(preset.width);
-    setLength(preset.length);
-    setUnit(preset.unit);
-    setPlotType(preset.plotType);
-    setFacing(preset.facing);
-    setActiveLayout(presetLayout);
-    setInitialSummary(presetLayout.summary);
-    setStep('visualizer');
-  };
-
   const handleInitialGenerate = async (
     w: number,
     l: number,
@@ -595,11 +581,6 @@ export default function App() {
                 {/* Inputs & Analytics Form */}
                 <div className="max-w-2xl mx-auto">
                   <SetupForm onGenerate={handleInitialGenerate} isLoading={isLoading} />
-                </div>
-
-                {/* Choose from 5 Professional House Plans (Presets) */}
-                <div className="pt-2">
-                  <PresetPlansSelector onSelectPlan={handleSelectPresetPlan} />
                 </div>
 
                 {/* Local Storage projects gallery */}

@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { Ruler, Sparkles, Sliders } from 'lucide-react';
+import { 
+  Ruler, 
+  Sparkles, 
+  Compass, 
+  Layout, 
+  HelpCircle, 
+  ChevronRight, 
+  Check, 
+  MapPin, 
+  Sun, 
+  ArrowUpRight,
+  Sliders
+} from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface SetupFormProps {
   onGenerate: (
@@ -19,6 +32,21 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
   const [plotType, setPlotType] = useState<'corner' | 'corner-left' | 'corner-right' | 'standard'>('standard');
   const [facing, setFacing] = useState<'north' | 'south' | 'east' | 'west'>('east');
   const [error, setError] = useState<string>('');
+
+  // Quick Preset Plot Sizes in Pakistan
+  const pakPresets = [
+    { name: '3 Marla', desc: 'Compact Townhouse', w: 20, l: 30, unit: 'ft' },
+    { name: '5 Marla', desc: 'Standard Residential', w: 25, l: 50, unit: 'ft' },
+    { name: '10 Marla', desc: 'Premium Semi-Villa', w: 35, l: 70, unit: 'ft' },
+    { name: '1 Kanal', desc: 'Luxurious Estate', w: 50, l: 90, unit: 'ft' },
+  ];
+
+  const handleApplyPreset = (w: number, l: number, prUnit: 'ft' | 'm') => {
+    setWidth(w.toString());
+    setLength(l.toString());
+    setUnit(prUnit);
+    setError('');
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,30 +71,83 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-lg shadow-slate-100/50 dark:shadow-none transition">
-      <div className="flex items-center space-x-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-        <div className="p-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-lg">
-          <Ruler className="w-5 h-5" />
+    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-100/50 dark:shadow-none transition-all duration-300 relative overflow-hidden">
+      {/* Decorative backdrop glow */}
+      <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl -translate-y-12 translate-x-12 pointer-events-none" />
+
+      <div className="flex items-center space-x-4 mb-8 border-b border-slate-100 dark:border-slate-850 pb-5">
+        <div className="p-3 bg-blue-550/10 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-500/10 shadow-inner">
+          <Ruler className="w-5.5 h-5.5" />
         </div>
         <div>
-          <h2 className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 font-extrabold block">
-            Plot Dimensions Configuration
+          <h2 className="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+            Plot Layout Configuration
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Provide actual length and width to generate the house map.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium leading-normal">
+            Enter your site parameters. The AI architect will compile a fully ventilated spatial blueprint.
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Quick Presets Section */}
+      <div className="mb-6 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Quick Pakistan Size Presets
+          </span>
+          <span className="text-[9px] font-medium text-slate-400 flex items-center gap-1">
+            <MapPin className="w-2.5 h-2.5" /> Auto-config
+          </span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {pakPresets.map((preset) => {
+            const isSelected = 
+              parseFloat(width) === preset.w && 
+              parseFloat(length) === preset.l && 
+              unit === preset.unit;
+
+            return (
+              <button
+                key={preset.name}
+                type="button"
+                onClick={() => handleApplyPreset(preset.w, preset.l, preset.unit as any)}
+                className={`p-3 rounded-2xl text-left border transition-all duration-200 relative group overflow-hidden cursor-pointer ${
+                  isSelected
+                    ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 text-blue-700 dark:text-blue-400 shadow-sm'
+                    : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200/60 dark:border-slate-800/60 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-1">
+                  <span className="text-xs font-black tracking-tight block">{preset.name}</span>
+                  {isSelected && (
+                    <div className="w-3.5 h-3.5 rounded-full bg-blue-500 text-white flex items-center justify-center">
+                      <Check className="w-2 h-2 stroke-[3]" />
+                    </div>
+                  )}
+                </div>
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold block leading-none">
+                  {preset.w}′×{preset.l}′ {preset.unit}
+                </span>
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium block mt-1 leading-none group-hover:text-blue-500 transition-colors">
+                  {preset.desc}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Unit Selector */}
-        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/30 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Measurement Unit</span>
-          <div className="inline-flex rounded-lg p-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950/50 p-2 rounded-2xl border border-slate-200/60 dark:border-slate-800/80">
+          <span className="text-xs font-extrabold text-slate-600 dark:text-slate-400 uppercase tracking-wider pl-2 flex items-center gap-1.5">
+            <Sliders className="w-3.5 h-3.5 text-slate-400" /> Metric System
+          </span>
+          <div className="inline-flex rounded-xl p-1 bg-slate-100 dark:bg-slate-850/80 border border-slate-200/50 dark:border-slate-800/50">
             <button
               type="button"
               onClick={() => setUnit('ft')}
-              className={`px-3 py-1 text-[10px] font-bold rounded transition-all ${
+              className={`px-4 py-1.5 text-[10px] font-black uppercase rounded-lg transition-all cursor-pointer ${
                 unit === 'ft'
                   ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -77,7 +158,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
             <button
               type="button"
               onClick={() => setUnit('m')}
-              className={`px-3 py-1 text-[10px] font-bold rounded transition-all ${
+              className={`px-4 py-1.5 text-[10px] font-black uppercase rounded-lg transition-all cursor-pointer ${
                 unit === 'm'
                   ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -88,11 +169,12 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Width and Length Inputs */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {/* Plot Width */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
-              Width ({unit})
+          <div className="space-y-2">
+            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              Plot Width ({unit})
             </label>
             <div className="relative">
               <input
@@ -102,20 +184,20 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 placeholder="e.g. 30"
                 min="10"
                 step="any"
-                className="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-sm"
+                className="w-full p-3.5 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-extrabold text-sm"
                 required
                 id="plot-width-input"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono font-bold">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono font-bold uppercase">
                 {unit}
               </span>
             </div>
           </div>
 
           {/* Plot Length */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
-              Length ({unit})
+          <div className="space-y-2">
+            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              Plot Length ({unit})
             </label>
             <div className="relative">
               <input
@@ -125,80 +207,98 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 placeholder="e.g. 50"
                 min="15"
                 step="any"
-                className="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-sm"
+                className="w-full p-3.5 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-extrabold text-sm"
                 required
                 id="plot-length-input"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono font-bold">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono font-bold uppercase">
                 {unit}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Plot Type */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
-              Plot Location Type
-            </label>
-            <div className="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-slate-800/30 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
-              <button
-                type="button"
-                onClick={() => setPlotType('standard')}
-                className={`py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-all ${
-                  plotType === 'standard'
-                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Standard
-              </button>
-              <button
-                type="button"
-                onClick={() => setPlotType('corner-left')}
-                className={`py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-all ${
-                  plotType === 'corner-left'
-                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Left Corner
-              </button>
-              <button
-                type="button"
-                onClick={() => setPlotType('corner-right')}
-                className={`py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-all ${
-                  plotType === 'corner-right'
-                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Right Corner
-              </button>
-            </div>
+        {/* Plot Aspect Type (Corner Selection) */}
+        <div className="space-y-2">
+          <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+            Plot Location Aspect (Zoning & Ventilation)
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'standard', title: 'Standard Lot', desc: 'Closed sides, front road' },
+              { id: 'corner-left', title: 'Left Corner', desc: 'Side lawn / road access' },
+              { id: 'corner-right', title: 'Right Corner', desc: 'Side lawn / road access' },
+            ].map((item) => {
+              const isSelected = plotType === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setPlotType(item.id as any)}
+                  className={`p-3.5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between h-20 relative cursor-pointer ${
+                    isSelected
+                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-sm ring-1 ring-blue-500/50'
+                      : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  <div className="flex justify-between items-center w-full">
+                    <span className="text-[11px] font-black tracking-tight text-slate-900 dark:text-white uppercase">
+                      {item.title}
+                    </span>
+                    <Layout className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-500' : 'text-slate-400'}`} />
+                  </div>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none mt-1">
+                    {item.desc}
+                  </span>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Facing Direction */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
-              Facing Direction (Compass)
-            </label>
-            <select
-              value={facing}
-              onChange={(e) => setFacing(e.target.value as any)}
-              className="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-sm"
-            >
-              <option value="east" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">East (🌅 Morning Sun)</option>
-              <option value="west" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">West (🌇 Evening Warmth)</option>
-              <option value="north" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">North (❄️ Ambient Diffused)</option>
-              <option value="south" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">South (☀️ All-day Sunshine)</option>
-            </select>
+        {/* Facing Direction Compass with beautiful solar paths */}
+        <div className="space-y-2">
+          <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
+            <span>Compass Facing Direction</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-normal flex items-center gap-1">
+              <Compass className="w-3 h-3 text-blue-500" /> Determines Sun Paths
+            </span>
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { id: 'east', title: 'East', sub: 'Morning Sun', icon: '🌅' },
+              { id: 'west', title: 'West', sub: 'Evening Glow', icon: '🌇' },
+              { id: 'north', title: 'North', sub: 'Ambient Light', icon: '❄️' },
+              { id: 'south', title: 'South', sub: 'All-day Warmth', icon: '☀️' },
+            ].map((dir) => {
+              const isSelected = facing === dir.id;
+              return (
+                <button
+                  key={dir.id}
+                  type="button"
+                  onClick={() => setFacing(dir.id as any)}
+                  className={`p-3 rounded-2xl text-center border transition-all duration-200 flex flex-col items-center justify-center relative cursor-pointer ${
+                    isSelected
+                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-md scale-[1.01]'
+                      : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  <span className="text-base mb-1.5">{dir.icon}</span>
+                  <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase leading-none block">
+                    {dir.title}
+                  </span>
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium leading-none block mt-1">
+                    {dir.sub}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {error && (
-          <p className="text-sm text-red-500 font-medium bg-red-50 dark:bg-red-950/30 p-3 rounded-xl border border-red-200 dark:border-red-900">
+          <p className="text-xs text-red-500 font-bold bg-red-50 dark:bg-red-950/20 p-4 rounded-2xl border border-red-200 dark:border-red-950/50 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
             {error}
           </p>
         )}
@@ -206,18 +306,18 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl shadow-lg shadow-blue-500/20 dark:shadow-none focus:outline-none focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-blue-500/15 hover:shadow-blue-500/25 focus:outline-none focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5 cursor-pointer"
           id="generate-btn"
         >
           {isLoading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Analyzing Dimensions...</span>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Compiling Spatial Analytics...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-5 h-5" />
-              <span>Generate Naqsha</span>
+              <Sparkles className="w-4.5 h-4.5 text-white animate-pulse" />
+              <span>Compile & Propose Map</span>
             </>
           )}
         </button>
