@@ -3,8 +3,93 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+:root {
+  /* Elegant light mode: Premium editorial warm ivory & prestigious architectural cobalt */
+  --slate-50: #fcfbfa;      /* Warm premium paper canvas */
+  --slate-100: #f5f3ef;     /* Subtle warm-cream secondary panels */
+  --slate-200: #e7e3da;     /* High-precision tactile borders */
+  --slate-300: #d5cfc1;
+  --slate-350: #b1a796;
+  --slate-400: #8d8370;     /* Muted metadata labels */
+  --slate-450: #756c5c;
+  --slate-500: #62594b;
+  --slate-600: #4d453b;     /* High-contrast readable body text */
+  --slate-700: #3b352d;
+  --slate-800: #29241f;
+  --slate-900: #1b1814;     /* Deep prestige charcoal/espresso for crisp typography */
+  --slate-950: #0f0d0b;
+
+  --indigo-50: #f0f3ff;
+  --indigo-100: #e1e7ff;
+  --indigo-200: #cbd7ff;
+  --indigo-300: #a1b6ff;
+  --indigo-400: #7390ff;
+  --indigo-500: #2552e2;    /* Architectural Blueprint Cobalt Blue */
+  --indigo-600: #1a3fc0;
+  --indigo-700: #122f99;
+  --indigo-800: #0d2273;
+  --indigo-900: #0a1854;
+  --indigo-950: #050d33;
+}
+
+.dark {
+  /* High-fidelity dark mode: Original perfect blue-slate scheme */
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-350: #94a3b8;
+  --slate-400: #94a3b8;
+  --slate-450: #64748b;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --slate-950: #020617;
+
+  --indigo-50: #eef2ff;
+  --indigo-100: #e0e7ff;
+  --indigo-200: #c7d2fe;
+  --indigo-300: #a5b4fc;
+  --indigo-400: #818cf8;
+  --indigo-500: #6366f1;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+  --indigo-800: #3730a3;
+  --indigo-900: #312e81;
+  --indigo-950: #1e1b4b;
+}
+
 @theme {
   --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Inject custom fluid high-contrast variable palettes */
+  --color-slate-50: var(--slate-50);
+  --color-slate-100: var(--slate-100);
+  --color-slate-200: var(--slate-200);
+  --color-slate-300: var(--slate-300);
+  --color-slate-350: var(--slate-350);
+  --color-slate-400: var(--slate-400);
+  --color-slate-450: var(--slate-450);
+  --color-slate-500: var(--slate-500);
+  --color-slate-600: var(--slate-600);
+  --color-slate-700: var(--slate-700);
+  --color-slate-800: var(--slate-800);
+  --color-slate-900: var(--slate-900);
+  --color-slate-950: var(--slate-950);
+
+  --color-indigo-50: var(--indigo-50);
+  --color-indigo-100: var(--indigo-100);
+  --color-indigo-200: var(--indigo-200);
+  --color-indigo-300: var(--indigo-300);
+  --color-indigo-400: var(--indigo-400);
+  --color-indigo-500: var(--indigo-500);
+  --color-indigo-600: var(--indigo-600);
+  --color-indigo-700: var(--indigo-700);
+  --color-indigo-800: var(--indigo-800);
+  --color-indigo-900: var(--indigo-900);
+  --color-indigo-950: var(--indigo-950);
 }
