@@ -144,9 +144,9 @@ export default function Cinematic2DNaqshaModal({
     }
   };
 
-  // Mouse / Touch Panning handlers
+  // Mouse Panning & Scroll Wheel Zoom Handlers for Desktop
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only primary mouse button
+    if (e.button !== 0) return;
     setIsDragging(true);
     setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
@@ -163,22 +163,211 @@ export default function Cinematic2DNaqshaModal({
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.12 : 0.88;
-    setZoom(prev => Math.max(0.25, Math.min(3.5, prev * zoomFactor)));
+    const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+    setZoom(prev => Math.max(0.15, Math.min(4.0, prev * zoomFactor)));
   };
 
-  // High-Res SVG Download
+  // Touch Pinch-to-Zoom & Pan Handlers for Mobile Screens
+  const initialTouchRef = useRef<{ dist: number; zoom: number; pan: { x: number; y: number } } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - pan.x,
+        y: e.touches[0].clientY - pan.y,
+      });
+      initialTouchRef.current = null;
+    } else if (e.touches.length === 2) {
+      setIsDragging(false);
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      initialTouchRef.current = {
+        dist: dist || 1,
+        zoom,
+        pan: { ...pan },
+      };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1 && isDragging && !initialTouchRef.current) {
+      setPan({
+        x: e.touches[0].clientX - dragStart.x,
+        y: e.touches[0].clientY - dragStart.y,
+      });
+    } else if (e.touches.length === 2 && initialTouchRef.current) {
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      const scaleFactor = currentDist / initialTouchRef.current.dist;
+      const newZoom = Math.max(0.15, Math.min(4.0, initialTouchRef.current.zoom * scaleFactor));
+
+      // Pinch center focal zooming
+      const touchCenterX = (t1.clientX + t2.clientX) / 2;
+      const touchCenterY = (t1.clientY + t2.clientY) / 2;
+
+      if (viewportRef.current) {
+        const rect = viewportRef.current.getBoundingClientRect();
+        const relX = touchCenterX - rect.left;
+        const relY = touchCenterY - rect.top;
+
+        const zoomRatio = newZoom / (zoom || 1);
+        setPan({
+          x: relX - (relX - pan.x) * zoomRatio,
+          y: relY - (relY - pan.y) * zoomRatio,
+        });
+      }
+
+      setZoom(newZoom);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 0) {
+      setIsDragging(false);
+      initialTouchRef.current = null;
+    } else if (e.touches.length === 1) {
+      initialTouchRef.current = null;
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - pan.x,
+        y: e.touches[0].clientY - pan.y,
+      });
+    }
+  };
+
+  // High-Res SVG Download - Perfectly Centered in Document with Blueprint Margins
   const handleDownloadSVG = () => {
     if (!svgRef.current) return;
-    const svgData = new XMLSerializer().serializeToString(svgRef.current);
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const svgUrl = URL.createObjectURL(svgBlob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = svgUrl;
-    downloadLink.download = `Cinematic_Naqsha_${layout.width}x${layout.length}_${activeFloorKey}.svg`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+
+    const currentStyle = themeStyles[theme];
+    const floorLabel = activeFloorKey === 'ground' ? 'Ground Floor' : activeFloorKey === 'first' ? '1st Floor' : activeFloorKey === 'second' ? '2nd Floor' : `${activeFloorKey} Floor`;
+
+    // Centered Canvas Margin Space
+    const margin = 50;
+    const headerSpace = 80;
+    const footerSpace = 40;
+
+    const contentW = svgWidth;
+    const contentH = svgHeight;
+
+    const docWidth = contentW + margin * 2;
+    const docHeight = contentH + headerSpace + footerSpace + margin;
+
+    // Clone SVG element to process
+    const clone = svgRef.current.cloneNode(true) as SVGElement;
+
+    // Convert foreignObject nodes to native vector <text> nodes for universal viewer compatibility
+    const foreignObjects = Array.from(clone.querySelectorAll('foreignObject'));
+    foreignObjects.forEach((fo) => {
+      const x = parseFloat(fo.getAttribute('x') || '0');
+      const y = parseFloat(fo.getAttribute('y') || '0');
+      const w = parseFloat(fo.getAttribute('width') || '0');
+      const h = parseFloat(fo.getAttribute('height') || '0');
+
+      const spans = Array.from(fo.querySelectorAll('span'));
+      let roomName = '';
+      let roomDim = '';
+      let roomSqFt = '';
+
+      if (spans.length >= 1) roomName = spans[0].textContent || '';
+      if (spans.length >= 2) roomDim = spans[1].textContent || '';
+      if (spans.length >= 3) roomSqFt = spans[2].textContent || '';
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const centerX = x + w / 2;
+      const centerY = y + h / 2 - (roomSqFt ? 8 : 2);
+
+      // Room Name Text
+      const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      nameText.setAttribute('x', String(centerX));
+      nameText.setAttribute('y', String(centerY));
+      nameText.setAttribute('text-anchor', 'middle');
+      nameText.setAttribute('fill', currentStyle.textColor);
+      nameText.setAttribute('font-family', 'ui-sans-serif, system-ui, sans-serif');
+      nameText.setAttribute('font-size', '12px');
+      nameText.setAttribute('font-weight', 'bold');
+      nameText.textContent = roomName;
+      g.appendChild(nameText);
+
+      // Room Dimensions Text
+      if (roomDim) {
+        const dimText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        dimText.setAttribute('x', String(centerX));
+        dimText.setAttribute('y', String(centerY + 14));
+        dimText.setAttribute('text-anchor', 'middle');
+        dimText.setAttribute('fill', currentStyle.dimTextColor);
+        dimText.setAttribute('font-family', 'monospace');
+        dimText.setAttribute('font-size', '10px');
+        dimText.setAttribute('font-weight', 'bold');
+        dimText.textContent = roomDim;
+        g.appendChild(dimText);
+      }
+
+      // Room Sq Ft Badge Text
+      if (roomSqFt && showSqFt) {
+        const sqftText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        sqftText.setAttribute('x', String(centerX));
+        sqftText.setAttribute('y', String(centerY + 26));
+        sqftText.setAttribute('text-anchor', 'middle');
+        sqftText.setAttribute('fill', currentStyle.outerWallStroke);
+        sqftText.setAttribute('font-family', 'monospace');
+        sqftText.setAttribute('font-size', '9px');
+        sqftText.setAttribute('font-weight', 'bold');
+        sqftText.textContent = roomSqFt;
+        g.appendChild(sqftText);
+      }
+
+      if (fo.parentNode) {
+        fo.parentNode.replaceChild(g, fo);
+      }
+    });
+
+    const innerGraphics = clone.innerHTML;
+
+    // Standalone centered SVG document string
+    const svgDoc = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${docWidth}" height="${docHeight}" viewBox="0 0 ${docWidth} ${docHeight}">
+  <style>
+    .naqsha-title { font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 900; fill: ${currentStyle.textColor}; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+    .naqsha-sub { font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 600; fill: ${currentStyle.dimTextColor}; font-size: 12px; }
+    .naqsha-footer { font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 800; fill: ${currentStyle.dimTextColor}; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  </style>
+
+  <!-- Background -->
+  <rect width="${docWidth}" height="${docHeight}" fill="${currentStyle.canvasBg}" />
+
+  <!-- Outer Frame Line -->
+  <rect x="12" y="12" width="${docWidth - 24}" height="${docHeight - 24}" fill="none" stroke="${currentStyle.outerWallStroke}" stroke-width="1.5" opacity="0.35" rx="12" />
+
+  <!-- Header Banner (Centered) -->
+  <g transform="translate(${docWidth / 2}, 42)">
+    <text text-anchor="middle" class="naqsha-title" y="0">SMART HOME NAQSHA — ${floorLabel.toUpperCase()}</text>
+    <text text-anchor="middle" class="naqsha-sub" y="22">Plot: ${layout.width} × ${layout.length} ${layout.unit} • Covered: ${Math.round(totalCoveredSqFt)} SQ FT • ${bedCount} Beds, ${bathCount} Baths</text>
+  </g>
+
+  <!-- Centered Blueprint Stage -->
+  <g transform="translate(${margin}, ${headerSpace})">
+    ${innerGraphics}
+  </g>
+
+  <!-- Footer Info (Centered) -->
+  <g transform="translate(${docWidth / 2}, ${docHeight - 24})">
+    <text text-anchor="middle" class="naqsha-footer">${layout.facing || 'EAST'} FACING • GENERATED WITH LIVE 2D NAQSHA STUDIO</text>
+  </g>
+</svg>`;
+
+    const blob = new Blob([svgDoc], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Naqsha_${layout.width}x${layout.length}_${activeFloorKey}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Theme styling definitions
@@ -397,11 +586,16 @@ export default function Cinematic2DNaqshaModal({
       {/* MAIN VIEWPORT CANVAS STAGE - COMPLETELY CLEAN & UNOBSTRUCTED */}
       <main
         ref={viewportRef}
-        className={`relative flex-1 w-full h-full overflow-hidden ${currentStyle.bg} cursor-grab active:cursor-grabbing`}
+        className={`relative flex-1 w-full h-full overflow-hidden ${currentStyle.bg} cursor-grab active:cursor-grabbing select-none`}
+        style={{ touchAction: 'none' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         onWheel={handleWheel}
       >
         {/* Blueprint Stage Box with Glow Frame */}
