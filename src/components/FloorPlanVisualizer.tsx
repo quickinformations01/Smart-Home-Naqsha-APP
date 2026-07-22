@@ -35,6 +35,7 @@ import {
   Home,
   Grid,
   Wind,
+  Eye,
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { NaqshaLayout, Room, Door, Window, RoomType } from '../types';
@@ -42,6 +43,7 @@ import { generateProceduralLayout } from '../utils/layoutGenerator';
 import FloorPlan3DViewer from './FloorPlan3DViewer';
 import FloorPlanElevationViewer from './FloorPlanElevationViewer';
 import PakistanCostEstimatorDashboard from './PakistanCostEstimatorDashboard';
+import Cinematic2DNaqshaModal from './Cinematic2DNaqshaModal';
 import {
   DEFAULT_PAK_RATES,
   DEFAULT_ESTIMATOR_INPUTS,
@@ -432,6 +434,7 @@ export default function FloorPlanVisualizer({
 
   // 3D & Drag lock toggle states
   const [is3DView, setIs3DView] = useState<boolean>(false);
+  const [showCinematicModal, setShowCinematicModal] = useState<boolean>(false);
   const [lockDragging, setLockDragging] = useState<boolean>(true);
   const [activeFloor, setActiveFloor] = useState<'ground' | 'first' | 'second'>('ground');
   const [layoutVersion, setLayoutVersion] = useState<1 | 2 | 3 | 4 | 5>(1);
@@ -3078,26 +3081,38 @@ export default function FloorPlanVisualizer({
                 </div>
               </div>
               
-              <button
-                onClick={() => setLockDragging(!lockDragging)}
-                className={`px-4 py-2.5 text-xs font-black rounded-xl transition-all duration-250 flex items-center space-x-2 shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0 ${
-                  lockDragging 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/10' 
-                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/10'
-                }`}
-                title={lockDragging ? 'Unlock Naqsha to edit rooms, doors and windows' : 'Lock Naqsha for viewing or exporting'}
-                id="toggle-edit-mode-btn"
-              >
-                {lockDragging ? (
-                  <>
-                    <span>✏️ Edit Naqsha</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🔒 Lock & Preview</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowCinematicModal(true)}
+                  className="px-3.5 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-2 cursor-pointer shrink-0"
+                  title="Open 2D Naqsha in Cinematic Lightbox View"
+                  id="open-cinematic-banner-btn"
+                >
+                  <Eye className="w-4 h-4 text-cyan-300 animate-pulse" />
+                  <span>🎬 Cinematic Popup</span>
+                </button>
+
+                <button
+                  onClick={() => setLockDragging(!lockDragging)}
+                  className={`px-4 py-2.5 text-xs font-black rounded-xl transition-all duration-250 flex items-center space-x-2 shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0 ${
+                    lockDragging 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/10' 
+                      : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/10'
+                  }`}
+                  title={lockDragging ? 'Unlock Naqsha to edit rooms, doors and windows' : 'Lock Naqsha for viewing or exporting'}
+                  id="toggle-edit-mode-btn"
+                >
+                  {lockDragging ? (
+                    <>
+                      <span>✏️ Edit Naqsha</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🔒 Lock & Preview</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Render our interactive 2D blueprint SVG editor inside its container */}
@@ -3113,20 +3128,42 @@ export default function FloorPlanVisualizer({
               onTouchCancel={handleTouchEnd2D}
               onWheel={handleWheel}
             >
-              {/* Floating Action Button (FAB) to trigger 3D view */}
-              <button
-                onClick={() => setIs3DView(true)}
-                className="absolute top-4 right-4 z-10 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-xl flex items-center space-x-2 shadow-lg transition-transform duration-200 hover:scale-[1.05] active:scale-[0.95] cursor-pointer"
-                title="Generate and explore this floor plan in 3D perspective"
-                id="fab-generate-3d"
-              >
-                <Box className="w-4 h-4 text-amber-300" />
-                <span>Generate 3D Naqsha</span>
-                <span className="bg-amber-400 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">Live</span>
-              </button>
+              {/* Floating Action Buttons top right */}
+              <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+                <button
+                  onClick={() => setShowCinematicModal(true)}
+                  className="px-3.5 py-2.5 bg-slate-900/90 hover:bg-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-extrabold text-xs rounded-xl flex items-center space-x-2 shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] cursor-pointer border border-slate-700/60"
+                  title="Expand 2D Naqsha into Cinematic Lightbox View"
+                  id="fab-cinematic-2d"
+                >
+                  <Eye className="w-4 h-4 text-cyan-400 animate-pulse" />
+                  <span>🎬 Cinematic View</span>
+                </button>
+
+                <button
+                  onClick={() => setIs3DView(true)}
+                  className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-xl flex items-center space-x-2 shadow-lg transition-transform duration-200 hover:scale-[1.05] active:scale-[0.95] cursor-pointer"
+                  title="Generate and explore this floor plan in 3D perspective"
+                  id="fab-generate-3d"
+                >
+                  <Box className="w-4 h-4 text-amber-300" />
+                  <span>Generate 3D Naqsha</span>
+                  <span className="bg-amber-400 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">Live</span>
+                </button>
+              </div>
 
               {/* Floating Zoom & Fit Canvas HUD */}
               <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-1.5 rounded-xl border border-slate-200/60 dark:border-slate-800/85 shadow-lg shadow-slate-250/20 dark:shadow-none select-none">
+                <button
+                  onClick={() => setShowCinematicModal(true)}
+                  className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition cursor-pointer flex items-center gap-1 px-2"
+                  title="Open Cinematic Lightbox View"
+                  id="canvas-cinematic-modal-btn"
+                >
+                  <Eye className="w-3.5 h-3.5 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase">Cinematic</span>
+                </button>
+                <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-0.5" />
                 <button
                   onClick={handleZoomOut}
                   className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer"
@@ -4334,6 +4371,19 @@ export default function FloorPlanVisualizer({
         </div>
       </div>
       )}
+
+      {/* Cinematic 2D Naqsha Lightbox View Modal */}
+      <Cinematic2DNaqshaModal
+        isOpen={showCinematicModal}
+        onClose={() => setShowCinematicModal(false)}
+        layout={layout}
+        pxPerUnit={pxPerUnit}
+        showSqFtLayer={showSqFtLayer}
+        onSwitch3D={() => setIs3DView(true)}
+        onSelectFloor={(floorKey) => {
+          setActiveFloor(floorKey as any);
+        }}
+      />
     </div>
   );
 }
