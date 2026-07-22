@@ -69,9 +69,11 @@ export default function Cinematic2DNaqshaModal({
       const contentWidth = layout.width * pxPerUnit;
       const contentHeight = layout.length * pxPerUnit;
 
-      const scaleX = (rect.width - 120) / contentWidth;
-      const scaleY = (rect.height - 120) / contentHeight;
-      const fitZoom = Math.max(0.4, Math.min(1.8, Math.min(scaleX, scaleY)));
+      const paddingX = rect.width < 640 ? 24 : 80;
+      const paddingY = rect.height < 640 ? 24 : 80;
+      const scaleX = (rect.width - paddingX) / contentWidth;
+      const scaleY = (rect.height - paddingY) / contentHeight;
+      const fitZoom = Math.max(0.15, Math.min(2.0, Math.min(scaleX, scaleY)));
 
       setZoom(fitZoom);
       setPan({
@@ -129,9 +131,11 @@ export default function Cinematic2DNaqshaModal({
       const rect = viewportRef.current.getBoundingClientRect();
       const contentWidth = layout.width * pxPerUnit;
       const contentHeight = layout.length * pxPerUnit;
-      const scaleX = (rect.width - 120) / contentWidth;
-      const scaleY = (rect.height - 120) / contentHeight;
-      const fitZoom = Math.max(0.4, Math.min(1.8, Math.min(scaleX, scaleY)));
+      const paddingX = rect.width < 640 ? 24 : 80;
+      const paddingY = rect.height < 640 ? 24 : 80;
+      const scaleX = (rect.width - paddingX) / contentWidth;
+      const scaleY = (rect.height - paddingY) / contentHeight;
+      const fitZoom = Math.max(0.15, Math.min(2.0, Math.min(scaleX, scaleY)));
       setZoom(fitZoom);
       setPan({
         x: (rect.width - contentWidth * fitZoom) / 2,
@@ -248,155 +252,145 @@ export default function Cinematic2DNaqshaModal({
       </div>
 
       {/* TOP HEADER BAR (OUTSIDE CANVAS) */}
-      <header className="relative z-10 flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 bg-slate-900/95 border-b border-slate-800/80 backdrop-blur-md">
-        {/* Title & Live Status Badge */}
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/20">
-            <Eye className="w-5 h-5 animate-pulse text-cyan-300" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <h3 className="font-display font-black text-sm sm:text-base uppercase tracking-wider text-white">
-                Live 2D Naqsha Studio
-              </h3>
-              <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Live 2D Projection
-              </span>
-              <span className="hidden md:inline-flex items-center gap-1 bg-slate-800/80 text-amber-400 border border-amber-500/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                <Compass className="w-3 h-3 animate-spin-slow" />
-                {layout.facing || 'EAST'} FACING
-              </span>
+      <header className="relative z-10 flex flex-col gap-2 px-4 py-2.5 sm:px-6 sm:py-3 bg-slate-900/95 border-b border-slate-800/80 backdrop-blur-md">
+        {/* Top Row: Title, Specs & Close */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 min-w-0">
+            <div className="p-1.5 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-lg shadow-md shrink-0">
+              <Eye className="w-4 h-4 animate-pulse text-cyan-300" />
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">
-              Plot: <strong className="text-slate-200">{layout.width} × {layout.length} {layout.unit}</strong> • {Math.round(totalCoveredSqFt)} SQ FT Covered • {bedCount} Beds, {bathCount} Baths
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center space-x-1.5">
+                <h3 className="font-display font-black text-xs sm:text-sm uppercase tracking-wider text-white truncate">
+                  Live 2D Naqsha
+                </h3>
+                <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase shrink-0">
+                  Live
+                </span>
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">
+                Plot: <strong className="text-slate-200">{layout.width} × {layout.length} {layout.unit}</strong> • {Math.round(totalCoveredSqFt)} SQ FT
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-1 shrink-0">
+            {/* Download High-Res SVG */}
+            <button
+              onClick={handleDownloadSVG}
+              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition cursor-pointer"
+              title="Download Vector SVG Blueprint"
+              id="cinematic-download-svg"
+            >
+              <Download className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Toggle Fullscreen */}
+            <button
+              onClick={toggleFullscreen}
+              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition cursor-pointer"
+              title="Toggle Fullscreen View"
+              id="cinematic-toggle-fullscreen"
+            >
+              {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Close Modal Button */}
+            <button
+              onClick={onClose}
+              className="p-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-lg transition shadow-md shadow-red-600/20 cursor-pointer ml-1"
+              title="Close Live View (Esc)"
+              id="cinematic-close-btn"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Floor Selection Tabs */}
-        {layout.floors && Object.keys(layout.floors).length > 1 && (
-          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
-            {Object.keys(layout.floors).map((floorKey) => {
-              const isActive = activeFloorKey === floorKey;
-              const floorLabel = floorKey === 'ground' ? 'Ground Floor' : floorKey === 'first' ? '1st Floor' : floorKey === 'second' ? '2nd Floor' : `${floorKey} Floor`;
-              return (
-                <button
-                  key={floorKey}
-                  onClick={() => {
-                    setActiveFloorKey(floorKey);
-                    if (onSelectFloor) onSelectFloor(floorKey);
-                  }}
-                  className={`px-3 py-1.5 text-xs font-black rounded-lg uppercase tracking-wider transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900'
-                  }`}
-                >
-                  {floorLabel}
-                </button>
-              );
-            })}
+        {/* Bottom Row: Floor Selector & Quick Toggles */}
+        <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px]">
+          {/* Floor Selection Tabs */}
+          {layout.floors && Object.keys(layout.floors).length > 1 ? (
+            <div className="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+              {Object.keys(layout.floors).map((floorKey) => {
+                const isActive = activeFloorKey === floorKey;
+                const floorLabel = floorKey === 'ground' ? 'Ground' : floorKey === 'first' ? '1st' : floorKey === 'second' ? '2nd' : floorKey;
+                return (
+                  <button
+                    key={floorKey}
+                    onClick={() => {
+                      setActiveFloorKey(floorKey);
+                      if (onSelectFloor) onSelectFloor(floorKey);
+                    }}
+                    className={`px-2 py-1 text-[10px] font-black rounded-md uppercase tracking-wider transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {floorLabel}
+                  </button>
+                );
+              })}
+            </div>
+          ) : <div />}
+
+          {/* Quick Toggles */}
+          <div className="flex items-center space-x-1.5 ml-auto">
+            {/* Blueprint Theme Selector */}
+            <div className="hidden md:flex items-center space-x-1 bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setTheme('classic_blue')}
+                className={`px-2 py-1 rounded text-[9px] font-black transition cursor-pointer ${
+                  theme === 'classic_blue' ? 'bg-blue-600 text-white' : 'text-slate-400'
+                }`}
+              >
+                Blueprint
+              </button>
+              <button
+                onClick={() => setTheme('ivory_draft')}
+                className={`px-2 py-1 rounded text-[9px] font-black transition cursor-pointer ${
+                  theme === 'ivory_draft' ? 'bg-amber-600 text-white' : 'text-slate-400'
+                }`}
+              >
+                Ivory
+              </button>
+              <button
+                onClick={() => setTheme('midnight_gold')}
+                className={`px-2 py-1 rounded text-[9px] font-black transition cursor-pointer ${
+                  theme === 'midnight_gold' ? 'bg-yellow-600 text-white' : 'text-slate-400'
+                }`}
+              >
+                Gold
+              </button>
+              <button
+                onClick={() => setTheme('monochrome_cad')}
+                className={`px-2 py-1 rounded text-[9px] font-black transition cursor-pointer ${
+                  theme === 'monochrome_cad' ? 'bg-slate-700 text-white' : 'text-slate-400'
+                }`}
+              >
+                CAD
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowSqFt(!showSqFt)}
+              className={`px-2 py-0.5 font-black rounded-md uppercase tracking-wider transition cursor-pointer border ${
+                showSqFt ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-slate-800 text-slate-400 border-slate-700'
+              }`}
+            >
+              Sq Ft {showSqFt ? 'ON' : 'OFF'}
+            </button>
+
+            <button
+              onClick={() => setShowGrid(!showGrid)}
+              className={`px-2 py-0.5 font-black rounded-md uppercase tracking-wider transition cursor-pointer border ${
+                showGrid ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-slate-800 text-slate-400 border-slate-700'
+              }`}
+            >
+              Grid {showGrid ? 'ON' : 'OFF'}
+            </button>
           </div>
-        )}
-
-        {/* Control Options (All Outside Naqsha) */}
-        <div className="flex flex-wrap items-center space-x-2">
-          {/* Blueprint Theme Selector */}
-          <div className="hidden sm:flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-            <button
-              onClick={() => setTheme('classic_blue')}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                theme === 'classic_blue' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-              }`}
-              title="Classic Cobalt Blueprint"
-            >
-              <div className="w-3 h-3 rounded-full bg-blue-500 border border-white/40" />
-              <span className="text-[10px] uppercase font-black">Blueprint</span>
-            </button>
-            <button
-              onClick={() => setTheme('ivory_draft')}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                theme === 'ivory_draft' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-              }`}
-              title="Architectural Ivory Draft"
-            >
-              <div className="w-3 h-3 rounded-full bg-[#fbf9f4] border border-amber-900/40" />
-              <span className="text-[10px] uppercase font-black">Ivory</span>
-            </button>
-            <button
-              onClick={() => setTheme('midnight_gold')}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                theme === 'midnight_gold' ? 'bg-yellow-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-              }`}
-              title="Midnight Obsidian Gold"
-            >
-              <div className="w-3 h-3 rounded-full bg-yellow-400 border border-white/40" />
-              <span className="text-[10px] uppercase font-black">Gold</span>
-            </button>
-            <button
-              onClick={() => setTheme('monochrome_cad')}
-              className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                theme === 'monochrome_cad' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-              }`}
-              title="Pure Monochrome CAD"
-            >
-              <div className="w-3 h-3 rounded-full bg-slate-200 border border-slate-900" />
-              <span className="text-[10px] uppercase font-black">CAD</span>
-            </button>
-          </div>
-
-          {/* Toggle Sq Ft */}
-          <button
-            onClick={() => setShowSqFt(!showSqFt)}
-            className={`px-2.5 py-1.5 text-[10px] font-black rounded-xl uppercase tracking-wider transition cursor-pointer border ${
-              showSqFt ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
-            }`}
-          >
-            {showSqFt ? 'Sq Ft ON' : 'Sq Ft OFF'}
-          </button>
-
-          {/* Toggle Grid */}
-          <button
-            onClick={() => setShowGrid(!showGrid)}
-            className={`px-2.5 py-1.5 text-[10px] font-black rounded-xl uppercase tracking-wider transition cursor-pointer border ${
-              showGrid ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
-            }`}
-          >
-            {showGrid ? 'Grid ON' : 'Grid OFF'}
-          </button>
-
-          <div className="h-6 w-px bg-slate-800" />
-
-          {/* Download High-Res SVG */}
-          <button
-            onClick={handleDownloadSVG}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
-            title="Download Vector SVG Blueprint"
-            id="cinematic-download-svg"
-          >
-            <Download className="w-4 h-4" />
-          </button>
-
-          {/* Toggle Fullscreen */}
-          <button
-            onClick={toggleFullscreen}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
-            title="Toggle Fullscreen View"
-            id="cinematic-toggle-fullscreen"
-          >
-            {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-          </button>
-
-          {/* Close Modal Button */}
-          <button
-            onClick={onClose}
-            className="p-2 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition shadow-lg shadow-red-600/20 cursor-pointer"
-            title="Close Live View (Esc)"
-            id="cinematic-close-btn"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
       </header>
 
@@ -418,7 +412,7 @@ export default function Cinematic2DNaqshaModal({
             transformOrigin: '0 0',
           }}
         >
-          <div className={`p-8 rounded-3xl ${currentStyle.glow} transition-all duration-300`} style={{ backgroundColor: currentStyle.canvasBg }}>
+          <div className={`p-3 sm:p-6 rounded-2xl ${currentStyle.glow} transition-all duration-300`} style={{ backgroundColor: currentStyle.canvasBg }}>
             <svg
               ref={svgRef}
               width={svgWidth}
