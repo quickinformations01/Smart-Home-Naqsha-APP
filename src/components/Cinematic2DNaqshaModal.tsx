@@ -247,25 +247,29 @@ export default function Cinematic2DNaqshaModal({
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px]" />
       </div>
 
-      {/* TOP CINEMATIC HEADER BAR */}
-      <header className="relative z-10 flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-slate-900/80 border-b border-slate-800/80 backdrop-blur-md">
+      {/* TOP HEADER BAR (OUTSIDE CANVAS) */}
+      <header className="relative z-10 flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 bg-slate-900/95 border-b border-slate-800/80 backdrop-blur-md">
         {/* Title & Live Status Badge */}
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/20">
-            <Eye className="w-5 h-5 animate-pulse" />
+            <Eye className="w-5 h-5 animate-pulse text-cyan-300" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
               <h3 className="font-display font-black text-sm sm:text-base uppercase tracking-wider text-white">
-                Cinematic Naqsha Studio
+                Live 2D Naqsha Studio
               </h3>
               <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                 Live 2D Projection
               </span>
+              <span className="hidden md:inline-flex items-center gap-1 bg-slate-800/80 text-amber-400 border border-amber-500/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <Compass className="w-3 h-3 animate-spin-slow" />
+                {layout.facing || 'EAST'} FACING
+              </span>
             </div>
             <p className="text-[11px] text-slate-400 font-medium">
-              Plot: <strong className="text-slate-200">{layout.width} × {layout.length} {layout.unit}</strong> • {Math.round(totalCoveredSqFt)} SQ FT • {bedCount} Beds, {bathCount} Baths
+              Plot: <strong className="text-slate-200">{layout.width} × {layout.length} {layout.unit}</strong> • {Math.round(totalCoveredSqFt)} SQ FT Covered • {bedCount} Beds, {bathCount} Baths
             </p>
           </div>
         </div>
@@ -296,8 +300,8 @@ export default function Cinematic2DNaqshaModal({
           </div>
         )}
 
-        {/* Theme & Utility Control Shortcuts */}
-        <div className="flex items-center space-x-2">
+        {/* Control Options (All Outside Naqsha) */}
+        <div className="flex flex-wrap items-center space-x-2">
           {/* Blueprint Theme Selector */}
           <div className="hidden sm:flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
             <button
@@ -342,6 +346,26 @@ export default function Cinematic2DNaqshaModal({
             </button>
           </div>
 
+          {/* Toggle Sq Ft */}
+          <button
+            onClick={() => setShowSqFt(!showSqFt)}
+            className={`px-2.5 py-1.5 text-[10px] font-black rounded-xl uppercase tracking-wider transition cursor-pointer border ${
+              showSqFt ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+            }`}
+          >
+            {showSqFt ? 'Sq Ft ON' : 'Sq Ft OFF'}
+          </button>
+
+          {/* Toggle Grid */}
+          <button
+            onClick={() => setShowGrid(!showGrid)}
+            className={`px-2.5 py-1.5 text-[10px] font-black rounded-xl uppercase tracking-wider transition cursor-pointer border ${
+              showGrid ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+            }`}
+          >
+            {showGrid ? 'Grid ON' : 'Grid OFF'}
+          </button>
+
           <div className="h-6 w-px bg-slate-800" />
 
           {/* Download High-Res SVG */}
@@ -367,8 +391,8 @@ export default function Cinematic2DNaqshaModal({
           {/* Close Modal Button */}
           <button
             onClick={onClose}
-            className="p-2.5 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition shadow-lg shadow-red-600/20 cursor-pointer"
-            title="Close Cinematic View (Esc)"
+            className="p-2 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition shadow-lg shadow-red-600/20 cursor-pointer"
+            title="Close Live View (Esc)"
             id="cinematic-close-btn"
           >
             <X className="w-5 h-5" />
@@ -376,7 +400,7 @@ export default function Cinematic2DNaqshaModal({
         </div>
       </header>
 
-      {/* MAIN VIEWPORT CANVAS STAGE */}
+      {/* MAIN VIEWPORT CANVAS STAGE - COMPLETELY CLEAN & UNOBSTRUCTED */}
       <main
         ref={viewportRef}
         className={`relative flex-1 w-full h-full overflow-hidden ${currentStyle.bg} cursor-grab active:cursor-grabbing`}
@@ -386,20 +410,6 @@ export default function Cinematic2DNaqshaModal({
         onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
       >
-        {/* Floating Compass Rose (Vastu Orientation Indicator) */}
-        <div className="absolute top-6 right-6 z-20 flex flex-col items-center bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-slate-800 shadow-xl pointer-events-none">
-          <div className="relative w-12 h-12 flex items-center justify-center">
-            <Compass className="w-10 h-10 text-indigo-400 animate-spin-slow" />
-            <span className="absolute -top-1 font-black text-[9px] text-red-400">N</span>
-            <span className="absolute -bottom-1 font-black text-[9px] text-slate-400">S</span>
-            <span className="absolute -left-1 font-black text-[9px] text-slate-400">W</span>
-            <span className="absolute -right-1 font-black text-[9px] text-amber-400">E</span>
-          </div>
-          <span className="text-[9px] font-black uppercase text-slate-400 mt-1 tracking-widest">
-            {layout.facing || 'EAST'} FACING
-          </span>
-        </div>
-
         {/* Blueprint Stage Box with Glow Frame */}
         <div
           className="absolute transition-transform duration-75 ease-out"
@@ -603,80 +613,12 @@ export default function Cinematic2DNaqshaModal({
             </svg>
           </div>
         </div>
-
-        {/* FLOATING HUD METRICS PILL (Bottom-Left) */}
-        <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2 bg-slate-900/90 backdrop-blur-md p-4 rounded-3xl border border-slate-800 shadow-2xl max-w-sm pointer-events-none">
-          <div className="flex items-center space-x-2 text-blue-400">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-xs font-black uppercase tracking-wider">Spatial Architectural Metrics</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-200">
-            <div className="bg-slate-950/60 p-2 rounded-2xl border border-slate-800/80">
-              <span className="text-[9px] text-slate-400 font-bold uppercase block">Covered Area</span>
-              <span className="font-mono text-sm text-emerald-400 font-black">{Math.round(totalCoveredSqFt)} SQ FT</span>
-            </div>
-            <div className="bg-slate-950/60 p-2 rounded-2xl border border-slate-800/80">
-              <span className="text-[9px] text-slate-400 font-bold uppercase block">Layout Vastu</span>
-              <span className="font-mono text-sm text-amber-400 font-black">98% Grade A</span>
-            </div>
-          </div>
-          <p className="text-[10px] text-slate-400 leading-tight">
-            Procedural layout optimized for sunlight ventilation, structural privacy corridors, and Vastu orientation.
-          </p>
-        </div>
-
-        {/* FLOATING CANVAS CONTROLS (Bottom-Right) */}
-        <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-2xl border border-slate-800 shadow-2xl">
-          <button
-            onClick={handleZoomOut}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-          <span className="text-xs font-bold font-mono text-slate-300 px-2 min-w-[50px] text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-          <button
-            onClick={handleZoomIn}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
-          <div className="h-5 w-px bg-slate-800 mx-1" />
-          <button
-            onClick={handleResetView}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
-            title="Fit Canvas to Center"
-          >
-            <Maximize className="w-4 h-4" />
-          </button>
-          <div className="h-5 w-px bg-slate-800 mx-1" />
-          {/* Toggle Sq Ft */}
-          <button
-            onClick={() => setShowSqFt(!showSqFt)}
-            className={`px-3 py-1.5 text-[10px] font-black rounded-xl uppercase tracking-wider transition cursor-pointer ${
-              showSqFt ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            {showSqFt ? 'Sq Ft ON' : 'Sq Ft OFF'}
-          </button>
-          {/* Toggle Grid */}
-          <button
-            onClick={() => setShowGrid(!showGrid)}
-            className={`px-3 py-1.5 text-[10px] font-black rounded-xl uppercase tracking-wider transition cursor-pointer ${
-              showGrid ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            {showGrid ? 'Grid ON' : 'Grid OFF'}
-          </button>
-        </div>
       </main>
 
-      {/* FOOTER BAR WITH SWITCH TO 3D SHORTCUT */}
-      <footer className="relative z-10 flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 bg-slate-900/90 border-t border-slate-800/80 backdrop-blur-md">
-        <div className="flex items-center space-x-2 text-xs text-slate-400 font-medium">
+      {/* FOOTER BAR WITH ZOOM & SWITCH TO 3D (OUTSIDE CANVAS) */}
+      <footer className="relative z-10 flex flex-wrap items-center justify-between gap-3 px-6 py-3 bg-slate-900/95 border-t border-slate-800/80 backdrop-blur-md">
+        {/* Navigation tips */}
+        <div className="hidden lg:flex items-center space-x-2 text-xs text-slate-400 font-medium">
           <span className="bg-slate-800 px-2 py-0.5 rounded text-[10px] font-mono text-slate-300">Drag Mouse / Touch</span>
           <span>to Pan</span>
           <span className="text-slate-600">•</span>
@@ -687,14 +629,52 @@ export default function Cinematic2DNaqshaModal({
           <span>Close / Fullscreen</span>
         </div>
 
+        {/* Zoom Controls & Metrics */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+            <button
+              onClick={handleZoomOut}
+              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition cursor-pointer"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-xs font-bold font-mono text-slate-300 px-1.5 min-w-[45px] text-center select-none">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              onClick={handleZoomIn}
+              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition cursor-pointer"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+            <div className="h-4 w-px bg-slate-800 mx-1" />
+            <button
+              onClick={handleResetView}
+              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition cursor-pointer"
+              title="Fit Canvas to Center"
+            >
+              <Maximize className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="hidden sm:flex items-center space-x-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+            <span className="text-slate-400 font-medium">Covered:</span>
+            <span className="text-emerald-400 font-mono font-black">{Math.round(totalCoveredSqFt)} SQ FT</span>
+            <span className="text-slate-700">•</span>
+            <span className="text-amber-400 font-mono font-black">Vastu 98%</span>
+          </div>
+        </div>
+
         {onSwitch3D && (
           <button
             onClick={() => {
               onClose();
               onSwitch3D();
             }}
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-indigo-500/20 flex items-center space-x-2 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-            id="cinematic-switch-3d-btn"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-indigo-500/20 flex items-center space-x-2 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            id="live-view-switch-3d-btn"
           >
             <Box className="w-4 h-4 text-amber-300" />
             <span>Switch to 3D Live Perspective</span>
