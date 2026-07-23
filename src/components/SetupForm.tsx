@@ -182,7 +182,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
             {[
               {
                 id: 'standard',
@@ -192,100 +192,100 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 desc: 'Flanked by neighboring plots on left, right & rear.',
                 icon: Building2,
                 svg: (
-                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                  <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Neighbor Blocks */}
-                    <rect x="2" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
-                    <rect x="76" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="2" y="2" width="22" height="34" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="76" y="2" width="22" height="34" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Active Plot */}
-                    <rect x="26" y="12" width="48" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <rect x="26" y="12" width="48" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
                     {/* Front Road */}
-                    <rect x="2" y="42" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <line x1="6" y1="48" x2="94" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
-                    <text x="50" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">25 FT FRONT ROAD</text>
+                    <rect x="2" y="38" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="6" y1="44" x2="94" y2="44" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="50" y="47" textAnchor="middle" className="text-[6px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
                   </svg>
                 )
               },
               {
                 id: 'corner-left',
-                title: 'Left Corner',
+                title: 'Corner Plot (Left)',
                 tag: '2 Open Roads',
                 subtitle: 'Front + Left Street',
-                desc: 'Open side boundary for secondary entrance & dual light.',
+                desc: 'Open left boundary for secondary gate & dual light.',
                 icon: CornerUpLeft,
                 svg: (
-                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                  <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Neighbor Blocks */}
-                    <rect x="76" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="76" y="2" width="22" height="34" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Left Street */}
-                    <rect x="2" y="2" width="22" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <line x1="13" y1="6" x2="13" y2="50" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
-                    <text x="13" y="28" textAnchor="middle" className="text-[5.5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(-90 13 28)">LEFT STREET</text>
+                    <rect x="2" y="2" width="22" height="48" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="13" y1="5" x2="13" y2="45" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="13" y="25" textAnchor="middle" className="text-[5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(-90 13 25)">LEFT STREET</text>
                     {/* Active Plot */}
-                    <rect x="26" y="12" width="48" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
-                    <circle cx="26" cy="20" r="2" fill="#22d3ee" className="animate-pulse" />
-                    <circle cx="26" cy="32" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <rect x="26" y="12" width="48" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <circle cx="26" cy="18" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <circle cx="26" cy="28" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
-                    <rect x="26" y="42" width="72" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <line x1="28" y1="48" x2="94" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
-                    <text x="60" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
+                    <rect x="26" y="38" width="72" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="28" y1="44" x2="94" y2="44" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="60" y="47" textAnchor="middle" className="text-[6px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
                   </svg>
                 )
               },
               {
                 id: 'corner-right',
-                title: 'Right Corner',
+                title: 'Corner Plot (Right)',
                 tag: '2 Open Roads',
                 subtitle: 'Front + Right Street',
                 desc: 'Open right street boundary for maximum breeze & windows.',
                 icon: CornerUpRight,
                 svg: (
-                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                  <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Neighbor Blocks */}
-                    <rect x="2" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="2" y="2" width="22" height="34" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Right Street */}
-                    <rect x="76" y="2" width="22" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <line x1="87" y1="6" x2="87" y2="50" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
-                    <text x="87" y="28" textAnchor="middle" className="text-[5.5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(90 87 28)">RIGHT STREET</text>
+                    <rect x="76" y="2" width="22" height="48" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="87" y1="5" x2="87" y2="45" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="87" y="25" textAnchor="middle" className="text-[5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(90 87 25)">RIGHT STREET</text>
                     {/* Active Plot */}
-                    <rect x="26" y="12" width="48" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
-                    <circle cx="74" cy="20" r="2" fill="#22d3ee" className="animate-pulse" />
-                    <circle cx="74" cy="32" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <rect x="26" y="12" width="48" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <circle cx="74" cy="18" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <circle cx="74" cy="28" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
-                    <rect x="2" y="42" width="72" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <line x1="6" y1="48" x2="72" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
-                    <text x="38" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
+                    <rect x="2" y="38" width="72" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="6" y1="44" x2="72" y2="44" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="38" y="47" textAnchor="middle" className="text-[6px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
                   </svg>
                 )
               },
               {
                 id: 'corner',
-                title: 'Dual Corner',
+                title: 'Three-Side Open Plot',
                 tag: '3 Open Sides',
                 subtitle: 'Panoramic Boulevard',
                 desc: '3-sided open exposure for luxury dual-façade residence.',
                 icon: Layers,
                 svg: (
-                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                  <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Left & Right Streets */}
-                    <rect x="2" y="2" width="20" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <rect x="78" y="2" width="20" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <rect x="2" y="2" width="20" height="48" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <rect x="78" y="2" width="20" height="48" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
                     {/* Top Neighbor */}
                     <rect x="24" y="2" width="52" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Active Plot */}
-                    <rect x="24" y="12" width="52" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
-                    <circle cx="24" cy="26" r="2" fill="#22d3ee" className="animate-pulse" />
-                    <circle cx="76" cy="26" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <rect x="24" y="12" width="52" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <circle cx="24" cy="24" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <circle cx="76" cy="24" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
-                    <rect x="2" y="42" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <line x1="6" y1="48" x2="94" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
-                    <text x="50" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">MAIN BOULEVARD</text>
+                    <rect x="2" y="38" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="6" y1="44" x2="94" y2="44" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="50" y="47" textAnchor="middle" className="text-[6px] font-extrabold fill-slate-300 tracking-widest uppercase">MAIN BOULEVARD</text>
                   </svg>
                 )
               }
@@ -298,46 +298,54 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                   key={item.id}
                   type="button"
                   onClick={() => setPlotType(item.id as any)}
-                  className={`p-4 rounded-2xl text-left border transition-all duration-300 flex flex-col justify-between relative cursor-pointer group hover:scale-[1.02] active:scale-[0.98] ${
+                  className={`p-4 rounded-[16px] text-left border transition-all duration-300 flex flex-col justify-between relative cursor-pointer group hover:-translate-y-1 active:translate-y-0 ${
                     isSelected
-                      ? 'bg-blue-600/10 dark:bg-blue-500/15 border-blue-500 shadow-lg shadow-blue-500/10 ring-2 ring-blue-500/40'
-                      : 'bg-white/80 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900 border-slate-200 dark:border-slate-800'
+                      ? 'bg-gradient-to-br from-blue-600 via-emerald-600 to-teal-700 text-white border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.35)] ring-2 ring-emerald-300/80 scale-[1.02]'
+                      : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm'
                   }`}
                 >
-                  {/* Top Badge & Title */}
+                  {/* Top Badge & Header */}
                   <div>
                     <div className="flex justify-between items-center w-full mb-2">
                       <span className={`text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
                         isSelected 
-                          ? 'bg-blue-600 text-white shadow-sm' 
+                          ? 'bg-white/20 text-white backdrop-blur-md border border-white/30' 
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}>
                         {item.tag}
                       </span>
                       {isSelected ? (
-                        <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        <div className="w-5 h-5 rounded-full bg-white text-emerald-600 flex items-center justify-center shrink-0 shadow-md animate-bounce-short">
+                          <CheckCircle2 className="w-4 h-4 fill-emerald-600 text-white" />
                         </div>
                       ) : (
-                        <IconComp className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
+                        <div className="p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/50 transition-colors">
+                          <IconComp className="w-4 h-4" />
+                        </div>
                       )}
                     </div>
 
-                    <h4 className="text-xs font-black tracking-tight text-slate-900 dark:text-white uppercase mt-1 flex items-center gap-1.5">
+                    <h4 className={`text-xs font-black tracking-tight uppercase mt-1 flex items-center gap-1.5 ${
+                      isSelected ? 'text-white' : 'text-slate-900 dark:text-white'
+                    }`}>
                       <span>{item.title}</span>
                     </h4>
-                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-extrabold tracking-tight">
+                    <p className={`text-[10px] font-bold tracking-tight ${
+                      isSelected ? 'text-emerald-100' : 'text-blue-600 dark:text-blue-400'
+                    }`}>
                       {item.subtitle}
                     </p>
                   </div>
 
-                  {/* Micro Diagram */}
-                  <div className="my-3">
+                  {/* Architectural SVG Diagram */}
+                  <div className="my-2.5">
                     {item.svg}
                   </div>
 
-                  {/* Description */}
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-normal">
+                  {/* Subtitle / Short Description */}
+                  <p className={`text-[10px] font-medium leading-normal ${
+                    isSelected ? 'text-slate-100/90' : 'text-slate-500 dark:text-slate-400'
+                  }`}>
                     {item.desc}
                   </p>
                 </button>
