@@ -57,31 +57,84 @@ export default function Cinematic2DNaqshaModal({
 
   // Sync active floor key if props update
   useEffect(() => {
-    if (layout.activeFloor) {
+    if (layout && layout.activeFloor) {
       setActiveFloorKey(layout.activeFloor);
     }
-  }, [layout.activeFloor]);
+  }, [layout?.activeFloor]);
+
+  // Robust Auto-Center & Fit Canvas Function
+  const autoCenterCanvas = () => {
+    if (!viewportRef.current) return;
+    const rect = viewportRef.current.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+
+    const lw = Math.max(1, layout?.width || 30);
+    const lh = Math.max(1, layout?.length || 50);
+    const unit = pxPerUnit || 24;
+
+    const contentWidth = lw * unit;
+    const contentHeight = lh * unit;
+
+    const paddingX = rect.width < 640 ? 32 : 96;
+    const paddingY = rect.height < 640 ? 32 : 96;
+
+    const availW = Math.max(100, rect.width - paddingX);
+    const availH = Math.max(100, rect.height - paddingY);
+
+    const scaleX = availW / contentWidth;
+    const scaleY = availH / contentHeight;
+
+    let fitZoom = Math.min(scaleX, scaleY);
+    if (!isFinite(fitZoom) || isNaN(fitZoom) || fitZoom <= 0) {
+      fitZoom = 1;
+    }
+    fitZoom = Math.max(0.15, Math.min(2.5, fitZoom));
+
+    const panX = (rect.width - contentWidth * fitZoom) / 2;
+    const panY = (rect.height - contentHeight * fitZoom) / 2;
+
+    setZoom(fitZoom);
+    setPan({
+      x: isFinite(panX) && !isNaN(panX) ? panX : 0,
+      y: isFinite(panY) && !isNaN(panY) ? panY : 0,
+    });
+  };
 
   // Center & Fit Canvas on Modal Open or Layout Change
   useEffect(() => {
-    if (isOpen && viewportRef.current) {
-      const rect = viewportRef.current.getBoundingClientRect();
-      const contentWidth = layout.width * pxPerUnit;
-      const contentHeight = layout.length * pxPerUnit;
+    if (isOpen) {
+      // Immediate attempt
+      autoCenterCanvas();
 
-      const paddingX = rect.width < 640 ? 24 : 80;
-      const paddingY = rect.height < 640 ? 24 : 80;
-      const scaleX = (rect.width - paddingX) / contentWidth;
-      const scaleY = (rect.height - paddingY) / contentHeight;
-      const fitZoom = Math.max(0.15, Math.min(2.0, Math.min(scaleX, scaleY)));
-
-      setZoom(fitZoom);
-      setPan({
-        x: (rect.width - contentWidth * fitZoom) / 2,
-        y: (rect.height - contentHeight * fitZoom) / 2,
+      // Double RAF to wait for modal flexbox animation and layout calculation
+      const raf1 = requestAnimationFrame(() => {
+        const raf2 = requestAnimationFrame(() => {
+          autoCenterCanvas();
+        });
+        return () => cancelAnimationFrame(raf2);
       });
+
+      // Fallback timer for slow touch/mobile renders
+      const timer = setTimeout(() => {
+        autoCenterCanvas();
+      }, 100);
+
+      return () => {
+        cancelAnimationFrame(raf1);
+        clearTimeout(timer);
+      };
     }
-  }, [isOpen, layout.width, layout.length, pxPerUnit]);
+  }, [isOpen, layout?.width, layout?.length, pxPerUnit, activeFloorKey]);
+
+  // ResizeObserver to re-center when modal resizes
+  useEffect(() => {
+    if (!isOpen || !viewportRef.current) return;
+    const observer = new ResizeObserver(() => {
+      autoCenterCanvas();
+    });
+    observer.observe(viewportRef.current);
+    return () => observer.disconnect();
+  }, [isOpen, layout?.width, layout?.length, pxPerUnit, activeFloorKey]);
 
   // Close on Escape Key press
   useEffect(() => {
@@ -99,18 +152,34 @@ export default function Cinematic2DNaqshaModal({
 
   if (!isOpen) return null;
 
-  // Active Floor Data Resolution
-  const currentFloorRooms = (layout.floors && layout.floors[activeFloorKey]?.rooms) || layout.rooms;
-  const currentFloorDoors = (layout.floors && layout.floors[activeFloorKey]?.doors) || layout.doors;
-  const currentFloorWindows = (layout.floors && layout.floors[activeFloorKey]?.windows) || layout.windows;
+  // Safe Data Resolution
+  const safeWidth = Math.max(1, layout?.width || 30);
+  const safeLength = Math.max(1, layout?.length || 50);
+  const safePxPerUnit = pxPerUnit || 24;
 
-  const svgWidth = layout.width * pxPerUnit;
-  const svgHeight = layout.length * pxPerUnit;
+  const safeRooms = Array.isArray(layout?.rooms) ? layout.rooms : [];
+  const safeDoors = Array.isArray(layout?.doors) ? layout.doors : [];
+  const safeWindows = Array.isArray(layout?.windows) ? layout.windows : [];
+
+  const currentFloorRooms = (layout?.floors && activeFloorKey in layout.floors && Array.isArray(layout.floors[activeFloorKey]?.rooms) && layout.floors[activeFloorKey].rooms.length > 0)
+    ? layout.floors[activeFloorKey].rooms
+    : safeRooms;
+
+  const currentFloorDoors = (layout?.floors && activeFloorKey in layout.floors && Array.isArray(layout.floors[activeFloorKey]?.doors))
+    ? layout.floors[activeFloorKey].doors
+    : safeDoors;
+
+  const currentFloorWindows = (layout?.floors && activeFloorKey in layout.floors && Array.isArray(layout.floors[activeFloorKey]?.windows))
+    ? layout.floors[activeFloorKey].windows
+    : safeWindows;
+
+  const svgWidth = safeWidth * safePxPerUnit;
+  const svgHeight = safeLength * safePxPerUnit;
 
   // Covered Area calculation
-  const totalCoveredSqFt = currentFloorRooms.reduce((sum, r) => sum + r.width * r.height, 0);
-  const bedCount = currentFloorRooms.filter(r => r.type === 'bedroom').length;
-  const bathCount = currentFloorRooms.filter(r => r.type === 'bathroom').length;
+  const totalCoveredSqFt = currentFloorRooms.reduce((sum, r) => sum + (r?.width || 0) * (r?.height || 0), 0);
+  const bedCount = currentFloorRooms.filter(r => r && r.type === 'bedroom').length;
+  const bathCount = currentFloorRooms.filter(r => r && r.type === 'bathroom').length;
 
   // Toggle browser native fullscreen mode
   const toggleFullscreen = () => {
@@ -125,24 +194,8 @@ export default function Cinematic2DNaqshaModal({
 
   // Zoom handlers
   const handleZoomIn = () => setZoom(prev => Math.min(3.5, prev * 1.25));
-  const handleZoomOut = () => setZoom(prev => Math.max(0.25, prev / 1.25));
-  const handleResetView = () => {
-    if (viewportRef.current) {
-      const rect = viewportRef.current.getBoundingClientRect();
-      const contentWidth = layout.width * pxPerUnit;
-      const contentHeight = layout.length * pxPerUnit;
-      const paddingX = rect.width < 640 ? 24 : 80;
-      const paddingY = rect.height < 640 ? 24 : 80;
-      const scaleX = (rect.width - paddingX) / contentWidth;
-      const scaleY = (rect.height - paddingY) / contentHeight;
-      const fitZoom = Math.max(0.15, Math.min(2.0, Math.min(scaleX, scaleY)));
-      setZoom(fitZoom);
-      setPan({
-        x: (rect.width - contentWidth * fitZoom) / 2,
-        y: (rect.height - contentHeight * fitZoom) / 2,
-      });
-    }
-  };
+  const handleZoomOut = () => setZoom(prev => Math.max(0.15, prev / 1.25));
+  const handleResetView = () => autoCenterCanvas();
 
   // Mouse Panning & Scroll Wheel Zoom Handlers for Desktop
   const handleMouseDown = (e: React.MouseEvent) => {

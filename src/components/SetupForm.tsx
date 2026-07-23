@@ -13,7 +13,15 @@ import {
   Sliders,
   Sunrise,
   Sunset,
-  Moon
+  Moon,
+  Building2,
+  CornerUpLeft,
+  CornerUpRight,
+  Wind,
+  CheckCircle2,
+  Info,
+  ShieldCheck,
+  Layers
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -160,41 +168,194 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
           </div>
         </div>
 
-        {/* Plot Aspect Type (Corner Selection) */}
-        <div className="space-y-2">
-          <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-            Plot Location Aspect (Zoning & Ventilation)
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Plot Aspect Type (Corner & Zoning Selection) */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-blue-500" />
+              <span>Plot Location & Road Aspect</span>
+            </label>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+              Zoning & Ventilation
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { id: 'standard', title: 'Standard Lot', desc: 'Closed sides, front road' },
-              { id: 'corner-left', title: 'Left Corner', desc: 'Side lawn / road access' },
-              { id: 'corner-right', title: 'Right Corner', desc: 'Side lawn / road access' },
+              {
+                id: 'standard',
+                title: 'Standard Plot',
+                tag: '1 Front Road',
+                subtitle: 'Front Road Only',
+                desc: 'Closed on left, right & back by adjacent plots.',
+                icon: Building2,
+                svg: (
+                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
+                    {/* Neighbors (Left, Right, Top) */}
+                    <rect x="2" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    <rect x="76" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    <rect x="26" y="2" width="48" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    {/* Plot Center */}
+                    <rect x="26" y="14" width="48" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
+                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
+                    {/* Front Road */}
+                    <rect x="2" y="46" width="96" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <line x1="10" y1="52" x2="90" y2="52" stroke="currentColor" className="text-slate-200 dark:text-slate-500" strokeDasharray="3 3" strokeWidth="1" />
+                    <text x="50" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                  </svg>
+                )
+              },
+              {
+                id: 'corner-left',
+                title: 'Left Corner',
+                tag: '2 Open Roads',
+                subtitle: 'Front + Left Street',
+                desc: 'Open road on left side for extra light & side doors.',
+                icon: CornerUpLeft,
+                svg: (
+                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
+                    {/* Neighbors (Right, Top) */}
+                    <rect x="76" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    <rect x="26" y="2" width="48" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    {/* Left Street */}
+                    <rect x="2" y="2" width="22" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <text x="13" y="30" textAnchor="middle" className="text-[6px] font-bold fill-white" transform="rotate(-90 13 30)">LEFT STREET</text>
+                    {/* Plot Center */}
+                    <rect x="26" y="14" width="48" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
+                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
+                    {/* Ventilation indicators */}
+                    <circle cx="26" cy="22" r="2" fill="currentColor" className="text-cyan-400" />
+                    <circle cx="26" cy="36" r="2" fill="currentColor" className="text-cyan-400" />
+                    {/* Front Road */}
+                    <rect x="26" y="46" width="72" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <text x="62" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                  </svg>
+                )
+              },
+              {
+                id: 'corner-right',
+                title: 'Right Corner',
+                tag: '2 Open Roads',
+                subtitle: 'Front + Right Street',
+                desc: 'Open road on right side for extra light & side doors.',
+                icon: CornerUpRight,
+                svg: (
+                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
+                    {/* Neighbors (Left, Top) */}
+                    <rect x="2" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    <rect x="26" y="2" width="48" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    {/* Right Street */}
+                    <rect x="76" y="2" width="22" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <text x="87" y="30" textAnchor="middle" className="text-[6px] font-bold fill-white" transform="rotate(90 87 30)">RIGHT STREET</text>
+                    {/* Plot Center */}
+                    <rect x="26" y="14" width="48" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
+                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
+                    {/* Ventilation indicators */}
+                    <circle cx="74" cy="22" r="2" fill="currentColor" className="text-cyan-400" />
+                    <circle cx="74" cy="36" r="2" fill="currentColor" className="text-cyan-400" />
+                    {/* Front Road */}
+                    <rect x="2" y="46" width="72" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <text x="38" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                  </svg>
+                )
+              },
+              {
+                id: 'corner',
+                title: 'Dual Corner',
+                tag: '3 Open Sides',
+                subtitle: 'Boulevard / Dual Street',
+                desc: 'Maximum open air & panoramic dual-façade architecture.',
+                icon: Layers,
+                svg: (
+                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
+                    {/* Left & Right Streets */}
+                    <rect x="2" y="2" width="20" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <rect x="78" y="2" width="20" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    {/* Top Neighbor */}
+                    <rect x="24" y="2" width="52" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                    {/* Plot Center */}
+                    <rect x="24" y="14" width="52" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
+                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
+                    {/* Air indicators */}
+                    <circle cx="24" cy="29" r="2" fill="currentColor" className="text-cyan-400" />
+                    <circle cx="76" cy="29" r="2" fill="currentColor" className="text-cyan-400" />
+                    {/* Front Road */}
+                    <rect x="2" y="46" width="96" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <text x="50" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                  </svg>
+                )
+              }
             ].map((item) => {
               const isSelected = plotType === item.id;
+              const IconComp = item.icon;
+
               return (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => setPlotType(item.id as any)}
-                  className={`p-3.5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between h-20 relative cursor-pointer ${
+                  className={`p-3.5 rounded-2xl text-left border transition-all duration-300 flex flex-col justify-between relative cursor-pointer group hover:scale-[1.02] active:scale-[0.98] ${
                     isSelected
-                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-sm ring-1 ring-blue-500/50'
-                      : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
+                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-md shadow-blue-500/5 ring-2 ring-blue-500/30'
+                      : 'bg-slate-50/60 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
                   }`}
                 >
-                  <div className="flex justify-between items-center w-full">
-                    <span className="text-[11px] font-black tracking-tight text-slate-900 dark:text-white uppercase">
+                  {/* Top Badge & Title */}
+                  <div>
+                    <div className="flex justify-between items-center w-full mb-1.5">
+                      <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        isSelected 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      }`}>
+                        {item.tag}
+                      </span>
+                      {isSelected ? (
+                        <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                      ) : (
+                        <IconComp className="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" />
+                      )}
+                    </div>
+
+                    <h4 className="text-xs font-black tracking-tight text-slate-900 dark:text-white uppercase mt-1">
                       {item.title}
-                    </span>
-                    <Layout className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-500' : 'text-slate-400'}`} />
+                    </h4>
+                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold tracking-tight">
+                      {item.subtitle}
+                    </p>
                   </div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none mt-1">
+
+                  {/* Micro Diagram */}
+                  <div className="my-2.5">
+                    {item.svg}
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight">
                     {item.desc}
-                  </span>
+                  </p>
                 </button>
               );
             })}
+          </div>
+
+          {/* Dynamic Ventilation & Zoning Note */}
+          <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 font-medium">
+            <Wind className="w-4 h-4 text-blue-500 shrink-0 animate-pulse" />
+            <span className="text-[11px] leading-snug">
+              {plotType === 'standard' && (
+                <><strong>Standard Plot Selected:</strong> Generates central ventilation courtyards & air ducts for inner rooms.</>
+              )}
+              {plotType === 'corner-left' && (
+                <><strong>Left Corner Plot Selected:</strong> Auto-integrates natural light windows along the left side street boundary.</>
+              )}
+              {plotType === 'corner-right' && (
+                <><strong>Right Corner Plot Selected:</strong> Auto-integrates natural light windows along the right side street boundary.</>
+              )}
+              {plotType === 'corner' && (
+                <><strong>Dual Corner Plot Selected:</strong> Integrates panoramic side street windows for maximum cross-ventilation.</>
+              )}
+            </span>
           </div>
         </div>
 
