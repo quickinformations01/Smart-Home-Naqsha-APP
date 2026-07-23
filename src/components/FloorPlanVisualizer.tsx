@@ -4364,11 +4364,12 @@ export default function FloorPlanVisualizer({
         isOpen={showCinematicModal}
         onClose={() => setShowCinematicModal(false)}
         layout={layout}
+        activeFloor={activeFloor}
         pxPerUnit={pxPerUnit}
         showSqFtLayer={showSqFtLayer}
         onSwitch3D={() => setIs3DView(true)}
         onSelectFloor={(floorKey) => {
-          setActiveFloor(floorKey as any);
+          handleFloorChange(floorKey as any);
         }}
       />
     </div>

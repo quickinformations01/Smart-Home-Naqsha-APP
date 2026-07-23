@@ -25,6 +25,7 @@ interface Cinematic2DNaqshaModalProps {
   isOpen: boolean;
   onClose: () => void;
   layout: NaqshaLayout;
+  activeFloor?: string;
   pxPerUnit?: number;
   showSqFtLayer?: boolean;
   onSwitch3D?: () => void;
@@ -37,6 +38,7 @@ export default function Cinematic2DNaqshaModal({
   isOpen,
   onClose,
   layout,
+  activeFloor: propActiveFloor,
   pxPerUnit = 24,
   showSqFtLayer: initialSqFtLayer = true,
   onSwitch3D,
@@ -50,23 +52,24 @@ export default function Cinematic2DNaqshaModal({
   const [showSqFt, setShowSqFt] = useState<boolean>(initialSqFtLayer);
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [activeFloorKey, setActiveFloorKey] = useState<string>(layout.activeFloor || 'ground');
+  const [activeFloorKey, setActiveFloorKey] = useState<string>(propActiveFloor || layout?.activeFloor || 'ground');
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Sync active floor key if props update
   useEffect(() => {
-    if (layout && layout.activeFloor) {
-      setActiveFloorKey(layout.activeFloor);
+    const targetFloor = propActiveFloor || layout?.activeFloor;
+    if (targetFloor) {
+      setActiveFloorKey(targetFloor);
     }
-  }, [layout?.activeFloor]);
+  }, [propActiveFloor, layout?.activeFloor]);
 
   // Robust Auto-Center & Fit Canvas Function
   const autoCenterCanvas = () => {
-    if (!viewportRef.current) return;
-    const rect = viewportRef.current.getBoundingClientRect();
-    if (rect.width <= 0 || rect.height <= 0) return;
+    const rect = viewportRef.current?.getBoundingClientRect();
+    const viewportW = (rect && rect.width > 0) ? rect.width : (typeof window !== 'undefined' ? window.innerWidth : 1000);
+    const viewportH = (rect && rect.height > 0) ? rect.height : (typeof window !== 'undefined' ? window.innerHeight - 120 : 700);
 
     const lw = Math.max(1, layout?.width || 30);
     const lh = Math.max(1, layout?.length || 50);
@@ -75,23 +78,23 @@ export default function Cinematic2DNaqshaModal({
     const contentWidth = lw * unit;
     const contentHeight = lh * unit;
 
-    const paddingX = rect.width < 640 ? 32 : 96;
-    const paddingY = rect.height < 640 ? 32 : 96;
+    const stageWidth = contentWidth + 48;
+    const stageHeight = contentHeight + 48;
 
-    const availW = Math.max(100, rect.width - paddingX);
-    const availH = Math.max(100, rect.height - paddingY);
+    const availW = Math.max(100, viewportW - 48);
+    const availH = Math.max(100, viewportH - 48);
 
-    const scaleX = availW / contentWidth;
-    const scaleY = availH / contentHeight;
+    const scaleX = availW / stageWidth;
+    const scaleY = availH / stageHeight;
 
     let fitZoom = Math.min(scaleX, scaleY);
     if (!isFinite(fitZoom) || isNaN(fitZoom) || fitZoom <= 0) {
       fitZoom = 1;
     }
-    fitZoom = Math.max(0.15, Math.min(2.5, fitZoom));
+    fitZoom = Math.max(0.2, Math.min(3.0, fitZoom));
 
-    const panX = (rect.width - contentWidth * fitZoom) / 2;
-    const panY = (rect.height - contentHeight * fitZoom) / 2;
+    const panX = (viewportW - stageWidth * fitZoom) / 2;
+    const panY = (viewportH - stageHeight * fitZoom) / 2;
 
     setZoom(fitZoom);
     setPan({
@@ -114,14 +117,14 @@ export default function Cinematic2DNaqshaModal({
         return () => cancelAnimationFrame(raf2);
       });
 
-      // Fallback timer for slow touch/mobile renders
-      const timer = setTimeout(() => {
-        autoCenterCanvas();
-      }, 100);
+      // Timers for slow touch/mobile renders
+      const timer1 = setTimeout(() => autoCenterCanvas(), 50);
+      const timer2 = setTimeout(() => autoCenterCanvas(), 200);
 
       return () => {
         cancelAnimationFrame(raf1);
-        clearTimeout(timer);
+        clearTimeout(timer1);
+        clearTimeout(timer2);
       };
     }
   }, [isOpen, layout?.width, layout?.length, pxPerUnit, activeFloorKey]);
@@ -720,13 +723,15 @@ export default function Cinematic2DNaqshaModal({
               {currentFloorRooms.map((room) => {
                 const rx = room.x * pxPerUnit;
                 const ry = room.y * pxPerUnit;
-                const rw = room.width * pxPerUnit;
-                const rh = room.height * pxPerUnit;
+                const rw = Math.max(1, room.width * pxPerUnit);
+                const rh = Math.max(1, room.height * pxPerUnit);
 
                 const baseFontSize = Math.max(9, Math.min(14, Math.min(room.width * 2, room.height * 2)));
+                const cx = rx + rw / 2;
+                const cy = ry + rh / 2;
 
                 return (
-                  <g key={room.id}>
+                  <g key={room.id || `${room.name}-${rx}-${ry}`}>
                     {/* Room Box */}
                     <rect
                       x={rx}
@@ -739,48 +744,66 @@ export default function Cinematic2DNaqshaModal({
                     />
 
                     {/* Room Inner Wall Highlight */}
-                    <rect
-                      x={rx + 2}
-                      y={ry + 2}
-                      width={rw - 4}
-                      height={rh - 4}
-                      fill="none"
-                      stroke={currentStyle.roomStroke}
-                      strokeWidth="0.5"
-                      strokeDasharray="2 2"
-                      opacity="0.6"
-                    />
+                    {rw > 8 && rh > 8 && (
+                      <rect
+                        x={rx + 2}
+                        y={ry + 2}
+                        width={rw - 4}
+                        height={rh - 4}
+                        fill="none"
+                        stroke={currentStyle.roomStroke}
+                        strokeWidth="0.5"
+                        strokeDasharray="2 2"
+                        opacity="0.6"
+                      />
+                    )}
 
-                    {/* Room Labels */}
-                    <foreignObject
-                      x={rx + 4}
-                      y={ry + 4}
-                      width={rw - 8}
-                      height={rh - 8}
-                      className="pointer-events-none select-none overflow-hidden"
-                    >
-                      <div className="flex flex-col items-center justify-center h-full w-full text-center p-1">
-                        <span
-                          className="font-black uppercase tracking-wider leading-tight"
-                          style={{ color: currentStyle.textColor, fontSize: `${baseFontSize}px` }}
+                    {/* Room Labels using Native SVG Text (100% Cross-Browser Reliable) */}
+                    <g className="pointer-events-none select-none">
+                      {/* Room Name */}
+                      <text
+                        x={cx}
+                        y={cy - (showSqFt ? 8 : 4)}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill={currentStyle.textColor}
+                        fontSize={`${baseFontSize}px`}
+                        fontWeight="900"
+                        className="font-sans uppercase tracking-wider"
+                      >
+                        {room.name}
+                      </text>
+
+                      {/* Dimensions */}
+                      <text
+                        x={cx}
+                        y={cy + (showSqFt ? 8 : 10)}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill={currentStyle.dimTextColor}
+                        fontSize={`${Math.max(8, baseFontSize * 0.75)}px`}
+                        fontWeight="700"
+                        className="font-mono"
+                      >
+                        {Math.round(room.width)}' × {Math.round(room.height)}' {layout.unit}
+                      </text>
+
+                      {/* Sq Ft Badge */}
+                      {showSqFt && (
+                        <text
+                          x={cx}
+                          y={cy + 22}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          fill={currentStyle.outerWallStroke}
+                          fontSize={`${Math.max(7, baseFontSize * 0.65)}px`}
+                          fontWeight="800"
+                          className="font-mono uppercase tracking-widest"
                         >
-                          {room.name}
-                        </span>
-                        <span
-                          className="font-mono font-bold mt-0.5 opacity-90"
-                          style={{ color: currentStyle.dimTextColor, fontSize: `${baseFontSize * 0.8}px` }}
-                        >
-                          {Math.round(room.width)}' × {Math.round(room.height)}' {layout.unit}
-                        </span>
-                        {showSqFt && (
-                          <span
-                            className="font-mono font-black mt-1 px-1.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-300 uppercase tracking-widest text-[8px]"
-                          >
-                            {Math.round(room.width * room.height)} SQ FT
-                          </span>
-                        )}
-                      </div>
-                    </foreignObject>
+                          {Math.round(room.width * room.height)} SQ FT
+                        </text>
+                      )}
+                    </g>
                   </g>
                 );
               })}
