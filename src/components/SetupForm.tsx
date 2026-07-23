@@ -171,12 +171,14 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
         {/* Plot Aspect Type (Corner & Zoning Selection) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-blue-500" />
+            <label className="block text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500">
+                <MapPin className="w-4 h-4" />
+              </span>
               <span>Plot Location & Road Aspect</span>
             </label>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
-              Zoning & Ventilation
+            <span className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900/50 px-2.5 py-1 rounded-full flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-amber-500" /> Architectural Zoning
             </span>
           </div>
 
@@ -186,22 +188,22 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 id: 'standard',
                 title: 'Standard Plot',
                 tag: '1 Front Road',
-                subtitle: 'Front Road Only',
-                desc: 'Closed on left, right & back by adjacent plots.',
+                subtitle: 'Single Road Façade',
+                desc: 'Flanked by neighboring plots on left, right & rear.',
                 icon: Building2,
                 svg: (
-                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
-                    {/* Neighbors (Left, Right, Top) */}
-                    <rect x="2" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
-                    <rect x="76" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
-                    <rect x="26" y="2" width="48" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
-                    {/* Plot Center */}
-                    <rect x="26" y="14" width="48" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
-                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
+                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                    {/* Neighbor Blocks */}
+                    <rect x="2" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="76" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    {/* Active Plot */}
+                    <rect x="26" y="12" width="48" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
                     {/* Front Road */}
-                    <rect x="2" y="46" width="96" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <line x1="10" y1="52" x2="90" y2="52" stroke="currentColor" className="text-slate-200 dark:text-slate-500" strokeDasharray="3 3" strokeWidth="1" />
-                    <text x="50" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                    <rect x="2" y="42" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="6" y1="48" x2="94" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="50" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">25 FT FRONT ROAD</text>
                   </svg>
                 )
               },
@@ -210,25 +212,26 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 title: 'Left Corner',
                 tag: '2 Open Roads',
                 subtitle: 'Front + Left Street',
-                desc: 'Open road on left side for extra light & side doors.',
+                desc: 'Open side boundary for secondary entrance & dual light.',
                 icon: CornerUpLeft,
                 svg: (
-                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
-                    {/* Neighbors (Right, Top) */}
-                    <rect x="76" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
-                    <rect x="26" y="2" width="48" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                    {/* Neighbor Blocks */}
+                    <rect x="76" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Left Street */}
-                    <rect x="2" y="2" width="22" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <text x="13" y="30" textAnchor="middle" className="text-[6px] font-bold fill-white" transform="rotate(-90 13 30)">LEFT STREET</text>
-                    {/* Plot Center */}
-                    <rect x="26" y="14" width="48" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
-                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
-                    {/* Ventilation indicators */}
-                    <circle cx="26" cy="22" r="2" fill="currentColor" className="text-cyan-400" />
-                    <circle cx="26" cy="36" r="2" fill="currentColor" className="text-cyan-400" />
+                    <rect x="2" y="2" width="22" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="13" y1="6" x2="13" y2="50" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="13" y="28" textAnchor="middle" className="text-[5.5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(-90 13 28)">LEFT STREET</text>
+                    {/* Active Plot */}
+                    <rect x="26" y="12" width="48" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <circle cx="26" cy="20" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <circle cx="26" cy="32" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
-                    <rect x="26" y="46" width="72" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <text x="62" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                    <rect x="26" y="42" width="72" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="28" y1="48" x2="94" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="60" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
                   </svg>
                 )
               },
@@ -237,25 +240,26 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 title: 'Right Corner',
                 tag: '2 Open Roads',
                 subtitle: 'Front + Right Street',
-                desc: 'Open road on right side for extra light & side doors.',
+                desc: 'Open right street boundary for maximum breeze & windows.',
                 icon: CornerUpRight,
                 svg: (
-                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
-                    {/* Neighbors (Left, Top) */}
-                    <rect x="2" y="2" width="22" height="42" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
-                    <rect x="26" y="2" width="48" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
+                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
+                    {/* Neighbor Blocks */}
+                    <rect x="2" y="2" width="22" height="38" rx="3" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Right Street */}
-                    <rect x="76" y="2" width="22" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <text x="87" y="30" textAnchor="middle" className="text-[6px] font-bold fill-white" transform="rotate(90 87 30)">RIGHT STREET</text>
-                    {/* Plot Center */}
-                    <rect x="26" y="14" width="48" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
-                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
-                    {/* Ventilation indicators */}
-                    <circle cx="74" cy="22" r="2" fill="currentColor" className="text-cyan-400" />
-                    <circle cx="74" cy="36" r="2" fill="currentColor" className="text-cyan-400" />
+                    <rect x="76" y="2" width="22" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="87" y1="6" x2="87" y2="50" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="87" y="28" textAnchor="middle" className="text-[5.5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(90 87 28)">RIGHT STREET</text>
+                    {/* Active Plot */}
+                    <rect x="26" y="12" width="48" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <circle cx="74" cy="20" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <circle cx="74" cy="32" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
-                    <rect x="2" y="46" width="72" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <text x="38" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                    <rect x="2" y="42" width="72" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="6" y1="48" x2="72" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="38" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">FRONT ROAD</text>
                   </svg>
                 )
               },
@@ -263,25 +267,25 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 id: 'corner',
                 title: 'Dual Corner',
                 tag: '3 Open Sides',
-                subtitle: 'Boulevard / Dual Street',
-                desc: 'Maximum open air & panoramic dual-façade architecture.',
+                subtitle: 'Panoramic Boulevard',
+                desc: '3-sided open exposure for luxury dual-façade residence.',
                 icon: Layers,
                 svg: (
-                  <svg viewBox="0 0 100 60" className="w-full h-12 rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
+                  <svg viewBox="0 0 100 56" className="w-full h-14 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner">
                     {/* Left & Right Streets */}
-                    <rect x="2" y="2" width="20" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <rect x="78" y="2" width="20" height="56" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
+                    <rect x="2" y="2" width="20" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <rect x="78" y="2" width="20" height="52" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
                     {/* Top Neighbor */}
-                    <rect x="24" y="2" width="52" height="10" rx="2" fill="currentColor" className="text-slate-300 dark:text-slate-800" />
-                    {/* Plot Center */}
-                    <rect x="24" y="14" width="52" height="30" rx="3" fill="currentColor" className="text-blue-500/20 dark:text-blue-500/30 stroke-blue-500" strokeWidth="1.5" />
-                    <text x="50" y="32" textAnchor="middle" className="text-[8px] font-black fill-blue-600 dark:fill-blue-400">PLOT</text>
-                    {/* Air indicators */}
-                    <circle cx="24" cy="29" r="2" fill="currentColor" className="text-cyan-400" />
-                    <circle cx="76" cy="29" r="2" fill="currentColor" className="text-cyan-400" />
+                    <rect x="24" y="2" width="52" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                    {/* Active Plot */}
+                    <rect x="24" y="12" width="52" height="28" rx="4" fill="rgba(37, 99, 235, 0.2)" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="50" y="28" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <circle cx="24" cy="26" r="2" fill="#22d3ee" className="animate-pulse" />
+                    <circle cx="76" cy="26" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
-                    <rect x="2" y="46" width="96" height="12" rx="2" fill="currentColor" className="text-slate-400 dark:text-slate-700" />
-                    <text x="50" y="55" textAnchor="middle" className="text-[7px] font-bold fill-white">FRONT ROAD</text>
+                    <rect x="2" y="42" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                    <line x1="6" y1="48" x2="94" y2="48" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                    <text x="50" y="51" textAnchor="middle" className="text-[6.5px] font-extrabold fill-slate-300 tracking-widest uppercase">MAIN BOULEVARD</text>
                   </svg>
                 )
               }
@@ -294,44 +298,46 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                   key={item.id}
                   type="button"
                   onClick={() => setPlotType(item.id as any)}
-                  className={`p-3.5 rounded-2xl text-left border transition-all duration-300 flex flex-col justify-between relative cursor-pointer group hover:scale-[1.02] active:scale-[0.98] ${
+                  className={`p-4 rounded-2xl text-left border transition-all duration-300 flex flex-col justify-between relative cursor-pointer group hover:scale-[1.02] active:scale-[0.98] ${
                     isSelected
-                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-md shadow-blue-500/5 ring-2 ring-blue-500/30'
-                      : 'bg-slate-50/60 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
+                      ? 'bg-blue-600/10 dark:bg-blue-500/15 border-blue-500 shadow-lg shadow-blue-500/10 ring-2 ring-blue-500/40'
+                      : 'bg-white/80 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900 border-slate-200 dark:border-slate-800'
                   }`}
                 >
                   {/* Top Badge & Title */}
                   <div>
-                    <div className="flex justify-between items-center w-full mb-1.5">
-                      <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    <div className="flex justify-between items-center w-full mb-2">
+                      <span className={`text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
                         isSelected 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          ? 'bg-blue-600 text-white shadow-sm' 
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}>
                         {item.tag}
                       </span>
                       {isSelected ? (
-                        <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                        <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        </div>
                       ) : (
-                        <IconComp className="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" />
+                        <IconComp className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
                       )}
                     </div>
 
-                    <h4 className="text-xs font-black tracking-tight text-slate-900 dark:text-white uppercase mt-1">
-                      {item.title}
+                    <h4 className="text-xs font-black tracking-tight text-slate-900 dark:text-white uppercase mt-1 flex items-center gap-1.5">
+                      <span>{item.title}</span>
                     </h4>
-                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold tracking-tight">
+                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-extrabold tracking-tight">
                       {item.subtitle}
                     </p>
                   </div>
 
                   {/* Micro Diagram */}
-                  <div className="my-2.5">
+                  <div className="my-3">
                     {item.svg}
                   </div>
 
                   {/* Description */}
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight">
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-normal">
                     {item.desc}
                   </p>
                 </button>
@@ -340,39 +346,42 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
           </div>
 
           {/* Dynamic Ventilation & Zoning Note */}
-          <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 font-medium">
+          <div className="flex items-center gap-2.5 p-3.5 rounded-2xl bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-blue-500/25 text-xs text-slate-800 dark:text-slate-200 font-medium shadow-sm">
             <Wind className="w-4 h-4 text-blue-500 shrink-0 animate-pulse" />
-            <span className="text-[11px] leading-snug">
+            <span className="text-[11px] leading-relaxed">
               {plotType === 'standard' && (
-                <><strong>Standard Plot Selected:</strong> Generates central ventilation courtyards & air ducts for inner rooms.</>
+                <><strong>Standard Plot Configured:</strong> Integrates central ventilation courtyards & air ducts for interior rooms.</>
               )}
               {plotType === 'corner-left' && (
-                <><strong>Left Corner Plot Selected:</strong> Auto-integrates natural light windows along the left side street boundary.</>
+                <><strong>Left Corner Plot Configured:</strong> Auto-integrates side street windows & optional lawn gate along the left boundary.</>
               )}
               {plotType === 'corner-right' && (
-                <><strong>Right Corner Plot Selected:</strong> Auto-integrates natural light windows along the right side street boundary.</>
+                <><strong>Right Corner Plot Configured:</strong> Auto-integrates side street windows & corner entrance options along the right boundary.</>
               )}
               {plotType === 'corner' && (
-                <><strong>Dual Corner Plot Selected:</strong> Integrates panoramic side street windows for maximum cross-ventilation.</>
+                <><strong>Dual Corner Boulevard Configured:</strong> Maximizes dual-façade natural light & cross-ventilation windows.</>
               )}
             </span>
           </div>
         </div>
 
-        {/* Facing Direction Compass with beautiful solar paths */}
-        <div className="space-y-2">
-          <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
-            <span>Compass Facing Direction</span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-normal flex items-center gap-1">
-              <Compass className="w-3 h-3 text-blue-500" /> Determines Sun Paths
+        {/* Facing Direction Compass with solar paths */}
+        <div className="space-y-2.5">
+          <label className="block text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-blue-500" />
+              <span>Compass Facing Direction</span>
+            </span>
+            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+              Determines Vastu & Sun Paths
             </span>
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { id: 'east', title: 'East', sub: 'Morning Sun', icon: Sunrise, iconColor: 'text-amber-500' },
-              { id: 'west', title: 'West', sub: 'Evening Glow', icon: Sunset, iconColor: 'text-orange-500' },
-              { id: 'north', title: 'North', sub: 'Ambient Light', icon: Moon, iconColor: 'text-indigo-400' },
-              { id: 'south', title: 'South', sub: 'All-day Warmth', icon: Sun, iconColor: 'text-yellow-500' },
+              { id: 'east', title: 'East Facing', sub: 'Morning Sun (Vastu Ideal)', icon: Sunrise, iconColor: 'text-amber-500' },
+              { id: 'west', title: 'West Facing', sub: 'Evening Sun & Air', icon: Sunset, iconColor: 'text-orange-500' },
+              { id: 'north', title: 'North Facing', sub: 'Soft Ambient Light', icon: Moon, iconColor: 'text-indigo-400' },
+              { id: 'south', title: 'South Facing', sub: 'All-Day Warmth', icon: Sun, iconColor: 'text-yellow-500' },
             ].map((dir) => {
               const isSelected = facing === dir.id;
               const IconComponent = dir.icon;
@@ -381,19 +390,19 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                   key={dir.id}
                   type="button"
                   onClick={() => setFacing(dir.id as any)}
-                  className={`p-4 rounded-2xl text-center border transition-all duration-300 flex flex-col items-center justify-center relative cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                  className={`p-3.5 rounded-2xl text-center border transition-all duration-300 flex flex-col items-center justify-center relative cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     isSelected
-                      ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500 shadow-lg shadow-blue-500/5 scale-[1.02]'
-                      : 'bg-slate-50/50 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/80 border-slate-200 dark:border-slate-800'
+                      ? 'bg-blue-600/10 dark:bg-blue-500/15 border-blue-500 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/40'
+                      : 'bg-white/80 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900 border-slate-200 dark:border-slate-800'
                   }`}
                 >
-                  <div className={`p-2.5 rounded-xl mb-2 transition-all duration-300 ${isSelected ? 'bg-white dark:bg-slate-800 shadow-inner scale-110' : 'bg-slate-100 dark:bg-slate-900/50'}`}>
-                    <IconComponent className={`w-5 h-5 ${dir.iconColor}`} />
+                  <div className={`p-2 rounded-xl mb-1.5 transition-all duration-300 ${isSelected ? 'bg-blue-500 text-white shadow-sm scale-110' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                    <IconComponent className={`w-4 h-4 ${isSelected ? 'text-white' : dir.iconColor}`} />
                   </div>
-                  <span className="text-[11px] font-display font-black text-slate-900 dark:text-white uppercase leading-none block">
+                  <span className="text-[11px] font-black text-slate-900 dark:text-white uppercase leading-none block">
                     {dir.title}
                   </span>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold leading-none block mt-1 tracking-tight">
+                  <span className="text-[9px] text-slate-500 dark:text-slate-400 font-bold leading-none block mt-1 tracking-tight">
                     {dir.sub}
                   </span>
                 </button>

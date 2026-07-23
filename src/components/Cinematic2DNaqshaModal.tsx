@@ -65,44 +65,6 @@ export default function Cinematic2DNaqshaModal({
     }
   }, [propActiveFloor, layout?.activeFloor]);
 
-  // Robust Auto-Center & Fit Canvas Function
-  const autoCenterCanvas = () => {
-    const rect = viewportRef.current?.getBoundingClientRect();
-    const viewportW = (rect && rect.width > 0) ? rect.width : (typeof window !== 'undefined' ? window.innerWidth : 1000);
-    const viewportH = (rect && rect.height > 0) ? rect.height : (typeof window !== 'undefined' ? window.innerHeight - 120 : 700);
-
-    const lw = Math.max(1, layout?.width || 30);
-    const lh = Math.max(1, layout?.length || 50);
-    const unit = pxPerUnit || 24;
-
-    const contentWidth = lw * unit;
-    const contentHeight = lh * unit;
-
-    const stageWidth = contentWidth + 48;
-    const stageHeight = contentHeight + 48;
-
-    const availW = Math.max(100, viewportW - 48);
-    const availH = Math.max(100, viewportH - 48);
-
-    const scaleX = availW / stageWidth;
-    const scaleY = availH / stageHeight;
-
-    let fitZoom = Math.min(scaleX, scaleY);
-    if (!isFinite(fitZoom) || isNaN(fitZoom) || fitZoom <= 0) {
-      fitZoom = 1;
-    }
-    fitZoom = Math.max(0.2, Math.min(3.0, fitZoom));
-
-    const panX = (viewportW - stageWidth * fitZoom) / 2;
-    const panY = (viewportH - stageHeight * fitZoom) / 2;
-
-    setZoom(fitZoom);
-    setPan({
-      x: isFinite(panX) && !isNaN(panX) ? panX : 0,
-      y: isFinite(panY) && !isNaN(panY) ? panY : 0,
-    });
-  };
-
   // Center & Fit Canvas on Modal Open or Layout Change
   useEffect(() => {
     if (isOpen) {
@@ -164,20 +126,57 @@ export default function Cinematic2DNaqshaModal({
   const safeDoors = Array.isArray(layout?.doors) ? layout.doors : [];
   const safeWindows = Array.isArray(layout?.windows) ? layout.windows : [];
 
-  const currentFloorRooms = (layout?.floors && activeFloorKey in layout.floors && Array.isArray(layout.floors[activeFloorKey]?.rooms) && layout.floors[activeFloorKey].rooms.length > 0)
-    ? layout.floors[activeFloorKey].rooms
+  const currentFloorData = layout?.floors?.[activeFloorKey];
+
+  const currentFloorRooms = (currentFloorData?.rooms && currentFloorData.rooms.length > 0)
+    ? currentFloorData.rooms
     : safeRooms;
 
-  const currentFloorDoors = (layout?.floors && activeFloorKey in layout.floors && Array.isArray(layout.floors[activeFloorKey]?.doors))
-    ? layout.floors[activeFloorKey].doors
+  const currentFloorDoors = (currentFloorData?.doors && currentFloorData.doors.length > 0)
+    ? currentFloorData.doors
     : safeDoors;
 
-  const currentFloorWindows = (layout?.floors && activeFloorKey in layout.floors && Array.isArray(layout.floors[activeFloorKey]?.windows))
-    ? layout.floors[activeFloorKey].windows
+  const currentFloorWindows = (currentFloorData?.windows && currentFloorData.windows.length > 0)
+    ? currentFloorData.windows
     : safeWindows;
 
   const svgWidth = safeWidth * safePxPerUnit;
   const svgHeight = safeLength * safePxPerUnit;
+
+  // Robust Auto-Center & Fit Canvas Function
+  const autoCenterCanvas = () => {
+    const rect = viewportRef.current?.getBoundingClientRect();
+    const viewportW = (rect && rect.width > 0) ? rect.width : (typeof window !== 'undefined' ? window.innerWidth : 1000);
+    const viewportH = (rect && rect.height > 0) ? rect.height : (typeof window !== 'undefined' ? window.innerHeight - 120 : 600);
+
+    const contentWidth = svgWidth;
+    const contentHeight = svgHeight;
+
+    const pad = 48; // padding around stage (p-6 = 24px * 2)
+    const stageWidth = contentWidth + pad;
+    const stageHeight = contentHeight + pad;
+
+    const availW = Math.max(100, viewportW - 32);
+    const availH = Math.max(100, viewportH - 32);
+
+    const scaleX = availW / stageWidth;
+    const scaleY = availH / stageHeight;
+
+    let fitZoom = Math.min(scaleX, scaleY);
+    if (!isFinite(fitZoom) || isNaN(fitZoom) || fitZoom <= 0) {
+      fitZoom = 1;
+    }
+    fitZoom = Math.max(0.2, Math.min(3.0, fitZoom));
+
+    const panX = (viewportW - stageWidth * fitZoom) / 2;
+    const panY = (viewportH - stageHeight * fitZoom) / 2;
+
+    setZoom(fitZoom);
+    setPan({
+      x: isFinite(panX) && !isNaN(panX) ? panX : 0,
+      y: isFinite(panY) && !isNaN(panY) ? panY : 0,
+    });
+  };
 
   // Covered Area calculation
   const totalCoveredSqFt = currentFloorRooms.reduce((sum, r) => sum + (r?.width || 0) * (r?.height || 0), 0);
@@ -489,7 +488,7 @@ export default function Cinematic2DNaqshaModal({
   const currentStyle = themeStyles[theme];
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-2xl flex flex-col text-slate-100 select-none overflow-hidden animate-fadeIn">
+    <div className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-2xl flex flex-col text-slate-100 select-none overflow-hidden">
       {/* Dynamic Ambient Background Glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
@@ -642,7 +641,7 @@ export default function Cinematic2DNaqshaModal({
       {/* MAIN VIEWPORT CANVAS STAGE - COMPLETELY CLEAN & UNOBSTRUCTED */}
       <main
         ref={viewportRef}
-        className={`relative flex-1 w-full h-full overflow-hidden ${currentStyle.bg} cursor-grab active:cursor-grabbing select-none`}
+        className={`relative flex-1 min-h-0 w-full overflow-hidden ${currentStyle.bg} cursor-grab active:cursor-grabbing select-none`}
         style={{ touchAction: 'none' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -656,7 +655,7 @@ export default function Cinematic2DNaqshaModal({
       >
         {/* Blueprint Stage Box with Glow Frame */}
         <div
-          className="absolute transition-transform duration-75 ease-out"
+          className="absolute top-0 left-0 transition-transform duration-75 ease-out"
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: '0 0',
