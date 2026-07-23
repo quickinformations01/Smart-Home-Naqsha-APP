@@ -2856,62 +2856,77 @@ export default function FloorPlanVisualizer({
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Visualization Mode
             </span>
-            <div className="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
               <button
                 onClick={() => {
                   setIs3DView(false);
                   setShowEstimator(false);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
-                  !is3DView && !showEstimator && !isElevationView
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                  !is3DView && !showEstimator && !isElevationView && !showCinematicModal
                     ? 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white shadow-md'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-2d"
               >
-                <Map className="w-3.5 h-3.5" />
-                <span>2D Naqsha</span>
+                <Map className="w-3.5 h-3.5 text-blue-400" />
+                <span>2D Editor</span>
               </button>
+
+              <button
+                onClick={() => {
+                  setShowCinematicModal(true);
+                }}
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-md hover:scale-[1.02] active:scale-[0.98] ring-1 ring-cyan-400/40`}
+                id="view-mode-cinematic-2d"
+                title="Launch Cinematic Fullscreen 2D Live View Lightbox"
+              >
+                <Eye className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
+                <span>🎬 Live View</span>
+              </button>
+
               <button
                 onClick={() => {
                   setIs3DView(true);
                   setShowEstimator(false);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
                   is3DView && !showEstimator && !isElevationView
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-3d"
               >
-                <Box className="w-3.5 h-3.5" />
+                <Box className="w-3.5 h-3.5 text-amber-300" />
                 <span>3D Live</span>
               </button>
+
               <button
                 onClick={() => {
                   setIs3DView(false);
                   setShowEstimator(false);
                   setIsElevationView(true);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
                   isElevationView && !showEstimator && !is3DView
                     ? 'bg-indigo-600 text-white shadow-md'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
                 }`}
                 id="view-mode-elevation"
               >
-                <Compass className="w-3.5 h-3.5" />
+                <Compass className="w-3.5 h-3.5 text-indigo-300" />
                 <span>Elevation</span>
               </button>
+
               <button
                 onClick={() => {
                   setIs3DView(false);
                   setShowEstimator(true);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-black rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-black rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer col-span-2 sm:col-span-1 ${
                   showEstimator && !is3DView && !isElevationView
                     ? 'bg-emerald-600 text-white shadow-md'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
