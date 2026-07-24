@@ -2832,52 +2832,35 @@ export default function FloorPlanVisualizer({
       {/* Editor & Canvas Area - Left 8 or 12 Cols depending on 2D/3D Mode */}
       <div className={`${is3DView ? 'lg:col-span-12' : 'lg:col-span-8'} w-full flex flex-col space-y-4`}>
         
-        {/* Row 1: Floor Selector & 2D/3D Mode Selector */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm">
-          {/* Segmented Floor Selector */}
-          <div className="flex flex-col space-y-1.5">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
-              <Layers className="w-3 h-3 text-blue-500" /> Choose Level / Floor
-            </span>
-            <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
-              {(['ground', 'first', 'second'] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => handleFloorChange(f)}
-                  className={`py-2 px-2 text-xs font-bold capitalize rounded-lg transition-all duration-150 ${
-                    activeFloor === f
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
-                  id={`floor-tab-${f}`}
-                >
-                  {f === 'ground' ? 'Ground' : f === 'first' ? '1st Floor' : '2nd Floor'}
-                </button>
-              ))}
+        {/* Row 1: Prominent Visualization Mode & Floor Selector Controls */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md space-y-4">
+          {/* Top Line: Mode Buttons */}
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" /> Visualization & Analysis Modes
+              </span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                Active: {!is3DView && !showEstimator && !isElevationView ? '2D CAD' : is3DView ? '3D Walkthrough' : isElevationView ? 'Elevation' : 'Cost Estimator'}
+              </span>
             </div>
-          </div>
 
-          {/* Segmented 2D/3D/Elevation/Cost/Audit View Selector */}
-          <div className="flex flex-col space-y-1.5">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Visualization Mode
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 bg-slate-100/80 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-800">
               <button
                 onClick={() => {
                   setIs3DView(false);
                   setShowEstimator(false);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-3 px-2 text-xs font-extrabold rounded-xl flex flex-row items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
                   !is3DView && !showEstimator && !isElevationView
-                    ? 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
+                    ? 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white shadow-lg ring-2 ring-blue-500/30'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/60 dark:hover:bg-slate-900/60'
                 }`}
                 id="view-mode-2d"
               >
-                <Map className="w-3.5 h-3.5 text-blue-400" />
-                <span>2D Naqsha</span>
+                <Map className="w-4 h-4 text-blue-500" />
+                <span className="truncate">2D Blueprint</span>
               </button>
 
               <button
@@ -2886,15 +2869,15 @@ export default function FloorPlanVisualizer({
                   setShowEstimator(false);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-3 px-2 text-xs font-extrabold rounded-xl flex flex-row items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
                   is3DView && !showEstimator && !isElevationView
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
+                    ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-400/40'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/60 dark:hover:bg-slate-900/60'
                 }`}
                 id="view-mode-3d"
               >
-                <Box className="w-3.5 h-3.5 text-amber-300" />
-                <span>3D Live</span>
+                <Box className="w-4 h-4 text-amber-300" />
+                <span className="truncate">3D Model</span>
               </button>
 
               <button
@@ -2903,15 +2886,15 @@ export default function FloorPlanVisualizer({
                   setShowEstimator(false);
                   setIsElevationView(true);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-extrabold rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-3 px-2 text-xs font-extrabold rounded-xl flex flex-row items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
                   isElevationView && !showEstimator && !is3DView
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
+                    ? 'bg-indigo-600 text-white shadow-lg ring-2 ring-indigo-400/40'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/60 dark:hover:bg-slate-900/60'
                 }`}
                 id="view-mode-elevation"
               >
-                <Compass className="w-3.5 h-3.5 text-indigo-300" />
-                <span>Elevation</span>
+                <Compass className="w-4 h-4 text-indigo-300" />
+                <span className="truncate">Elevation</span>
               </button>
 
               <button
@@ -2920,28 +2903,56 @@ export default function FloorPlanVisualizer({
                   setShowEstimator(true);
                   setIsElevationView(false);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-black rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`py-3 px-2 text-xs font-extrabold rounded-xl flex flex-row items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
                   showEstimator && !is3DView && !isElevationView
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-900/50'
+                    ? 'bg-emerald-600 text-white shadow-lg ring-2 ring-emerald-400/40'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/60 dark:hover:bg-slate-900/60'
                 }`}
                 id="view-mode-estimator"
               >
-                <Calculator className="w-3.5 h-3.5 text-amber-300" />
-                <span>Cost PKR</span>
+                <Calculator className="w-4 h-4 text-amber-300" />
+                <span className="truncate">Cost Estimator</span>
               </button>
 
               <button
                 onClick={() => {
                   setShowDiagnosticsModal(true);
                 }}
-                className={`py-2 px-1 text-[10px] sm:text-[11px] font-black rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer bg-slate-900 hover:bg-indigo-950 text-emerald-400 border border-emerald-500/30 shadow-md`}
+                className={`py-3 px-2 text-xs font-black rounded-xl flex flex-row items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-900 hover:bg-indigo-950 text-emerald-400 border border-emerald-500/30 shadow-md`}
                 id="view-mode-audit"
                 title="View deterministic client-side architectural diagnostics & engineering rules"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Audit ({diagnosticReport.overallScore}/100)</span>
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="truncate">Audit ({diagnosticReport.overallScore}/100)</span>
               </button>
+            </div>
+          </div>
+
+          {/* Bottom Line: Prominent Floor Block Switcher */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-blue-500" />
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                Floor Level Block Selector
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 bg-slate-100/90 dark:bg-slate-950 p-1 rounded-2xl sm:w-auto w-full">
+              {(['ground', 'first', 'second'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => handleFloorChange(f)}
+                  className={`py-2 px-4 text-xs font-black capitalize rounded-xl transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
+                    activeFloor === f
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                  id={`floor-tab-${f}`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${f === 'ground' ? 'bg-emerald-400' : f === 'first' ? 'bg-amber-300' : 'bg-purple-300'}`} />
+                  <span>{f === 'ground' ? 'Ground Floor' : f === 'first' ? '1st Floor' : '2nd Floor'}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>

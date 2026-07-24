@@ -332,13 +332,13 @@ export default function PakistanCostEstimatorDashboard({
       <div className="bg-gradient-to-br from-emerald-900 via-teal-950 to-slate-950 p-6 sm:p-8 rounded-3xl text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-emerald-800/40">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-            <Calculator className="w-3.5 h-3.5" /> Intelligent Estimation Engine
+            <Calculator className="w-3.5 h-3.5" /> Intelligent Quantity Surveying Engine
           </div>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight uppercase">
-            Pakistan Grey Structure Cost Estimator
+            Pakistan Grey Structure Cost Estimator — Ground, 1st & 2nd Floor Complete Budget
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl font-medium leading-relaxed">
-            Calculated dynamically based on real architectural partitions, wall lengths, and door/window openings of your active <strong>{layout.width}'x{layout.length}' Naqsha</strong>, not just gross estimates.
+            Includes comprehensive material and contractor labor estimates for <strong>Ground Floor</strong>, <strong>First Floor</strong>, and <strong>Second Floor / Rooftop</strong> structures calculated dynamically from real wall lengths and openings of your active <strong>{layout.width}'x{layout.length}' Naqsha</strong>.
           </p>
         </div>
 
@@ -364,7 +364,7 @@ export default function PakistanCostEstimatorDashboard({
             {formatPKR(estimate.grandTotal)}
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-medium">
-            Approx. Grand Total (PKR)
+            Ground + 1st + 2nd Floor Total (PKR)
           </span>
         </div>
 
@@ -392,7 +392,7 @@ export default function PakistanCostEstimatorDashboard({
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-sans"> Sq Ft</span>
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-medium">
-            Across {estimate.floorsCount} floors / storeys
+            Across Ground, 1st & 2nd Floor
           </span>
         </div>
 
@@ -420,6 +420,97 @@ export default function PakistanCostEstimatorDashboard({
           <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-medium">
             {Math.round((estimate.totalLabourCost / estimate.grandTotal) * 100)}% of grand total budget
           </span>
+        </div>
+      </div>
+
+      {/* Prominent Floor-wise Visual Blocks Card */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+              <Layers className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black uppercase text-slate-900 dark:text-white tracking-wide">
+                Floor-By-Floor Budget Blocks & Comparison
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium">
+                Distinct cost and material allocations for Ground Floor, First Floor, and Second Floor
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-mono font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-500/20 self-start sm:self-auto">
+            3 Storeys Calculated
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+          {estimate.floorWiseBreakdown.filter(f => f.floorKey !== 'logistics').map((floor) => {
+            const isGround = floor.floorKey === 'ground';
+            const isFirst = floor.floorKey === 'first';
+            const badgeColor = isGround
+              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+              : isFirst
+              ? 'bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400'
+              : 'bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400';
+
+            return (
+              <div
+                key={floor.floorKey}
+                className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-3 relative flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded-lg border ${badgeColor}`}>
+                      {floor.floorName} Block
+                    </span>
+                    <span className="text-[10px] font-mono font-bold text-slate-500">
+                      {Math.round(floor.coveredAreaSqFt)} Sq Ft
+                    </span>
+                  </div>
+
+                  <div className="space-y-1 my-3">
+                    <span className="text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight block">
+                      {formatPKR(floor.totalCost)}
+                    </span>
+                    <span className="text-[10px] font-medium text-slate-500 block">
+                      {Math.round((floor.totalCost / estimate.grandTotal) * 100)}% of full building budget
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs border-t border-slate-200/50 dark:border-slate-800/80 pt-3">
+                    <div>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase block">Material Cost</span>
+                      <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                        {formatPKR(floor.materialCost)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase block">Labour Cost</span>
+                      <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
+                        {formatPKR(floor.labourCost)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-200/40 dark:border-slate-800/60 flex items-center justify-between text-[10px] text-slate-500">
+                  <span className="font-medium truncate max-w-[150px]">
+                    {isGround ? 'Foundations, Plinth & Slab' : isFirst ? 'Columns, Beams & Upper Slab' : 'Mumty, Parapet & Overhead Tank'}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setCollapsedSections(prev => ({ ...prev, floorBreakdown: false }));
+                      toggleFloorMaterials(floor.floorKey);
+                    }}
+                    className="text-blue-600 dark:text-blue-400 font-extrabold hover:underline cursor-pointer shrink-0"
+                  >
+                    Stocks →
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
