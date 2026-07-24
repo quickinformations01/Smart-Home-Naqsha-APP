@@ -36,13 +36,17 @@ import {
   Grid,
   Wind,
   Eye,
+  ShieldCheck,
+  Ruler,
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { NaqshaLayout, Room, Door, Window, RoomType } from '../types';
 import { generateProceduralLayout } from '../utils/layoutGenerator';
+import { analyzeLayout } from '../utils/analysisEngine';
 import FloorPlan3DViewer from './FloorPlan3DViewer';
 import FloorPlanElevationViewer from './FloorPlanElevationViewer';
 import PakistanCostEstimatorDashboard from './PakistanCostEstimatorDashboard';
+import ArchitecturalDiagnosticsPanel from './ArchitecturalDiagnosticsPanel';
 import {
   DEFAULT_PAK_RATES,
   DEFAULT_ESTIMATOR_INPUTS,
@@ -438,6 +442,10 @@ export default function FloorPlanVisualizer({
   const [layoutVersion, setLayoutVersion] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [showSqFtLayer, setShowSqFtLayer] = useState<boolean>(true);
   const [showAnalysisHeatmap, setShowAnalysisHeatmap] = useState<boolean>(false);
+  const [showDiagnosticsModal, setShowDiagnosticsModal] = useState<boolean>(false);
+
+  // Pure rule-based client-side architectural report calculation
+  const diagnosticReport = React.useMemo(() => analyzeLayout(layout), [layout]);
 
   // Dragging/Resizing rooms state
   const [draggedRoomId, setDraggedRoomId] = useState<string | null>(null);
@@ -2849,12 +2857,12 @@ export default function FloorPlanVisualizer({
             </div>
           </div>
 
-          {/* Segmented 2D/3D/Elevation/Cost View Selector */}
+          {/* Segmented 2D/3D/Elevation/Cost/Audit View Selector */}
           <div className="flex flex-col space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Visualization Mode
             </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
               <button
                 onClick={() => {
                   setIs3DView(false);
@@ -2921,6 +2929,18 @@ export default function FloorPlanVisualizer({
               >
                 <Calculator className="w-3.5 h-3.5 text-amber-300" />
                 <span>Cost PKR</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowDiagnosticsModal(true);
+                }}
+                className={`py-2 px-1 text-[10px] sm:text-[11px] font-black rounded-lg flex flex-row items-center justify-center gap-1 transition-all cursor-pointer bg-slate-900 hover:bg-indigo-950 text-emerald-400 border border-emerald-500/30 shadow-md`}
+                id="view-mode-audit"
+                title="View deterministic client-side architectural diagnostics & engineering rules"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Audit ({diagnosticReport.overallScore}/100)</span>
               </button>
             </div>
           </div>
@@ -2999,6 +3019,24 @@ export default function FloorPlanVisualizer({
               <Layers className="w-4 h-4" />
               <span className="text-[10px] font-bold uppercase hidden md:inline">
                 {showSqFtLayer ? 'Sq Ft ON' : 'Sq Ft OFF'}
+              </span>
+            </button>
+
+            {/* Engineering Rules Heatmap / Diagnostic Overlay Toggle Button */}
+            <button
+              onClick={() => setShowAnalysisHeatmap(!showAnalysisHeatmap)}
+              disabled={is3DView}
+              className={`p-2 rounded-xl border transition flex items-center space-x-1 ${
+                showAnalysisHeatmap
+                  ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-400 text-emerald-600 dark:text-emerald-400 font-bold'
+                  : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+              }`}
+              title="Toggle Rule Diagnostic Overlay (Aspect Ratios & Ventilation Badges)"
+              id="toggle-rule-overlay-btn"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span className="text-[10px] font-bold uppercase hidden md:inline">
+                {showAnalysisHeatmap ? 'Rule Overlay ON' : 'Rule Overlay OFF'}
               </span>
             </button>
           </div>
@@ -3223,12 +3261,32 @@ export default function FloorPlanVisualizer({
                 const isSelected = selectedRoomId === room.id;
                 const rColor = room.color || '#f8fafc';
 
-                // Clean architectural style: standard color fill, solid border stroke (no pink warnings, no dotted lines)
+                // Diagnostic rule evaluation for this room
+                const roomDiag = showAnalysisHeatmap
+                  ? diagnosticReport.roomDiagnostics.find((rd) => rd.roomId === room.id)
+                  : null;
+
+                // Clean architectural style: standard color fill, solid border stroke
                 const fillValue = isSelected 
                   ? (document.documentElement.classList.contains('dark') ? 'rgba(37, 99, 235, 0.15)' : 'rgba(37, 99, 235, 0.05)')
                   : rColor;
-                const strokeValue = isSelected ? '#2563eb' : '#334155';
-                const strokeWidthValue = isSelected ? '3.5' : '2.5';
+
+                let strokeValue = isSelected ? '#2563eb' : '#334155';
+                let strokeWidthValue = isSelected ? '3.5' : '2.5';
+
+                if (showAnalysisHeatmap && roomDiag) {
+                  if (roomDiag.status === 'good') {
+                    strokeValue = '#10b981';
+                    strokeWidthValue = '3.5';
+                  } else if (roomDiag.status === 'acceptable' || roomDiag.status === 'warning') {
+                    strokeValue = '#f59e0b';
+                    strokeWidthValue = '3.5';
+                  } else {
+                    strokeValue = '#f43f5e';
+                    strokeWidthValue = '4.0';
+                  }
+                }
+
                 const strokeDasharray = undefined; // Solid lines only, no dotted lines
 
                 // Dynamically scaled and auto-shrunk font sizes for perfect wrapping and zero overflow
@@ -3456,6 +3514,46 @@ export default function FloorPlanVisualizer({
                           onTouchStart={(e) => handleResizeMouseDown(e, room.id, 'br')}
                         />
                       </>
+                    )}
+
+                    {/* Diagnostic Rule Overlay Badge Pill (When Rule Overlay is ON) */}
+                    {showAnalysisHeatmap && roomDiag && (
+                      <g
+                        className="pointer-events-auto cursor-pointer select-none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowDiagnosticsModal(true);
+                        }}
+                      >
+                        <rect
+                          x={(room.x + room.width) * pxPerUnit - 42}
+                          y={room.y * pxPerUnit + 4}
+                          width="38"
+                          height="15"
+                          rx="7.5"
+                          fill={
+                            roomDiag.status === 'good'
+                              ? '#059669'
+                              : roomDiag.status === 'error'
+                              ? '#e11d48'
+                              : '#d97706'
+                          }
+                          stroke="#ffffff"
+                          strokeWidth="1"
+                          className="shadow-md"
+                        />
+                        <text
+                          x={(room.x + room.width) * pxPerUnit - 23}
+                          y={room.y * pxPerUnit + 15}
+                          fontSize="7"
+                          fontWeight="900"
+                          fill="#ffffff"
+                          textAnchor="middle"
+                          fontFamily="sans-serif"
+                        >
+                          {roomDiag.aspectRatio.toFixed(2)}:1
+                        </text>
+                      </g>
                     )}
                   </g>
                 );
@@ -4338,6 +4436,15 @@ export default function FloorPlanVisualizer({
           </div>
         </div>
       </div>
+      )}
+
+      {/* Pure Client-Side Deterministic Architectural Audit Modal */}
+      {showDiagnosticsModal && (
+        <ArchitecturalDiagnosticsPanel
+          report={diagnosticReport}
+          layout={layout}
+          onClose={() => setShowDiagnosticsModal(false)}
+        />
       )}
     </div>
   );

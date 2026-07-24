@@ -1,4 +1,5 @@
 import { NaqshaLayout, Room, Door, Window, RoomType, NaqshaSummary } from '../types';
+import { analyzeLayout } from './analysisEngine';
 
 interface TemplateConfig {
   id: number;
@@ -821,13 +822,17 @@ export function generateProceduralLayout(
     ? 'Right Corner Plot: Side street ventilation windows integrated on right perimeter.'
     : 'Standard single-frontage ventilation shaft alignment.';
 
+  // Run pure rule-based architectural analysis on the best layout
+  const diagnosticReport = analyzeLayout(bestLayout);
+  bestLayout.analysis = diagnosticReport;
+
   // Inject beautiful features description back into the summary
   bestLayout.summary.otherFeatures = [
-    `★ On-Device Architectural Verification Score: ${maxScore}/100`,
+    `★ Deterministic Architectural Score: ${diagnosticReport.overallScore}/100 (${diagnosticReport.status.toUpperCase().replace('_', ' ')})`,
     `✔ Style Selected: ${bestConfig.name}`,
+    `✔ Room Proportions Score: ${diagnosticReport.categoryScores.proportionsScore}/20 | Daylight & Vent: ${diagnosticReport.categoryScores.ventilationScore}/20`,
     `✔ Optimal zoning: private quiet master suite placed in the rear quadrant for maximum privacy.`,
-    `✔ Logical circulation: direct open-access flow to family areas with separate drawing lobby entrance.`,
-    `✔ Natural cross-ventilation: bedroom window coordinates aligned with rear open setback shafts.`,
+    `✔ Natural cross-ventilation: ${diagnosticReport.lightingVentilationMetrics.crossVentilatedRoomsCount} room(s) cross-ventilated.`,
     `Orientation facing ${facing.toUpperCase()}: ${orientationTips[facing]}`,
     `${floorText} configuration.`,
     `✔ ${cornerMessage}`,

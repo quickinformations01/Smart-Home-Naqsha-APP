@@ -101,6 +101,7 @@ export interface NaqshaLayout {
   facing?: 'north' | 'south' | 'east' | 'west';
   activeFloor?: 'ground' | 'first' | 'second';
   autoFurnished?: boolean;
+  analysis?: any;
   floors?: {
     [key: string]: {
       rooms: Room[];
