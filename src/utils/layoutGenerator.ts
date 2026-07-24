@@ -153,6 +153,178 @@ function scoreCandidate(layout: NaqshaLayout, preferences: any): { score: number
   return { score, report };
 }
 
+/**
+ * Pure Rule-Based Aspect Ratio Refiner
+ * Ensures no room becomes an awkward, skinny rectangle (aspect ratio > 1.52:1)
+ * when plot length or width has a great difference. Splits long spans into two well-proportioned rooms.
+ */
+function refineLayoutAspectRatios(layout: NaqshaLayout): NaqshaLayout {
+  const newRooms: Room[] = [];
+  const roomSplitsMap = new Map<string, { r1: Room; r2: Room }>();
+
+  let idCounter = 100;
+  const nextSplitId = (prefix: string) => `${prefix}_split_${idCounter++}`;
+
+  layout.rooms.forEach((r) => {
+    // Skip lawns, corridors, staircases, or tiny spaces
+    if (
+      r.type === 'lawn' ||
+      r.type === 'corridor' ||
+      r.type === 'staircase' ||
+      r.width * r.height < (layout.unit === 'ft' ? 36 : 3.3)
+    ) {
+      newRooms.push(r);
+      return;
+    }
+
+    const ar = Math.max(r.width / r.height, r.height / r.width);
+    if (ar <= 1.52) {
+      // Room shape is already well-proportioned
+      newRooms.push(r);
+      return;
+    }
+
+    // Room is excessively elongated rectangle (aspect ratio > 1.52:1)
+    if (r.height > 1.52 * r.width) {
+      // Vertically elongated -> split horizontally into two stacked rooms
+      const targetH = Math.round(r.width * 1.2 * 10) / 10;
+      const h1 = Math.max(layout.unit === 'ft' ? 7.5 : 2.2, Math.min(targetH, r.height - (layout.unit === 'ft' ? 5 : 1.5)));
+      const h2 = Math.round((r.height - h1) * 10) / 10;
+
+      let subName1 = r.name;
+      let subName2 = `${r.name} Alcove`;
+      let subType1 = r.type;
+      let subType2: RoomType = 'other';
+
+      if (r.type === 'bedroom') {
+        subName1 = r.name;
+        subName2 = 'Dress & Walk-in Wardrobe';
+        subType2 = 'other';
+      } else if (r.type === 'kitchen') {
+        subName1 = 'Gourmet Kitchen';
+        subName2 = 'Kitchen Store & Utility';
+        subType2 = 'other';
+      } else if (r.type === 'living') {
+        subName1 = 'Family TV Lounge';
+        subName2 = 'Formal Dining Area';
+        subType2 = 'living';
+      } else if (r.type === 'drawing') {
+        subName1 = 'Drawing Room';
+        subName2 = 'Reception Foyer & Powder';
+        subType2 = 'other';
+      }
+
+      const r1: Room = {
+        ...r,
+        id: nextSplitId('room'),
+        name: subName1,
+        type: subType1,
+        height: h1,
+      };
+
+      const r2: Room = {
+        ...r,
+        id: nextSplitId('room'),
+        name: subName2,
+        type: subType2,
+        y: Math.round((r.y + h1) * 10) / 10,
+        height: h2,
+        color: subType2 === 'other' ? '#f8fafc' : r.color,
+      };
+
+      newRooms.push(r1, r2);
+      roomSplitsMap.set(r.id, { r1, r2 });
+    } else if (r.width > 1.52 * r.height) {
+      // Horizontally elongated -> split vertically into two side-by-side rooms
+      const targetW = Math.round(r.height * 1.2 * 10) / 10;
+      const w1 = Math.max(layout.unit === 'ft' ? 7.5 : 2.2, Math.min(targetW, r.width - (layout.unit === 'ft' ? 5 : 1.5)));
+      const w2 = Math.round((r.width - w1) * 10) / 10;
+
+      let subName1 = r.name;
+      let subName2 = `${r.name} Space`;
+      let subType1 = r.type;
+      let subType2: RoomType = 'other';
+
+      if (r.type === 'bedroom') {
+        subName1 = r.name;
+        subName2 = 'Dresser & Attached Bath';
+        subType2 = 'bathroom';
+      } else if (r.type === 'kitchen') {
+        subName1 = 'Main Kitchen';
+        subName2 = 'Pantry Store';
+        subType2 = 'other';
+      } else if (r.type === 'living') {
+        subName1 = 'Family Lounge';
+        subName2 = 'Dining Space';
+        subType2 = 'living';
+      } else if (r.type === 'drawing') {
+        subName1 = 'Drawing Room';
+        subName2 = 'Entrance Foyer';
+        subType2 = 'other';
+      }
+
+      const r1: Room = {
+        ...r,
+        id: nextSplitId('room'),
+        name: subName1,
+        type: subType1,
+        width: w1,
+      };
+
+      const r2: Room = {
+        ...r,
+        id: nextSplitId('room'),
+        name: subName2,
+        type: subType2,
+        x: Math.round((r.x + w1) * 10) / 10,
+        width: w2,
+        color: subType2 === 'bathroom' ? '#f1f5f9' : r.color,
+      };
+
+      newRooms.push(r1, r2);
+      roomSplitsMap.set(r.id, { r1, r2 });
+    } else {
+      newRooms.push(r);
+    }
+  });
+
+  // Re-map doors and windows for split rooms
+  const newDoors: Door[] = [];
+  layout.doors.forEach((d) => {
+    if (d.roomId && roomSplitsMap.has(d.roomId)) {
+      const { r1, r2 } = roomSplitsMap.get(d.roomId)!;
+      if (d.x >= r1.x - 0.5 && d.x <= r1.x + r1.width + 0.5 && d.y >= r1.y - 0.5 && d.y <= r1.y + r1.height + 0.5) {
+        newDoors.push({ ...d, roomId: r1.id });
+      } else {
+        newDoors.push({ ...d, roomId: r2.id });
+      }
+    } else {
+      newDoors.push(d);
+    }
+  });
+
+  const newWindows: Window[] = [];
+  layout.windows.forEach((w) => {
+    if (w.roomId && roomSplitsMap.has(w.roomId)) {
+      const { r1, r2 } = roomSplitsMap.get(w.roomId)!;
+      if (w.x >= r1.x - 0.5 && w.x <= r1.x + r1.width + 0.5 && w.y >= r1.y - 0.5 && w.y <= r1.y + r1.height + 0.5) {
+        newWindows.push({ ...w, roomId: r1.id });
+      } else {
+        newWindows.push({ ...w, roomId: r2.id });
+      }
+    } else {
+      newWindows.push(w);
+    }
+  });
+
+  return {
+    ...layout,
+    rooms: newRooms,
+    doors: newDoors,
+    windows: newWindows,
+  };
+}
+
 function buildCandidate(
   config: TemplateConfig,
   width: number,
@@ -486,27 +658,60 @@ function buildCandidate(
   const wCommonBath = Math.min(unit === 'ft' ? 5.5 : 1.7, (usableWidth - wKit) * 0.25);
   const wLounge = usableWidth - wKit - wStairs - wCommonBath;
 
-  if (config.midType === 'classic') {
-    addRoom('Closed Kitchen', 'kitchen', 0, yMid, wKit, hMid);
-    addRoom('Staircase', 'staircase', wKit, yMid + hMid - (unit === 'ft' ? 10 : 3.0), wStairs, unit === 'ft' ? 10 : 3.0);
-    addRoom('Bath (Common)', 'bathroom', wKit + wStairs, yMid + hMid - (unit === 'ft' ? 6 : 1.8), wCommonBath, unit === 'ft' ? 6 : 1.8);
-    addRoom('Family TV Lounge & Dining', 'living', wKit + wStairs + wCommonBath, yMid, wLounge, hMid);
-  } else if (config.midType === 'swapped') {
-    addRoom('Staircase', 'staircase', 0, yMid + hMid - (unit === 'ft' ? 10 : 3.0), wStairs, unit === 'ft' ? 10 : 3.0);
-    addRoom('Bath (Common)', 'bathroom', wStairs, yMid + hMid - (unit === 'ft' ? 6 : 1.8), wCommonBath, unit === 'ft' ? 6 : 1.8);
-    addRoom('Open Great Room & Lounge', 'living', wStairs + wCommonBath, yMid, wLounge, hMid);
-    addRoom('Open Kitchen & Island', 'kitchen', wStairs + wCommonBath + wLounge, yMid, wKit, hMid);
-  } else if (config.midType === 'courtyard') {
-    const wAtrium = Math.min(unit === 'ft' ? 11 : 3.3, usableWidth * 0.3);
-    const wLoungeC = usableWidth - wKit - wAtrium;
-    addRoom('Courtyard Kitchen', 'kitchen', 0, yMid, wKit, hMid);
-    addRoom('Central Atrium (O.T.S.)', 'lawn', wKit, yMid, wAtrium, hMid);
-    addRoom('Family Hall & Lounge', 'living', wKit + wAtrium, yMid, wLoungeC, hMid);
-    addRoom('Staircase', 'staircase', wKit + wAtrium, yMid, Math.min(unit === 'ft' ? 6.5 : 2.0, wLoungeC * 0.4), hMid * 0.7);
+  // Safeguard for elongated plots: if hMid is excessively long (> 16ft / 4.8m),
+  // split middle zone into two horizontal sub-bays to prevent skinny corridor-like rooms
+  const isElongatedMid = hMid > (unit === 'ft' ? 16 : 4.8);
+  if (isElongatedMid) {
+    const hMid1 = Math.round(Math.min(hMid * 0.45, unit === 'ft' ? 14 : 4.2) * 10) / 10;
+    const hMid2 = Math.round((hMid - hMid1) * 10) / 10;
+
+    if (config.midType === 'classic' || config.midType === 'swapped') {
+      // Sub-bay 1 (Mid-Rear): Kitchen & Service Core
+      addRoom('Closed Kitchen', 'kitchen', 0, yMid, wKit, hMid1);
+      addRoom('Staircase', 'staircase', wKit, yMid + hMid1 - (unit === 'ft' ? 9 : 2.7), wStairs, unit === 'ft' ? 9 : 2.7);
+      addRoom('Bath (Common)', 'bathroom', wKit + wStairs, yMid + hMid1 - (unit === 'ft' ? 6 : 1.8), wCommonBath, unit === 'ft' ? 6 : 1.8);
+      addRoom('Dining & Breakfast Nook', 'living', wKit + wStairs + wCommonBath, yMid, wLounge, hMid1);
+
+      // Sub-bay 2 (Mid-Front): Spacious Family TV Lounge
+      addRoom('Family TV Lounge', 'living', 0, yMid + hMid1, usableWidth, hMid2);
+    } else if (config.midType === 'courtyard') {
+      const wAtrium = Math.min(unit === 'ft' ? 11 : 3.3, usableWidth * 0.3);
+      const wLoungeC = usableWidth - wKit - wAtrium;
+
+      addRoom('Courtyard Kitchen', 'kitchen', 0, yMid, wKit, hMid1);
+      addRoom('Central Atrium (O.T.S.)', 'lawn', wKit, yMid, wAtrium, hMid);
+      addRoom('Staircase', 'staircase', wKit + wAtrium, yMid, Math.min(unit === 'ft' ? 6.5 : 2.0, wLoungeC * 0.4), hMid1);
+      addRoom('Family Hall & TV Room', 'living', wKit + wAtrium + Math.min(unit === 'ft' ? 6.5 : 2.0, wLoungeC * 0.4), yMid, wLoungeC - Math.min(unit === 'ft' ? 6.5 : 2.0, wLoungeC * 0.4), hMid1);
+
+      addRoom('Formal Lounge & Dining', 'living', 0, yMid + hMid1, usableWidth, hMid2);
+    } else {
+      addRoom('Gourmet Kitchen & Pantry', 'kitchen', 0, yMid, wKit, hMid1);
+      addRoom('Staircase & Powder', 'staircase', wKit, yMid, usableWidth - wKit, hMid1);
+      addRoom('Grand Family Lounge & TV Hall', 'living', 0, yMid + hMid1, usableWidth, hMid2);
+    }
   } else {
-    addRoom('Gourmet Kitchen & Pantry', 'kitchen', 0, yMid, wKit, hMid);
-    addRoom('Grand Family Lounge & Dining', 'living', wKit, yMid, usableWidth - wKit, hMid);
-    addRoom('Staircase', 'staircase', wKit, yMid, Math.min(unit === 'ft' ? 6.5 : 2.0, (usableWidth - wKit) * 0.3), hMid * 0.7);
+    if (config.midType === 'classic') {
+      addRoom('Closed Kitchen', 'kitchen', 0, yMid, wKit, hMid);
+      addRoom('Staircase', 'staircase', wKit, yMid + hMid - (unit === 'ft' ? 10 : 3.0), wStairs, unit === 'ft' ? 10 : 3.0);
+      addRoom('Bath (Common)', 'bathroom', wKit + wStairs, yMid + hMid - (unit === 'ft' ? 6 : 1.8), wCommonBath, unit === 'ft' ? 6 : 1.8);
+      addRoom('Family TV Lounge & Dining', 'living', wKit + wStairs + wCommonBath, yMid, wLounge, hMid);
+    } else if (config.midType === 'swapped') {
+      addRoom('Staircase', 'staircase', 0, yMid + hMid - (unit === 'ft' ? 10 : 3.0), wStairs, unit === 'ft' ? 10 : 3.0);
+      addRoom('Bath (Common)', 'bathroom', wStairs, yMid + hMid - (unit === 'ft' ? 6 : 1.8), wCommonBath, unit === 'ft' ? 6 : 1.8);
+      addRoom('Open Great Room & Lounge', 'living', wStairs + wCommonBath, yMid, wLounge, hMid);
+      addRoom('Open Kitchen & Island', 'kitchen', wStairs + wCommonBath + wLounge, yMid, wKit, hMid);
+    } else if (config.midType === 'courtyard') {
+      const wAtrium = Math.min(unit === 'ft' ? 11 : 3.3, usableWidth * 0.3);
+      const wLoungeC = usableWidth - wKit - wAtrium;
+      addRoom('Courtyard Kitchen', 'kitchen', 0, yMid, wKit, hMid);
+      addRoom('Central Atrium (O.T.S.)', 'lawn', wKit, yMid, wAtrium, hMid);
+      addRoom('Family Hall & Lounge', 'living', wKit + wAtrium, yMid, wLoungeC, hMid);
+      addRoom('Staircase', 'staircase', wKit + wAtrium, yMid, Math.min(unit === 'ft' ? 6.5 : 2.0, wLoungeC * 0.4), hMid * 0.7);
+    } else {
+      addRoom('Gourmet Kitchen & Pantry', 'kitchen', 0, yMid, wKit, hMid);
+      addRoom('Grand Family Lounge & Dining', 'living', wKit, yMid, usableWidth - wKit, hMid);
+      addRoom('Staircase', 'staircase', wKit, yMid, Math.min(unit === 'ft' ? 6.5 : 2.0, (usableWidth - wKit) * 0.3), hMid * 0.7);
+    }
   }
 
   // --- 3. FRONT ZONE ---
@@ -728,7 +933,7 @@ function buildCandidate(
     otherFeatures: [],
   };
 
-  return {
+  const rawLayout: NaqshaLayout = {
     width,
     length,
     unit,
@@ -740,6 +945,8 @@ function buildCandidate(
     facing,
     activeFloor,
   };
+
+  return refineLayoutAspectRatios(rawLayout);
 }
 
 export function generateProceduralLayout(
