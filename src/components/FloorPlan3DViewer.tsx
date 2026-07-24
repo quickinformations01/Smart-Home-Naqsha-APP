@@ -20,26 +20,31 @@ export interface MaterialItem {
 }
 
 export const FLOOR_MATERIALS: MaterialItem[] = [
-  { id: 'light-oak', name: 'Light Oak Wood', color: '#f59e0b', secondaryColor: '#b45309', pattern: 'wood', description: 'Warm natural wood boards' },
-  { id: 'dark-walnut', name: 'Dark Walnut', color: '#451a03', secondaryColor: '#1e0c02', pattern: 'wood', description: 'Premium deep dark timber' },
-  { id: 'white-marble', name: 'Carrara Marble', color: '#fafafa', secondaryColor: '#cbd5e1', pattern: 'marble', description: 'Classic white with grey veins' },
-  { id: 'emerald-marble', name: 'Verde Marble', color: '#064e3b', secondaryColor: '#10b981', pattern: 'marble', description: 'Luxury rich green marble' },
-  { id: 'classic-tile', name: 'Terracotta Tile', color: '#ea580c', secondaryColor: '#9a3412', pattern: 'tile', description: 'Cozy clay-baked pottery tiles' },
-  { id: 'grey-slate', name: 'Grey Slate Tile', color: '#475569', secondaryColor: '#1e293b', pattern: 'tile', description: 'Sleek industrial slate tilework' },
+  { id: 'white-marble', name: 'Carrara White Marble', color: '#f8fafc', secondaryColor: '#cbd5e1', pattern: 'marble', description: 'Classic Italian polished marble with silver veins' },
+  { id: 'black-gold-marble', name: 'Black Gold Marble', color: '#18181b', secondaryColor: '#f59e0b', pattern: 'marble', description: 'Luxury obsidian marble with gold veining' },
+  { id: 'emerald-marble', name: 'Verde Green Marble', color: '#064e3b', secondaryColor: '#34d399', pattern: 'marble', description: 'Deep royal emerald polished marble' },
+  { id: 'calacatta-marble', name: 'Calacatta Marble', color: '#ffffff', secondaryColor: '#94a3b8', pattern: 'marble', description: 'Pure white marble with thick charcoal veins' },
+  { id: 'travertine-marble', name: 'Cream Travertine', color: '#fef3c7', secondaryColor: '#d97706', pattern: 'marble', description: 'Warm beige natural stone finish' },
+  { id: 'light-oak', name: 'Light Oak Wood', color: '#f59e0b', secondaryColor: '#b45309', pattern: 'wood', description: 'Warm natural wood parquet' },
+  { id: 'dark-walnut', name: 'Dark Walnut Timber', color: '#451a03', secondaryColor: '#1e0c02', pattern: 'wood', description: 'Rich deep walnut timber flooring' },
+  { id: 'white-tile', name: 'Porcelain White Tile', color: '#ffffff', secondaryColor: '#e2e8f0', pattern: 'tile', description: 'High-gloss square ceramic tiles' },
+  { id: 'classic-tile', name: 'Terracotta Tile', color: '#ea580c', secondaryColor: '#9a3412', pattern: 'tile', description: 'Cozy clay-baked pottery floor tiles' },
+  { id: 'grey-slate', name: 'Grey Slate Tile', color: '#475569', secondaryColor: '#1e293b', pattern: 'tile', description: 'Modern industrial slate tilework' },
   { id: 'concrete', name: 'Polished Concrete', color: '#94a3b8', pattern: 'plain', description: 'Seamless minimalist gray finish' },
-  { id: 'beige-carpet', name: 'Velvet Carpet', color: '#e7e5e4', pattern: 'plain', description: 'Plush cream comfort' },
-  { id: 'royal-carpet', name: 'Royal Blue Carpet', color: '#1e3a8a', pattern: 'plain', description: 'Cozy deep blue texture' }
+  { id: 'beige-carpet', name: 'Velvet Carpet', color: '#e7e5e4', pattern: 'plain', description: 'Plush cream comfort carpet' }
 ];
 
 export const WALL_MATERIALS: MaterialItem[] = [
-  { id: 'white-paint', name: 'Pristine White', color: '#f8fafc', pattern: 'plain', description: 'Bright plaster paint' },
-  { id: 'sand-paint', name: 'Warm Sandstone', color: '#f5f5dc', pattern: 'plain', description: 'Soft neutral plaster' },
-  { id: 'red-brick', name: 'Red Brick', color: '#b91c1c', secondaryColor: '#450a0a', pattern: 'brick', description: 'Rustic masonry style' },
-  { id: 'wood-panel', name: 'Wood Boarding', color: '#d97706', secondaryColor: '#78350f', pattern: 'wood', description: 'Vertical cedar panels' },
-  { id: 'charcoal-slate', name: 'Charcoal Stone', color: '#334155', secondaryColor: '#0f172a', pattern: 'brick', description: 'Bold split-face stone' },
-  { id: 'teal-wallpaper', name: 'Teal Wallpaper', color: '#0f766e', secondaryColor: '#134e4a', pattern: 'wallpaper', description: 'Damask patterned wallpaper' },
-  { id: 'gold-wallpaper', name: 'Golden Damask', color: '#ca8a04', secondaryColor: '#713f12', pattern: 'wallpaper', description: 'Royal amber print' },
-  { id: 'sage-paint', name: 'Sage Green', color: '#bbf7d0', pattern: 'plain', description: 'Calming natural tone' }
+  { id: 'white-paint', name: 'Pristine White Paint', color: '#f8fafc', pattern: 'plain', description: 'Bright architectural wall paint' },
+  { id: 'sand-paint', name: 'Warm Sandstone', color: '#f5f5dc', pattern: 'plain', description: 'Soft warm neutral plaster' },
+  { id: 'sage-paint', name: 'Sage Green Paint', color: '#bbf7d0', pattern: 'plain', description: 'Calming natural green wall paint' },
+  { id: 'navy-paint', name: 'Royal Navy Paint', color: '#1e3a8a', pattern: 'plain', description: 'Deep sophisticated navy blue finish' },
+  { id: 'venetian-plaster', name: 'Venetian Marble Plaster', color: '#f1f5f9', secondaryColor: '#94a3b8', pattern: 'marble', description: 'Smooth polished marble wall coating' },
+  { id: 'red-brick', name: 'Red Brick Masonry', color: '#b91c1c', secondaryColor: '#450a0a', pattern: 'brick', description: 'Exposed rustic brick wall finish' },
+  { id: 'wood-panel', name: 'Wood Wall Boarding', color: '#d97706', secondaryColor: '#78350f', pattern: 'wood', description: 'Vertical cedar wood panels' },
+  { id: 'charcoal-slate', name: 'Charcoal Stone Wall', color: '#334155', secondaryColor: '#0f172a', pattern: 'brick', description: 'Split-face dark stone masonry' },
+  { id: 'teal-wallpaper', name: 'Teal Damask Wallpaper', color: '#0f766e', secondaryColor: '#134e4a', pattern: 'wallpaper', description: 'Royal damask patterned wallpaper' },
+  { id: 'gold-wallpaper', name: 'Golden Damask Wallpaper', color: '#ca8a04', secondaryColor: '#713f12', pattern: 'wallpaper', description: 'Luxury amber gold wallpaper' }
 ];
 
 // Convex polygon point-in-polygon helper (for room clicks in 3D)
@@ -178,13 +183,19 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     };
   }, []);
 
+  // Active floor rooms resolution helper
+  const activeFloorKey = layout.activeFloor || 'ground';
+  const activeRooms = (layout.floors && layout.floors[activeFloorKey]?.rooms && layout.floors[activeFloorKey].rooms.length > 0)
+    ? layout.floors[activeFloorKey].rooms
+    : layout.rooms;
+
   // Apply material change
   const applyMaterial = (materialId: string) => {
     if (!onUpdateLayout) return;
 
     let updatedRooms: Room[];
     if (selectedRoomId === 'all' || !selectedRoomId) {
-      updatedRooms = layout.rooms.map(r => {
+      updatedRooms = activeRooms.map(r => {
         if (r.type === 'lawn') return r;
         if (activeTab === 'floor') {
           return { ...r, floorMaterial: materialId };
@@ -193,7 +204,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         }
       });
     } else {
-      updatedRooms = layout.rooms.map(r => {
+      updatedRooms = activeRooms.map(r => {
         if (r.id === selectedRoomId) {
           if (activeTab === 'floor') {
             return { ...r, floorMaterial: materialId };
@@ -207,11 +218,11 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
 
     const updatedLayout: NaqshaLayout = {
       ...layout,
-      rooms: updatedRooms,
+      rooms: activeFloorKey === 'ground' ? updatedRooms : layout.rooms,
       floors: layout.floors ? {
         ...layout.floors,
-        [layout.activeFloor || 'ground']: {
-          ...layout.floors[layout.activeFloor || 'ground'],
+        [activeFloorKey]: {
+          ...layout.floors[activeFloorKey],
           rooms: updatedRooms
         }
       } : undefined
@@ -226,7 +237,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
 
     let updatedRooms: Room[];
     if (selectedRoomId === 'all' || !selectedRoomId) {
-      updatedRooms = layout.rooms.map(r => {
+      updatedRooms = activeRooms.map(r => {
         const u = { ...r };
         if (activeTab === 'floor') {
           delete u.floorMaterial;
@@ -236,7 +247,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
         return u;
       });
     } else {
-      updatedRooms = layout.rooms.map(r => {
+      updatedRooms = activeRooms.map(r => {
         if (r.id === selectedRoomId) {
           const u = { ...r };
           if (activeTab === 'floor') {
@@ -252,11 +263,11 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
 
     const updatedLayout: NaqshaLayout = {
       ...layout,
-      rooms: updatedRooms,
+      rooms: activeFloorKey === 'ground' ? updatedRooms : layout.rooms,
       floors: layout.floors ? {
         ...layout.floors,
-        [layout.activeFloor || 'ground']: {
-          ...layout.floors[layout.activeFloor || 'ground'],
+        [activeFloorKey]: {
+          ...layout.floors[activeFloorKey],
           rooms: updatedRooms
         }
       } : undefined
@@ -512,15 +523,20 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     setIsRotating(false);
     if (e.touches.length === 0) {
       if (clickStart && !touchState.current.isDoubleTouch) {
-        const dx = Math.abs(dragStart.current.x - clickStart.x);
-        const dy = Math.abs(dragStart.current.y - clickStart.y);
-        if (dx < 10 && dy < 10) {
-          const canvas = canvasRef.current;
-          if (canvas) {
-            const rect = canvas.getBoundingClientRect();
-            const mx = dragStart.current.x - rect.left;
-            const my = dragStart.current.y - rect.top;
-            handleCanvasTouchTap(mx, my, canvas);
+        const touch = e.changedTouches[0];
+        if (touch) {
+          const dx = Math.abs(touch.clientX - clickStart.x);
+          const dy = Math.abs(touch.clientY - clickStart.y);
+          if (dx < 18 && dy < 18) { // 18px tap jitter tolerance for touchscreens
+            const canvas = canvasRef.current;
+            if (canvas) {
+              const rect = canvas.getBoundingClientRect();
+              const scaleX = canvas.width / rect.width;
+              const scaleY = canvas.height / rect.height;
+              const mx = (touch.clientX - rect.left) * scaleX;
+              const my = (touch.clientY - rect.top) * scaleY;
+              handleCanvasTouchTap(mx, my, canvas);
+            }
           }
         }
       }
@@ -543,7 +559,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     let clickedRoom: Room | null = null;
     let maxDepth = -999999;
 
-    layout.rooms.forEach((room) => {
+    activeRooms.forEach((room) => {
       const rx = room.x;
       const ry = room.y;
       const rw = room.width;
@@ -574,8 +590,10 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
 
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -585,7 +603,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     let clickedRoom: Room | null = null;
     let maxDepth = -999999;
 
-    layout.rooms.forEach((room) => {
+    activeRooms.forEach((room) => {
       const rx = room.x;
       const ry = room.y;
       const rw = room.width;
@@ -1303,7 +1321,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     const primitives: DrawPrimitive[] = [];
 
     // 1. ADD FLOOR Slabs
-    layout.rooms.forEach((room) => {
+    activeRooms.forEach((room) => {
       const rx = room.x;
       const ry = room.y;
       const rw = room.width;
@@ -2591,7 +2609,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
     });
 
     // 3. EXTRUDE 3D ROOM WALLS (Low-height architectural model style)
-    layout.rooms.forEach((room) => {
+    activeRooms.forEach((room) => {
       // We skip lawn to avoid creating outer walls on lawn blocks
       if (room.type === 'lawn') return;
 
@@ -2760,6 +2778,54 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
                   ctx.stroke();
                 }
                 ctx.restore();
+              } else if (wallMat.pattern === 'marble') {
+                // Marble veins on wall faces
+                ctx.lineWidth = 0.8 * zoom3d;
+                ctx.save();
+                ctx.globalAlpha = 0.3;
+                let seed = 0;
+                for (let i = 0; i < room.id.length; i++) {
+                  seed += room.id.charCodeAt(i);
+                }
+                const pseudoRandom = () => {
+                  const x = Math.sin(seed++) * 10000;
+                  return x - Math.floor(x);
+                };
+
+                for (let v = 0; v < 3; v++) {
+                  const d1 = pseudoRandom() * wallLen;
+                  const z1 = pseudoRandom() * wallHeight;
+                  const d2 = pseudoRandom() * wallLen;
+                  const z2 = pseudoRandom() * wallHeight;
+                  const p1 = project(w.x1 + d1 * dx, w.y1 + d1 * dy, z1, cx, cy, radYaw, radPitch);
+                  const p2 = project(w.x1 + d2 * dx, w.y1 + d2 * dy, z2, cx, cy, radYaw, radPitch);
+                  ctx.beginPath();
+                  ctx.moveTo(p1.x, p1.y);
+                  ctx.lineTo(p2.x, p2.y);
+                  ctx.stroke();
+                }
+                ctx.restore();
+              } else if (wallMat.pattern === 'tile') {
+                // Wall tiles grid
+                ctx.lineWidth = 0.6 * zoom3d;
+                for (let zh = 0.4; zh < wallHeight; zh += 0.4) {
+                  const pStart = project(w.x1, w.y1, zh, cx, cy, radYaw, radPitch);
+                  const pEnd = project(w.x2, w.y2, zh, cx, cy, radYaw, radPitch);
+                  ctx.beginPath();
+                  ctx.moveTo(pStart.x, pStart.y);
+                  ctx.lineTo(pEnd.x, pEnd.y);
+                  ctx.stroke();
+                }
+                for (let d = 0.4; d < wallLen; d += 0.4) {
+                  const wx = w.x1 + d * dx;
+                  const wy = w.y1 + d * dy;
+                  const lineB = project(wx, wy, 0, cx, cy, radYaw, radPitch);
+                  const lineT = project(wx, wy, wallHeight, cx, cy, radYaw, radPitch);
+                  ctx.beginPath();
+                  ctx.moveTo(lineB.x, lineB.y);
+                  ctx.lineTo(lineT.x, lineT.y);
+                  ctx.stroke();
+                }
               }
               ctx.restore();
             }
@@ -3611,7 +3677,7 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
             className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">🌐 All Rooms (Global Override)</option>
-            {layout.rooms
+            {activeRooms
               .filter((r) => r.type !== 'lawn')
               .map((r) => (
                 <option key={r.id} value={r.id}>
@@ -3660,12 +3726,12 @@ export default function FloorPlan3DViewer({ layout, onUpdateLayout }: FloorPlan3
             let isActive = false;
             if (selectedRoomId === 'all') {
               // Check if all non-lawn rooms have this material
-              const targetRooms = layout.rooms.filter(r => r.type !== 'lawn');
+              const targetRooms = activeRooms.filter(r => r.type !== 'lawn');
               isActive = targetRooms.length > 0 && targetRooms.every(r => 
                 (activeTab === 'floor' ? r.floorMaterial : r.wallMaterial) === material.id
               );
             } else {
-              const currentRoom = layout.rooms.find(r => r.id === selectedRoomId);
+              const currentRoom = activeRooms.find(r => r.id === selectedRoomId);
               isActive = !!currentRoom && (activeTab === 'floor' ? currentRoom.floorMaterial : currentRoom.wallMaterial) === material.id;
             }
 

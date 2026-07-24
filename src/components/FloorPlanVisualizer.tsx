@@ -2938,21 +2938,30 @@ export default function FloorPlanVisualizer({
             </div>
 
             <div className="grid grid-cols-3 gap-2 bg-slate-100/90 dark:bg-slate-950 p-1 rounded-2xl sm:w-auto w-full">
-              {(['ground', 'first', 'second'] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => handleFloorChange(f)}
-                  className={`py-2 px-4 text-xs font-black capitalize rounded-xl transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
-                    activeFloor === f
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
-                  id={`floor-tab-${f}`}
-                >
-                  <span className={`w-2 h-2 rounded-full ${f === 'ground' ? 'bg-emerald-400' : f === 'first' ? 'bg-amber-300' : 'bg-purple-300'}`} />
-                  <span>{f === 'ground' ? 'Ground Floor' : f === 'first' ? '1st Floor' : '2nd Floor'}</span>
-                </button>
-              ))}
+              {(['ground', 'first', 'second'] as const).map((f) => {
+                const isActive = activeFloor === f;
+                const activeClasses = f === 'ground'
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 ring-2 ring-emerald-400/40 font-extrabold'
+                  : f === 'first'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 ring-2 ring-amber-400/40 font-black'
+                  : 'bg-purple-600 text-white shadow-md shadow-purple-600/20 ring-2 ring-purple-400/40 font-extrabold';
+
+                return (
+                  <button
+                    key={f}
+                    onClick={() => handleFloorChange(f)}
+                    className={`py-2 px-3 sm:px-4 text-xs capitalize rounded-xl transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
+                      isActive
+                        ? activeClasses
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-bold'
+                    }`}
+                    id={`floor-tab-${f}`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${f === 'ground' ? (isActive ? 'bg-white' : 'bg-emerald-500') : f === 'first' ? (isActive ? 'bg-slate-950' : 'bg-amber-500') : (isActive ? 'bg-white' : 'bg-purple-500')}`} />
+                    <span>{f === 'ground' ? 'Ground Floor' : f === 'first' ? '1st Floor' : '2nd Floor'}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

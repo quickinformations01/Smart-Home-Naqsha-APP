@@ -448,45 +448,58 @@ export default function PakistanCostEstimatorDashboard({
           {estimate.floorWiseBreakdown.filter(f => f.floorKey !== 'logistics').map((floor) => {
             const isGround = floor.floorKey === 'ground';
             const isFirst = floor.floorKey === 'first';
-            const badgeColor = isGround
-              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+            
+            const cardTheme = isGround
+              ? 'bg-gradient-to-br from-emerald-50/80 via-emerald-50/30 to-teal-50/40 dark:from-emerald-950/30 dark:via-slate-900 dark:to-teal-950/20 border-emerald-500/30 dark:border-emerald-500/30'
               : isFirst
-              ? 'bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400'
-              : 'bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400';
+              ? 'bg-gradient-to-br from-amber-50/80 via-amber-50/30 to-orange-50/40 dark:from-amber-950/30 dark:via-slate-900 dark:to-orange-950/20 border-amber-500/30 dark:border-amber-500/30'
+              : 'bg-gradient-to-br from-purple-50/80 via-purple-50/30 to-indigo-50/40 dark:from-purple-950/30 dark:via-slate-900 dark:to-indigo-950/20 border-purple-500/30 dark:border-purple-500/30';
+
+            const badgeColor = isGround
+              ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
+              : isFirst
+              ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+              : 'bg-purple-600 text-white font-extrabold shadow-sm';
+
+            const costTextColor = isGround
+              ? 'text-emerald-700 dark:text-emerald-400'
+              : isFirst
+              ? 'text-amber-700 dark:text-amber-400'
+              : 'text-purple-700 dark:text-purple-400';
 
             return (
               <div
                 key={floor.floorKey}
-                className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-3 relative flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition"
+                className={`p-5 rounded-2xl border ${cardTheme} shadow-sm space-y-3 relative flex flex-col justify-between hover:shadow-md transition-all duration-200`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded-lg border ${badgeColor}`}>
+                    <span className={`px-2.5 py-1 text-[10px] uppercase rounded-lg ${badgeColor}`}>
                       {floor.floorName} Block
                     </span>
-                    <span className="text-[10px] font-mono font-bold text-slate-500">
+                    <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
                       {Math.round(floor.coveredAreaSqFt)} Sq Ft
                     </span>
                   </div>
 
                   <div className="space-y-1 my-3">
-                    <span className="text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight block">
+                    <span className={`text-2xl font-black font-mono tracking-tight block ${costTextColor}`}>
                       {formatPKR(floor.totalCost)}
                     </span>
-                    <span className="text-[10px] font-medium text-slate-500 block">
+                    <span className="text-[10px] font-bold text-slate-500 block">
                       {Math.round((floor.totalCost / estimate.grandTotal) * 100)}% of full building budget
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs border-t border-slate-200/50 dark:border-slate-800/80 pt-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs border-t border-slate-200/60 dark:border-slate-800/80 pt-3">
                     <div>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase block">Material Cost</span>
+                      <span className="text-[9px] font-bold text-slate-500 uppercase block">Material Cost</span>
                       <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
                         {formatPKR(floor.materialCost)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase block">Labour Cost</span>
+                      <span className="text-[9px] font-bold text-slate-500 uppercase block">Labour Cost</span>
                       <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
                         {formatPKR(floor.labourCost)}
                       </span>
@@ -494,8 +507,8 @@ export default function PakistanCostEstimatorDashboard({
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-200/40 dark:border-slate-800/60 flex items-center justify-between text-[10px] text-slate-500">
-                  <span className="font-medium truncate max-w-[150px]">
+                <div className="pt-2 border-t border-slate-200/50 dark:border-slate-800/60 flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold truncate max-w-[150px]">
                     {isGround ? 'Foundations, Plinth & Slab' : isFirst ? 'Columns, Beams & Upper Slab' : 'Mumty, Parapet & Overhead Tank'}
                   </span>
                   <button
@@ -503,7 +516,9 @@ export default function PakistanCostEstimatorDashboard({
                       setCollapsedSections(prev => ({ ...prev, floorBreakdown: false }));
                       toggleFloorMaterials(floor.floorKey);
                     }}
-                    className="text-blue-600 dark:text-blue-400 font-extrabold hover:underline cursor-pointer shrink-0"
+                    className={`font-black hover:underline cursor-pointer shrink-0 ${
+                      isGround ? 'text-emerald-600 dark:text-emerald-400' : isFirst ? 'text-amber-600 dark:text-amber-400' : 'text-purple-600 dark:text-purple-400'
+                    }`}
                   >
                     Stocks →
                   </button>
