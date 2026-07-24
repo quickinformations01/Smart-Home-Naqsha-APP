@@ -125,14 +125,14 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
         <div className="space-y-2">
           <label className="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
             <Grid className="w-3.5 h-3.5 text-blue-500" />
-            <span>Popular Architectural Footprint Presets</span>
+            <span>Popular Architectural Presets & Dimensions</span>
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
-              { label: "60' x 50'", w: '60', l: '50', u: 'ft', desc: '3,000 sq ft Modern CAD Blueprint' },
-              { label: "30' x 50'", w: '30', l: '50', u: 'ft', desc: '1,500 sq ft Standard Plot' },
-              { label: "35' x 70'", w: '35', l: '70', u: 'ft', desc: '2,450 sq ft Executive Plot' },
-              { label: "50' x 90'", w: '50', l: '90', u: 'ft', desc: '4,500 sq ft Grand Villa' },
+              { label: "60' x 50'", w: '60', l: '50', u: 'ft', desc: '3,000 sq ft / 13.3 Marla' },
+              { label: "30' x 50'", w: '30', l: '50', u: 'ft', desc: '1,500 sq ft / 6.6 Marla' },
+              { label: "35' x 70'", w: '35', l: '70', u: 'ft', desc: '2,450 sq ft / 10.8 Marla' },
+              { label: "50' x 90'", w: '50', l: '90', u: 'ft', desc: '4,500 sq ft / 20 Marla' },
             ].map((preset) => {
               const isActive = width === preset.w && length === preset.l && unit === preset.u;
               return (
@@ -151,7 +151,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                   }`}
                 >
                   <div className="text-xs font-black font-mono">{preset.label}</div>
-                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">{preset.desc}</div>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-bold truncate mt-0.5">{preset.desc}</div>
                 </button>
               );
             })}
@@ -170,7 +170,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 type="number"
                 value={width}
                 onChange={(e) => setWidth(e.target.value)}
-                placeholder="e.g. 30"
+                placeholder="e.g. 60"
                 min="10"
                 step="any"
                 className="w-full p-3.5 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-extrabold text-sm"
@@ -206,6 +206,53 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
             </div>
           </div>
         </div>
+
+        {/* Dynamic Plot Footprint & Area Calculation Display */}
+        {(!isNaN(parseFloat(width)) && !isNaN(parseFloat(length)) && parseFloat(width) > 0 && parseFloat(length) > 0) && (
+          <div className="p-4 rounded-2xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-blue-500 text-white font-mono font-black text-[11px]">
+                CAD Area
+              </div>
+              <div>
+                <div className="font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 font-mono">
+                  <span>{width} {unit} × {length} {unit}</span>
+                  <span className="text-blue-600 dark:text-blue-400">
+                    = {(parseFloat(width) * parseFloat(length)).toLocaleString()} {unit === 'ft' ? 'sq ft' : 'sq m'}
+                  </span>
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                  Calculated rectangular site footprint
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 font-mono text-[11px]">
+              {unit === 'ft' ? (
+                <>
+                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-black text-slate-700 dark:text-slate-300">
+                    {((parseFloat(width) * parseFloat(length)) / 225).toFixed(2)} Marla
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-black text-slate-700 dark:text-slate-300">
+                    {((parseFloat(width) * parseFloat(length)) / 9).toFixed(1)} Sq Yds
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-black text-slate-700 dark:text-slate-300">
+                    {(parseFloat(width) * parseFloat(length) * 0.092903).toFixed(1)} Sq M
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-black text-slate-700 dark:text-slate-300">
+                    {(parseFloat(width) * parseFloat(length) * 10.7639).toFixed(0)} Sq Ft
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-black text-slate-700 dark:text-slate-300">
+                    {((parseFloat(width) * parseFloat(length) * 10.7639) / 225).toFixed(2)} Marla
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Plot Aspect Type (Corner & Zoning Selection) */}
         <div className="space-y-3">
