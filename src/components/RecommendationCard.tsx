@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Check, ChevronRight, RotateCcw, Home, ShowerHead, Eye, Trees, CarFront } from 'lucide-react';
+import { Sparkles, Check, ChevronRight, RotateCcw, Home, ShowerHead, Eye, Trees, CarFront, ChefHat } from 'lucide-react';
 import { NaqshaSummary } from '../types';
 
 interface RecommendationCardProps {
@@ -146,9 +146,10 @@ export default function RecommendationCard({
         {/* Kitchen Style */}
         <div className="p-5 border border-slate-100 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-800/40 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Kitchen Style
-            </span>
+            <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
+              <ChefHat className="w-4 h-4 text-orange-500" />
+              <span className="text-sm font-semibold">Kitchen Configuration</span>
+            </div>
           </div>
           <div className="flex space-x-3">
             {['Closed Kitchen', 'Open Kitchen'].map((type) => (
@@ -274,11 +275,12 @@ export default function RecommendationCard({
       <div className="flex items-center space-x-4">
         <button
           onClick={handleConfirm}
-          className="flex-1 py-4 px-6 bg-gradient-to-r from-blue-600 via-indigo-650 to-indigo-700 hover:from-blue-500 hover:via-indigo-555 hover:to-indigo-600 text-white font-display font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-500/15 hover:shadow-indigo-500/25 flex items-center justify-center space-x-2 transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          className="flex-1 py-4 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 hover:from-blue-500 hover:via-indigo-500 hover:to-indigo-600 text-white font-display font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-500/15 hover:shadow-indigo-500/25 flex items-center justify-center space-x-2 transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           id="confirm-generate-btn"
         >
-          <span>Generate 2D Floor Plan</span>
-          <ChevronRight className="w-5 h-5 text-white animate-pulse" />
+          <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+          <span>Compile CAD Blueprint & 3D Model</span>
+          <ChevronRight className="w-4 h-4 text-white" />
         </button>
       </div>
     </div>

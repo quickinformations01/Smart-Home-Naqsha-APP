@@ -124,28 +124,32 @@ export default function Header({ isDarkMode, setIsDarkMode }: HeaderProps) {
             </div>
           )}
 
-          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700/60">
+          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700/60 items-center">
             <button
               onClick={() => setIsDarkMode(false)}
-              className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 !isDarkMode
-                  ? 'bg-white text-blue-600 shadow-sm'
+                  ? 'bg-white text-blue-600 shadow-sm font-extrabold'
                   : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
               }`}
               id="toggle-light-btn"
+              title="Switch to Light Theme"
             >
-              Light
+              <Sun className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Light</span>
             </button>
             <button
               onClick={() => setIsDarkMode(true)}
-              className={`px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 isDarkMode
-                  ? 'bg-slate-700 text-blue-400 shadow-sm'
+                  ? 'bg-slate-700 text-blue-400 shadow-sm font-extrabold'
                   : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
               }`}
               id="toggle-dark-btn"
+              title="Switch to Dark Theme"
             >
-              Dark
+              <Moon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Dark</span>
             </button>
           </div>
           
