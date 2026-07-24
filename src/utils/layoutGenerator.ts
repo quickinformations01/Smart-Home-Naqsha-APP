@@ -171,20 +171,29 @@ function buildCandidate(
   let idCounter = 1;
   const nextId = (prefix: string) => `${prefix}_cand_${config.id}_${idCounter++}`;
 
-  const colors = {
-    bedroom: '#f8fafc',
+  const colors: Record<string, string> = {
+    bedroom: '#ffffff',
     bathroom: '#f1f5f9',
     kitchen: '#ffffff',
-    living: '#f8fafc',
+    living: '#e0f2fe',
     drawing: '#ffffff',
     garage: '#f1f5f9',
-    lawn: '#f0fdf4',
-    staircase: '#faf5ff',
-    corridor: '#fafafa',
-    other: '#f8fafc',
+    lawn: '#dcfce7',
+    staircase: '#f8fafc',
+    corridor: '#f1f5f9',
+    other: '#ffffff',
   };
 
   const addRoom = (name: string, type: RoomType, rx: number, ry: number, rw: number, rh: number): Room => {
+    let chosenColor = colors[type] || '#ffffff';
+    if (name.toLowerCase().includes('pantry') || name.toLowerCase().includes('bath')) {
+      chosenColor = '#f1f5f9'; // Soft grey for bathrooms/pantry
+    } else if (name.toLowerCase().includes('ventilation') || name.toLowerCase().includes('o.t.s') || name.toLowerCase().includes('atrium') || name.toLowerCase().includes('courtyard')) {
+      chosenColor = '#dcfce7'; // Light green tint for ventilation/open shafts
+    } else if (type === 'living') {
+      chosenColor = '#e0f2fe'; // Subtle light blue shading for living spaces
+    }
+
     const r: Room = {
       id: nextId('room'),
       name,
@@ -193,7 +202,7 @@ function buildCandidate(
       y: Math.round(ry * 10) / 10,
       width: Math.round(rw * 10) / 10,
       height: Math.round(rh * 10) / 10,
-      color: colors[type] || '#ffffff',
+      color: chosenColor,
     };
     rooms.push(r);
     return r;

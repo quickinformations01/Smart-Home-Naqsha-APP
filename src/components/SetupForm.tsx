@@ -121,6 +121,43 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
           </div>
         </div>
 
+        {/* Quick Footprint Presets */}
+        <div className="space-y-2">
+          <label className="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Grid className="w-3.5 h-3.5 text-blue-500" />
+            <span>Popular Architectural Footprint Presets</span>
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { label: "60' x 50'", w: '60', l: '50', u: 'ft', desc: '3,000 sq ft Modern CAD Blueprint' },
+              { label: "30' x 50'", w: '30', l: '50', u: 'ft', desc: '1,500 sq ft Standard Plot' },
+              { label: "35' x 70'", w: '35', l: '70', u: 'ft', desc: '2,450 sq ft Executive Plot' },
+              { label: "50' x 90'", w: '50', l: '90', u: 'ft', desc: '4,500 sq ft Grand Villa' },
+            ].map((preset) => {
+              const isActive = width === preset.w && length === preset.l && unit === preset.u;
+              return (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => {
+                    setWidth(preset.w);
+                    setLength(preset.l);
+                    setUnit(preset.u as 'ft' | 'm');
+                  }}
+                  className={`p-2.5 rounded-xl border text-left transition-all duration-150 cursor-pointer ${
+                    isActive
+                      ? 'bg-blue-50/90 dark:bg-blue-950/50 border-blue-500 text-blue-700 dark:text-blue-300 shadow-sm'
+                      : 'bg-slate-50/50 dark:bg-slate-950/40 border-slate-200/80 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  <div className="text-xs font-black font-mono">{preset.label}</div>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">{preset.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Width and Length Inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {/* Plot Width */}
