@@ -10,13 +10,15 @@ import {
   MapPin, 
   Sun, 
   ArrowUpRight,
+  ArrowUpLeft,
   Sliders,
   Sunrise,
   Sunset,
   Moon,
+  Building,
   Building2,
-  CornerUpLeft,
-  CornerUpRight,
+  Maximize2,
+  Grid,
   Wind,
   CheckCircle2,
   Info,
@@ -190,7 +192,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 tag: '1 Front Road',
                 subtitle: 'Single Road Façade',
                 desc: 'Flanked by neighboring plots on left, right & rear.',
-                icon: Building2,
+                icon: Building,
                 svg: (
                   <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Neighbor Blocks */}
@@ -199,7 +201,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                     <rect x="26" y="2" width="48" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Active Plot */}
                     <rect x="26" y="12" width="48" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider font-mono">STANDARD</text>
                     {/* Front Road */}
                     <rect x="2" y="38" width="96" height="12" rx="3" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
                     <line x1="6" y1="44" x2="94" y2="44" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
@@ -213,7 +215,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 tag: '2 Open Roads',
                 subtitle: 'Front + Left Street',
                 desc: 'Open left boundary for secondary gate & dual light.',
-                icon: CornerUpLeft,
+                icon: ArrowUpLeft,
                 svg: (
                   <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Neighbor Blocks */}
@@ -225,7 +227,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                     <text x="13" y="25" textAnchor="middle" className="text-[5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(-90 13 25)">LEFT STREET</text>
                     {/* Active Plot */}
                     <rect x="26" y="12" width="48" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider font-mono">LEFT CORNER</text>
                     <circle cx="26" cy="18" r="2" fill="#22d3ee" className="animate-pulse" />
                     <circle cx="26" cy="28" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
@@ -241,7 +243,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 tag: '2 Open Roads',
                 subtitle: 'Front + Right Street',
                 desc: 'Open right street boundary for maximum breeze & windows.',
-                icon: CornerUpRight,
+                icon: ArrowUpRight,
                 svg: (
                   <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Neighbor Blocks */}
@@ -253,7 +255,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                     <text x="87" y="25" textAnchor="middle" className="text-[5px] font-extrabold fill-slate-300 tracking-widest uppercase" transform="rotate(90 87 25)">RIGHT STREET</text>
                     {/* Active Plot */}
                     <rect x="26" y="12" width="48" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider font-mono">RIGHT CORNER</text>
                     <circle cx="74" cy="18" r="2" fill="#22d3ee" className="animate-pulse" />
                     <circle cx="74" cy="28" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
@@ -269,7 +271,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                 tag: '3 Open Sides',
                 subtitle: 'Panoramic Boulevard',
                 desc: '3-sided open exposure for luxury dual-façade residence.',
-                icon: Layers,
+                icon: Maximize2,
                 svg: (
                   <svg viewBox="0 0 100 52" className="w-full h-12 rounded-xl bg-slate-950 p-1.5 border border-slate-800/80 shadow-inner transition-opacity">
                     {/* Left & Right Streets */}
@@ -279,7 +281,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                     <rect x="24" y="2" width="52" height="8" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="1" />
                     {/* Active Plot */}
                     <rect x="24" y="12" width="52" height="24" rx="3" fill="rgba(37, 99, 235, 0.25)" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider">PLOT</text>
+                    <text x="50" y="26" textAnchor="middle" className="text-[8px] font-black fill-blue-400 tracking-wider font-mono">3-SIDE OPEN</text>
                     <circle cx="24" cy="24" r="2" fill="#22d3ee" className="animate-pulse" />
                     <circle cx="76" cy="24" r="2" fill="#22d3ee" className="animate-pulse" />
                     {/* Front Road */}
@@ -315,22 +317,22 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
                         {item.tag}
                       </span>
                       {isSelected ? (
-                        <div className="w-5 h-5 rounded-full bg-white text-emerald-600 flex items-center justify-center shrink-0 shadow-md animate-bounce-short">
+                        <div className="w-5.5 h-5.5 rounded-full bg-white text-emerald-600 flex items-center justify-center shrink-0 shadow-md">
                           <CheckCircle2 className="w-4 h-4 fill-emerald-600 text-white" />
                         </div>
                       ) : (
-                        <div className="p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/50 transition-colors">
+                        <div className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 transition-all shadow-xs">
                           <IconComp className="w-4 h-4" />
                         </div>
                       )}
                     </div>
 
-                    <h4 className={`text-xs font-black tracking-tight uppercase mt-1 flex items-center gap-1.5 ${
+                    <h4 className={`text-xs font-black tracking-tight uppercase mt-1 flex items-center gap-1.5 font-sans ${
                       isSelected ? 'text-white' : 'text-slate-900 dark:text-white'
                     }`}>
                       <span>{item.title}</span>
                     </h4>
-                    <p className={`text-[10px] font-bold tracking-tight ${
+                    <p className={`text-[10px] font-bold tracking-tight mt-0.5 ${
                       isSelected ? 'text-emerald-100' : 'text-blue-600 dark:text-blue-400'
                     }`}>
                       {item.subtitle}
@@ -344,7 +346,7 @@ export default function SetupForm({ onGenerate, isLoading }: SetupFormProps) {
 
                   {/* Subtitle / Short Description */}
                   <p className={`text-[10px] font-medium leading-normal ${
-                    isSelected ? 'text-slate-100/90' : 'text-slate-500 dark:text-slate-400'
+                    isSelected ? 'text-slate-100/95' : 'text-slate-500 dark:text-slate-400'
                   }`}>
                     {item.desc}
                   </p>
